@@ -8,7 +8,7 @@ import { createPageUrl } from '@/utils';
 import { 
   LayoutDashboard, Plus, Eye, Users, DollarSign, 
   TrendingUp, Loader2, Pencil, Trash2, AlertTriangle,
-  ArrowLeft
+  ArrowLeft, Gift
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,11 @@ export default function AdminPanel() {
     queryFn: () => base44.entities.AdView.list('-created_date', 100)
   });
 
+  const { data: allReferralBonuses = [] } = useQuery({
+    queryKey: ['allReferralBonuses'],
+    queryFn: () => base44.entities.ReferralBonus.list('-created_date')
+  });
+
   const createAdMutation = useMutation({
     mutationFn: (data) => base44.entities.Advertisement.create(data),
     onSuccess: () => {
@@ -103,6 +108,8 @@ export default function AdminPanel() {
   const totalEarnings = allViews.reduce((sum, v) => sum + (v.reward_earned || 0), 0);
   const pendingPayments = paymentRequests.filter(p => p.status === 'pending');
   const totalPaid = paymentRequests.filter(p => p.status === 'paid').reduce((sum, p) => sum + p.amount, 0);
+  const totalReferralBonuses = allReferralBonuses.reduce((sum, b) => sum + (b.bonus_amount || 0), 0);
+  const usersWithReferrals = users.filter(u => u.referred_by).length;
 
   const statusColors = {
     active: 'bg-emerald-100 text-emerald-700',
@@ -156,7 +163,7 @@ export default function AdminPanel() {
           </Link>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <AdminStatsCard
             title="Total Users"
             value={users.length}
@@ -174,7 +181,14 @@ export default function AdminPanel() {
             value={formatCurrency(totalEarnings)}
             icon={TrendingUp}
             color="purple"
-            subtitle="Paid to users"
+            subtitle="Ad views"
+          />
+          <AdminStatsCard
+            title="Referral Bonuses"
+            value={formatCurrency(totalReferralBonuses)}
+            icon={Gift}
+            color="rose"
+            subtitle={`${usersWithReferrals} referred users`}
           />
           <AdminStatsCard
             title="Pending Payments"
@@ -292,25 +306,40 @@ export default function AdminPanel() {
                     <TableHead>Email</TableHead>
                     <TableHead>Balance</TableHead>
                     <TableHead>Total Earned</TableHead>
+                    <TableHead>Referral Earnings</TableHead>
                     <TableHead>Ads Viewed</TableHead>
+                    <TableHead>Referred By</TableHead>
                     <TableHead>Role</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((u) => (
-                    <TableRow key={u.id}>
-                      <TableCell className="font-medium">{u.full_name || '-'}</TableCell>
-                      <TableCell>{u.email}</TableCell>
-                      <TableCell>{formatCurrency(u.balance)}</TableCell>
-                      <TableCell>{formatCurrency(u.total_earned)}</TableCell>
-                      <TableCell>{u.ads_viewed || 0}</TableCell>
-                      <TableCell>
-                        <Badge className={u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'}>
-                          {u.role || 'user'}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {users.map((u) => {
+                    const referrer = u.referred_by ? users.find(user => user.id === u.referred_by) : null;
+                    return (
+                      <TableRow key={u.id}>
+                        <TableCell className="font-medium">{u.full_name || '-'}</TableCell>
+                        <TableCell>{u.email}</TableCell>
+                        <TableCell>{formatCurrency(u.balance)}</TableCell>
+                        <TableCell>{formatCurrency(u.total_earned)}</TableCell>
+                        <TableCell>
+                          {u.referral_earnings > 0 ? (
+                            <span className="text-purple-600 font-medium">{formatCurrency(u.referral_earnings)}</span>
+                          ) : '-'}
+                        </TableCell>
+                        <TableCell>{u.ads_viewed || 0}</TableCell>
+                        <TableCell>
+                          {referrer ? (
+                            <span className="text-sm text-slate-500">{referrer.full_name || referrer.email}</span>
+                          ) : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'}>
+                            {u.role || 'user'}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
