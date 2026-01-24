@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { Wallet, Eye, TrendingUp, DollarSign, Loader2 } from 'lucide-react';
+import { Wallet, Eye, TrendingUp, DollarSign, Loader2, Users } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import StatsCard from '@/components/dashboard/StatsCard';
@@ -11,12 +11,26 @@ import AdCard from '@/components/dashboard/AdCard';
 import AdViewModal from '@/components/dashboard/AdViewModal';
 import PaymentRequestModal from '@/components/payments/PaymentRequestModal';
 import PaymentHistory from '@/components/payments/PaymentHistory';
+import ReferralSection from '@/components/referrals/ReferralSection';
+
+const REFERRAL_BONUS_PERCENT = 10; // 10% of ad reward goes to referrer
 
 export default function Dashboard() {
   const [selectedAd, setSelectedAd] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [viewedAds, setViewedAds] = useState(new Set());
   const queryClient = useQueryClient();
+
+  // Check for referral code in URL and store it
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) {
+      localStorage.setItem('referral_code', refCode);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ['currentUser'],
@@ -40,6 +54,51 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
+  // Fetch referred users (users who have this user as their referrer)
+  const { data: referredUsers = [] } = useQuery({
+    queryKey: ['referredUsers', user?.id],
+    queryFn: () => base44.entities.User.filter({ referred_by: user?.id }),
+    enabled: !!user?.id
+  });
+
+  // Fetch referral bonuses earned by this user
+  const { data: referralBonuses = [] } = useQuery({
+    queryKey: ['referralBonuses', user?.id],
+    queryFn: () => base44.entities.ReferralBonus.filter({ referrer_id: user?.id }),
+    enabled: !!user?.id
+  });
+
+  // Generate referral code if user doesn't have one
+  useEffect(() => {
+    const generateReferralCode = async () => {
+      if (user && !user.referral_code) {
+        const code = `${user.full_name?.split(' ')[0]?.toUpperCase() || 'USER'}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+        await base44.auth.updateMe({ referral_code: code });
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      }
+    };
+    generateReferralCode();
+  }, [user]);
+
+  // Process referral if user was referred
+  useEffect(() => {
+    const processReferral = async () => {
+      if (user && !user.referred_by) {
+        const storedRefCode = localStorage.getItem('referral_code');
+        if (storedRefCode && storedRefCode !== user.referral_code) {
+          // Find the referrer by their code
+          const referrers = await base44.entities.User.filter({ referral_code: storedRefCode });
+          if (referrers.length > 0 && referrers[0].id !== user.id) {
+            await base44.auth.updateMe({ referred_by: referrers[0].id });
+            queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+            localStorage.removeItem('referral_code');
+          }
+        }
+      }
+    };
+    processReferral();
+  }, [user]);
+
   useEffect(() => {
     if (myViews.length > 0) {
       const completedAds = new Set(myViews.filter(v => v.completed).map(v => v.advertisement_id));
@@ -49,7 +108,7 @@ export default function Dashboard() {
 
   const completeViewMutation = useMutation({
     mutationFn: async (ad) => {
-      await base44.entities.AdView.create({
+      const adView = await base44.entities.AdView.create({
         user_id: user.id,
         user_email: user.email,
         advertisement_id: ad.id,
@@ -67,6 +126,35 @@ export default function Dashboard() {
         total_earned: (user.total_earned || 0) + ad.reward_amount,
         ads_viewed: (user.ads_viewed || 0) + 1
       });
+
+      // Award referral bonus if user was referred
+      if (user.referred_by) {
+        const bonusAmount = Math.floor(ad.reward_amount * REFERRAL_BONUS_PERCENT / 100);
+        if (bonusAmount > 0) {
+          // Get referrer details
+          const referrers = await base44.entities.User.filter({ id: user.referred_by });
+          if (referrers.length > 0) {
+            const referrer = referrers[0];
+            
+            // Create referral bonus record
+            await base44.entities.ReferralBonus.create({
+              referrer_id: referrer.id,
+              referrer_email: referrer.email,
+              referred_user_id: user.id,
+              referred_user_email: user.email,
+              ad_view_id: adView.id,
+              bonus_amount: bonusAmount
+            });
+
+            // Update referrer's balance and referral earnings
+            await base44.entities.User.update(referrer.id, {
+              balance: (referrer.balance || 0) + bonusAmount,
+              total_earned: (referrer.total_earned || 0) + bonusAmount,
+              referral_earnings: (referrer.referral_earnings || 0) + bonusAmount
+            });
+          }
+        }
+      }
     },
     onSuccess: (_, ad) => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
@@ -161,6 +249,10 @@ export default function Dashboard() {
               <TabsTrigger value="ads" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
                 Available Ads ({availableAds.length})
               </TabsTrigger>
+              <TabsTrigger value="referrals" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
+                <Users className="w-4 h-4 mr-1.5" />
+                Referrals
+              </TabsTrigger>
               <TabsTrigger value="payments" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
                 Payments
               </TabsTrigger>
@@ -203,6 +295,14 @@ export default function Dashboard() {
                 <p className="text-slate-500">Check back later for new earning opportunities</p>
               </motion.div>
             )}
+          </TabsContent>
+
+          <TabsContent value="referrals">
+            <ReferralSection 
+              user={user} 
+              referredUsers={referredUsers}
+              referralBonuses={referralBonuses}
+            />
           </TabsContent>
 
           <TabsContent value="payments">
