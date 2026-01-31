@@ -8,6 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from 'lucide-react';
 
 const CATEGORIES = ['general', 'tech', 'shopping', 'finance', 'entertainment', 'health'];
+const AFFILIATE_NETWORKS = [
+  { value: 'none', label: 'None' },
+  { value: 'tradedoubler', label: 'TradeDoubler' },
+  { value: 'awin', label: 'Awin' },
+  { value: 'cj', label: 'Commission Junction' },
+  { value: 'admitad', label: 'Admitad' },
+  { value: 'other', label: 'Other' }
+];
 
 export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading }) {
   const [formData, setFormData] = useState(editingAd || {
@@ -19,7 +27,9 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
     view_duration: 30,
     max_views: 100,
     category: 'general',
-    status: 'active'
+    status: 'active',
+    affiliate_network: 'none',
+    affiliate_id: ''
   });
 
   const handleChange = (field, value) => {
@@ -120,14 +130,44 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="url">Website URL</Label>
+            <Label htmlFor="url">Website/Affiliate URL</Label>
             <Input
               id="url"
               type="url"
               value={formData.url}
               onChange={(e) => handleChange('url', e.target.value)}
-              placeholder="https://..."
+              placeholder="https://... (affiliate link opens in iframe)"
             />
+            <p className="text-xs text-slate-500">
+              Paste your affiliate link here. The page will be displayed in an iframe with a countdown timer.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Affiliate Network</Label>
+              <Select value={formData.affiliate_network} onValueChange={(v) => handleChange('affiliate_network', v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {AFFILIATE_NETWORKS.map(net => (
+                    <SelectItem key={net.value} value={net.value}>
+                      {net.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="affiliateId">Campaign ID (optional)</Label>
+              <Input
+                id="affiliateId"
+                value={formData.affiliate_id}
+                onChange={(e) => handleChange('affiliate_id', e.target.value)}
+                placeholder="e.g. 12345"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">

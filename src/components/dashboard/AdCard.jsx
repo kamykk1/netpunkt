@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Clock, DollarSign, Eye, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { createPageUrl } from '@/utils';
 
 export default function AdCard({ ad, onView, isViewing, viewProgress, isCompleted }) {
   const formatCurrency = (cents) => `$${(cents / 100).toFixed(2)}`;
@@ -79,10 +80,10 @@ export default function AdCard({ ad, onView, isViewing, viewProgress, isComplete
           ) : (
             <motion.div key="action" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <Button
-                onClick={() => onView(ad)}
+                onClick={() => window.open(createPageUrl('AdViewer') + `?id=${ad.id}`, '_blank')}
                 className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl h-11"
               >
-                <Eye className="w-4 h-4 mr-2" />
+                <ExternalLink className="w-4 h-4 mr-2" />
                 View & Earn {formatCurrency(ad.reward_amount)}
               </Button>
             </motion.div>
