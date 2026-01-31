@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Clock, DollarSign, Eye, ExternalLink, CheckCircle2 } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
-export default function AdCard({ ad, onView, isViewing, viewProgress, isCompleted }) {
-  const formatCurrency = (cents) => `$${(cents / 100).toFixed(2)}`;
+export default function AdCard({ ad, isCompleted }) {
+  const formatCurrency = (cents) => `${(cents / 100).toFixed(2)} zł`;
+
+  const handleViewAd = () => {
+    window.open(createPageUrl('AdViewer') + `?id=${ad.id}`, '_blank');
+  };
 
   return (
     <motion.div
@@ -16,7 +19,6 @@ export default function AdCard({ ad, onView, isViewing, viewProgress, isComplete
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       className={`relative overflow-hidden rounded-2xl bg-white border transition-all duration-300 ${
-        isViewing ? 'border-emerald-300 shadow-lg shadow-emerald-100' : 
         isCompleted ? 'border-slate-200 opacity-60' : 'border-slate-100 hover:border-emerald-200 hover:shadow-md'
       }`}
     >
@@ -54,20 +56,7 @@ export default function AdCard({ ad, onView, isViewing, viewProgress, isComplete
         </div>
 
         <AnimatePresence mode="wait">
-          {isViewing ? (
-            <motion.div
-              key="viewing"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="space-y-3"
-            >
-              <Progress value={viewProgress} className="h-2" />
-              <p className="text-center text-sm text-emerald-600 font-medium">
-                Viewing... {Math.ceil((100 - viewProgress) * (ad.view_duration || 30) / 100)}s remaining
-              </p>
-            </motion.div>
-          ) : isCompleted ? (
+          {isCompleted ? (
             <motion.div
               key="completed"
               initial={{ opacity: 0 }}
@@ -75,16 +64,16 @@ export default function AdCard({ ad, onView, isViewing, viewProgress, isComplete
               className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 text-slate-500"
             >
               <CheckCircle2 className="w-5 h-5" />
-              <span className="font-medium">Completed</span>
+              <span className="font-medium">Ukończone</span>
             </motion.div>
           ) : (
             <motion.div key="action" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <Button
-                onClick={() => window.open(createPageUrl('AdViewer') + `?id=${ad.id}`, '_blank')}
+                onClick={handleViewAd}
                 className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl h-11"
               >
                 <ExternalLink className="w-4 h-4 mr-2" />
-                View & Earn {formatCurrency(ad.reward_amount)}
+                Oglądaj i zarabiaj {formatCurrency(ad.reward_amount)}
               </Button>
             </motion.div>
           )}

@@ -3,24 +3,22 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { toast } from 'sonner';
 import { Copy, Users, Gift, TrendingUp, Check } from 'lucide-react';
-import { format } from 'date-fns';
 
-const REFERRAL_BONUS_PERCENT = 10; // 10% of ad reward goes to referrer
+const REFERRAL_BONUS_PERCENT = 10;
 
 export default function ReferralSection({ user, referredUsers, referralBonuses }) {
   const [copied, setCopied] = useState(false);
 
-  const formatCurrency = (cents) => `$${((cents || 0) / 100).toFixed(2)}`;
+  const formatCurrency = (cents) => `${((cents || 0) / 100).toFixed(2)} zł`;
 
   const referralLink = `${window.location.origin}?ref=${user?.referral_code}`;
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(referralLink);
     setCopied(true);
-    toast.success('Referral link copied!');
+    toast.success('Link polecający skopiowany!');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -29,7 +27,7 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
 
   return (
     <div className="space-y-6">
-      {/* Referral Stats */}
+      {/* Statystyki poleceń */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -38,7 +36,7 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100 text-sm">Referral Earnings</p>
+              <p className="text-purple-100 text-sm">Zarobki z poleceń</p>
               <p className="text-3xl font-bold mt-1">{formatCurrency(totalReferralEarnings)}</p>
             </div>
             <Gift className="w-10 h-10 text-purple-200" />
@@ -53,7 +51,7 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-500 text-sm">Total Referrals</p>
+              <p className="text-slate-500 text-sm">Liczba poleceń</p>
               <p className="text-3xl font-bold text-slate-900 mt-1">{activeReferrals}</p>
             </div>
             <div className="p-3 bg-emerald-100 rounded-xl">
@@ -70,7 +68,7 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-slate-500 text-sm">Bonus Rate</p>
+              <p className="text-slate-500 text-sm">Stawka bonusu</p>
               <p className="text-3xl font-bold text-slate-900 mt-1">{REFERRAL_BONUS_PERCENT}%</p>
             </div>
             <div className="p-3 bg-amber-100 rounded-xl">
@@ -80,14 +78,14 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
         </motion.div>
       </div>
 
-      {/* Referral Link */}
+      {/* Link polecający */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Your Referral Link</CardTitle>
+          <CardTitle className="text-lg">Twój link polecający</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-slate-500 mb-4">
-            Share your link and earn {REFERRAL_BONUS_PERCENT}% of every ad view your referrals complete!
+            Udostępnij swój link i zarabiaj {REFERRAL_BONUS_PERCENT}% od każdej obejrzanej reklamy przez polecone osoby!
           </p>
           <div className="flex gap-2">
             <Input
@@ -104,16 +102,16 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
           </div>
           <div className="mt-4 p-4 bg-purple-50 rounded-xl">
             <p className="text-sm text-purple-700">
-              <strong>Your referral code:</strong> <code className="bg-purple-100 px-2 py-1 rounded">{user?.referral_code}</code>
+              <strong>Twój kod polecający:</strong> <code className="bg-purple-100 px-2 py-1 rounded">{user?.referral_code}</code>
             </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Referred Users List */}
+      {/* Lista poleconych użytkowników */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Your Referrals</CardTitle>
+          <CardTitle className="text-lg">Twoje polecenia</CardTitle>
         </CardHeader>
         <CardContent>
           {referredUsers && referredUsers.length > 0 ? (
@@ -132,13 +130,13 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
                         {referredUser.full_name?.[0]?.toUpperCase() || referredUser.email?.[0]?.toUpperCase() || '?'}
                       </div>
                       <div>
-                        <p className="font-medium text-slate-900">{referredUser.full_name || 'User'}</p>
+                        <p className="font-medium text-slate-900">{referredUser.full_name || 'Użytkownik'}</p>
                         <p className="text-sm text-slate-500">{referredUser.email}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-emerald-600">{formatCurrency(totalFromUser)}</p>
-                      <p className="text-xs text-slate-400">earned from this referral</p>
+                      <p className="text-xs text-slate-400">zarobione z tego polecenia</p>
                     </div>
                   </div>
                 );
@@ -147,8 +145,8 @@ export default function ReferralSection({ user, referredUsers, referralBonuses }
           ) : (
             <div className="text-center py-8">
               <Users className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500">No referrals yet</p>
-              <p className="text-sm text-slate-400">Share your link to start earning!</p>
+              <p className="text-slate-500">Brak poleceń</p>
+              <p className="text-sm text-slate-400">Udostępnij swój link, aby zacząć zarabiać!</p>
             </div>
           )}
         </CardContent>
