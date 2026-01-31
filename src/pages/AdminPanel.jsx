@@ -69,7 +69,7 @@ export default function AdminPanel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allAds'] });
       setShowAdForm(false);
-      toast.success('Advertisement created!');
+      toast.success('Reklama została utworzona!');
     }
   });
 
@@ -79,7 +79,7 @@ export default function AdminPanel() {
       queryClient.invalidateQueries({ queryKey: ['allAds'] });
       setShowAdForm(false);
       setEditingAd(null);
-      toast.success('Advertisement updated!');
+      toast.success('Reklama została zaktualizowana!');
     }
   });
 
@@ -88,7 +88,7 @@ export default function AdminPanel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allAds'] });
       setDeleteAd(null);
-      toast.success('Advertisement deleted!');
+      toast.success('Reklama została usunięta!');
     }
   });
 
@@ -99,11 +99,11 @@ export default function AdminPanel() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allPayments'] });
-      toast.success('Payment request updated!');
+      toast.success('Wniosek o wypłatę zaktualizowany!');
     }
   });
 
-  const formatCurrency = (cents) => `$${((cents || 0) / 100).toFixed(2)}`;
+  const formatCurrency = (cents) => `${((cents || 0) / 100).toFixed(2)} zł`;
 
   const totalEarnings = allViews.reduce((sum, v) => sum + (v.reward_earned || 0), 0);
   const pendingPayments = paymentRequests.filter(p => p.status === 'pending');
@@ -130,12 +130,12 @@ export default function AdminPanel() {
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
           <AlertTriangle className="w-16 h-16 mx-auto text-amber-500 mb-4" />
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Access Denied</h1>
-          <p className="text-slate-500 mb-6">You don't have permission to access this page.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Brak dostępu</h1>
+          <p className="text-slate-500 mb-6">Nie masz uprawnień do wyświetlenia tej strony.</p>
           <Link to={createPageUrl('Dashboard')}>
             <Button className="bg-emerald-500 hover:bg-emerald-600">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Go to Dashboard
+              Wróć do panelu
             </Button>
           </Link>
         </div>
@@ -152,46 +152,46 @@ export default function AdminPanel() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
         >
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Admin Panel</h1>
-            <p className="text-slate-500 mt-1">Manage advertisements and payments</p>
+            <h1 className="text-3xl font-bold text-slate-900">Panel administratora</h1>
+            <p className="text-slate-500 mt-1">Zarządzaj reklamami i wypłatami</p>
           </div>
           <Link to={createPageUrl('Dashboard')}>
             <Button variant="outline">
               <LayoutDashboard className="w-4 h-4 mr-2" />
-              User Dashboard
+              Panel użytkownika
             </Button>
           </Link>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <AdminStatsCard
-            title="Total Users"
+            title="Użytkownicy"
             value={users.length}
             icon={Users}
             color="blue"
           />
           <AdminStatsCard
-            title="Active Ads"
+            title="Aktywne reklamy"
             value={ads.filter(a => a.status === 'active').length}
             icon={Eye}
             color="emerald"
           />
           <AdminStatsCard
-            title="Total Earnings"
+            title="Łączne zarobki"
             value={formatCurrency(totalEarnings)}
             icon={TrendingUp}
             color="purple"
-            subtitle="Ad views"
+            subtitle="Za reklamy"
           />
           <AdminStatsCard
-            title="Referral Bonuses"
+            title="Bonusy za polecenia"
             value={formatCurrency(totalReferralBonuses)}
             icon={Gift}
             color="rose"
-            subtitle={`${usersWithReferrals} referred users`}
+            subtitle={`${usersWithReferrals} poleconych`}
           />
           <AdminStatsCard
-            title="Pending Payments"
+            title="Oczekujące wypłaty"
             value={pendingPayments.length}
             icon={DollarSign}
             color="amber"
@@ -201,26 +201,26 @@ export default function AdminPanel() {
         <Tabs defaultValue="ads" className="space-y-6">
           <TabsList className="bg-white border border-slate-200">
             <TabsTrigger value="ads" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-              Advertisements
+              Reklamy
             </TabsTrigger>
             <TabsTrigger value="payments" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-              Payment Requests
+              Wnioski o wypłatę
             </TabsTrigger>
             <TabsTrigger value="users" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-              Users
+              Użytkownicy
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="ads">
             <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-slate-900">All Advertisements</h2>
+                <h2 className="text-xl font-semibold text-slate-900">Wszystkie reklamy</h2>
                 <Button
                   onClick={() => { setEditingAd(null); setShowAdForm(true); }}
                   className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add New
+                  Dodaj nową
                 </Button>
               </div>
               
@@ -232,13 +232,13 @@ export default function AdminPanel() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Reward</TableHead>
-                      <TableHead>Views</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Category</TableHead>
+                      <TableHead>Tytuł</TableHead>
+                      <TableHead>Nagroda</TableHead>
+                      <TableHead>Wyświetlenia</TableHead>
+                      <TableHead>Czas</TableHead>
+                      <TableHead>Kategoria</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead>Akcje</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -282,7 +282,7 @@ export default function AdminPanel() {
           <TabsContent value="payments">
             <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
               <div className="p-6 border-b border-slate-100">
-                <h2 className="text-xl font-semibold text-slate-900">Payment Requests</h2>
+                <h2 className="text-xl font-semibold text-slate-900">Wnioski o wypłatę</h2>
               </div>
               <PaymentRequestsTable
                 requests={paymentRequests}
@@ -297,19 +297,19 @@ export default function AdminPanel() {
           <TabsContent value="users">
             <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
               <div className="p-6 border-b border-slate-100">
-                <h2 className="text-xl font-semibold text-slate-900">All Users</h2>
+                <h2 className="text-xl font-semibold text-slate-900">Wszyscy użytkownicy</h2>
               </div>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
+                    <TableHead>Imię</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Balance</TableHead>
-                    <TableHead>Total Earned</TableHead>
-                    <TableHead>Referral Earnings</TableHead>
-                    <TableHead>Ads Viewed</TableHead>
-                    <TableHead>Referred By</TableHead>
-                    <TableHead>Role</TableHead>
+                    <TableHead>Saldo</TableHead>
+                    <TableHead>Łączne zarobki</TableHead>
+                    <TableHead>Z poleceń</TableHead>
+                    <TableHead>Obejrzane</TableHead>
+                    <TableHead>Polecony przez</TableHead>
+                    <TableHead>Rola</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -364,18 +364,18 @@ export default function AdminPanel() {
       <AlertDialog open={!!deleteAd} onOpenChange={() => setDeleteAd(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Advertisement</AlertDialogTitle>
+            <AlertDialogTitle>Usuń reklamę</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{deleteAd?.title}"? This action cannot be undone.
+              Czy na pewno chcesz usunąć "{deleteAd?.title}"? Tej operacji nie można cofnąć.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteAdMutation.mutate(deleteAd?.id)}
               className="bg-red-500 hover:bg-red-600"
             >
-              Delete
+              Usuń
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

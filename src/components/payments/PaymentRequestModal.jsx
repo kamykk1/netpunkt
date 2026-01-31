@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AlertCircle, DollarSign, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const MIN_WITHDRAWAL = 500; // $5.00 in cents
+const MIN_WITHDRAWAL = 500; // 5.00 zł w groszach
 
 export default function PaymentRequestModal({ isOpen, onClose, onSubmit, currentBalance, isLoading }) {
   const [amount, setAmount] = useState('');
@@ -15,29 +15,29 @@ export default function PaymentRequestModal({ isOpen, onClose, onSubmit, current
   const [paymentDetails, setPaymentDetails] = useState('');
   const [error, setError] = useState('');
 
-  const formatCurrency = (cents) => `$${(cents / 100).toFixed(2)}`;
+  const formatCurrency = (cents) => `${(cents / 100).toFixed(2)} zł`;
   const amountInCents = Math.round(parseFloat(amount || 0) * 100);
 
   const handleSubmit = () => {
     setError('');
     
     if (!amount || amountInCents <= 0) {
-      setError('Please enter a valid amount');
+      setError('Podaj prawidłową kwotę');
       return;
     }
     
     if (amountInCents < MIN_WITHDRAWAL) {
-      setError(`Minimum withdrawal is ${formatCurrency(MIN_WITHDRAWAL)}`);
+      setError(`Minimalna wypłata to ${formatCurrency(MIN_WITHDRAWAL)}`);
       return;
     }
     
     if (amountInCents > currentBalance) {
-      setError('Insufficient balance');
+      setError('Niewystarczające środki');
       return;
     }
     
     if (!paymentDetails.trim()) {
-      setError('Please enter your payment details');
+      setError('Podaj dane do wypłaty');
       return;
     }
 
@@ -50,9 +50,9 @@ export default function PaymentRequestModal({ isOpen, onClose, onSubmit, current
 
   const getPaymentPlaceholder = () => {
     switch (paymentMethod) {
-      case 'paypal': return 'Enter your PayPal email';
-      case 'bank_transfer': return 'Enter your bank account details';
-      case 'crypto': return 'Enter your crypto wallet address';
+      case 'paypal': return 'Podaj email PayPal';
+      case 'bank_transfer': return 'Podaj numer konta bankowego';
+      case 'crypto': return 'Podaj adres portfela krypto';
       default: return '';
     }
   };
@@ -61,9 +61,9 @@ export default function PaymentRequestModal({ isOpen, onClose, onSubmit, current
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl">Request Payment</DialogTitle>
+          <DialogTitle className="text-xl">Wniosek o wypłatę</DialogTitle>
           <DialogDescription>
-            Available balance: <span className="font-semibold text-emerald-600">{formatCurrency(currentBalance)}</span>
+            Dostępne saldo: <span className="font-semibold text-emerald-600">{formatCurrency(currentBalance)}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -76,7 +76,7 @@ export default function PaymentRequestModal({ isOpen, onClose, onSubmit, current
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount ($)</Label>
+            <Label htmlFor="amount">Kwota (zł)</Label>
             <div className="relative">
               <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
@@ -90,25 +90,25 @@ export default function PaymentRequestModal({ isOpen, onClose, onSubmit, current
                 className="pl-9"
               />
             </div>
-            <p className="text-xs text-slate-500">Minimum withdrawal: {formatCurrency(MIN_WITHDRAWAL)}</p>
+            <p className="text-xs text-slate-500">Minimalna wypłata: {formatCurrency(MIN_WITHDRAWAL)}</p>
           </div>
 
           <div className="space-y-2">
-            <Label>Payment Method</Label>
+            <Label>Metoda płatności</Label>
             <Select value={paymentMethod} onValueChange={setPaymentMethod}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="paypal">PayPal</SelectItem>
-                <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                <SelectItem value="crypto">Cryptocurrency</SelectItem>
+                <SelectItem value="bank_transfer">Przelew bankowy</SelectItem>
+                <SelectItem value="crypto">Kryptowaluta</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="details">Payment Details</Label>
+            <Label htmlFor="details">Dane do wypłaty</Label>
             <Input
               id="details"
               placeholder={getPaymentPlaceholder()}
@@ -125,7 +125,7 @@ export default function PaymentRequestModal({ isOpen, onClose, onSubmit, current
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
             ) : null}
-            Request Payment
+            Złóż wniosek
           </Button>
         </div>
       </DialogContent>
