@@ -35,8 +35,8 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, page: 'Dashboard' },
-    ...(user?.role === 'admin' ? [{ name: 'Admin Panel', icon: Shield, page: 'AdminPanel' }] : [])
+    { name: 'Panel', icon: LayoutDashboard, page: 'Dashboard' },
+    ...(user?.role === 'admin' ? [{ name: 'Administracja', icon: Shield, page: 'AdminPanel' }] : [])
   ];
 
   return (

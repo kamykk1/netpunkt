@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,14 +7,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from 'lucide-react';
 
-const CATEGORIES = ['general', 'tech', 'shopping', 'finance', 'entertainment', 'health'];
+const CATEGORIES = [
+  { value: 'general', label: 'Ogólne' },
+  { value: 'tech', label: 'Technologia' },
+  { value: 'shopping', label: 'Zakupy' },
+  { value: 'finance', label: 'Finanse' },
+  { value: 'entertainment', label: 'Rozrywka' },
+  { value: 'health', label: 'Zdrowie' }
+];
+
 const AFFILIATE_NETWORKS = [
-  { value: 'none', label: 'None' },
+  { value: 'none', label: 'Brak' },
   { value: 'tradedoubler', label: 'TradeDoubler' },
   { value: 'awin', label: 'Awin' },
   { value: 'cj', label: 'Commission Junction' },
   { value: 'admitad', label: 'Admitad' },
-  { value: 'other', label: 'Other' }
+  { value: 'other', label: 'Inna' }
 ];
 
 export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading }) {
@@ -51,12 +59,15 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{editingAd ? 'Edit Advertisement' : 'Create New Advertisement'}</DialogTitle>
+          <DialogTitle>{editingAd ? 'Edytuj reklamę' : 'Utwórz nową reklamę'}</DialogTitle>
+          <DialogDescription>
+            Wypełnij formularz, aby {editingAd ? 'zaktualizować' : 'dodać'} reklamę.
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 py-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="title">Tytuł *</Label>
             <Input
               id="title"
               value={formData.title}
@@ -66,7 +77,7 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
+            <Label htmlFor="description">Opis *</Label>
             <Textarea
               id="description"
               value={formData.description}
@@ -78,7 +89,7 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="reward">Reward ($) *</Label>
+              <Label htmlFor="reward">Nagroda (zł) *</Label>
               <Input
                 id="reward"
                 type="number"
@@ -90,7 +101,7 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="duration">View Duration (s)</Label>
+              <Label htmlFor="duration">Czas oglądania (s)</Label>
               <Input
                 id="duration"
                 type="number"
@@ -103,7 +114,7 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="maxViews">Max Views</Label>
+              <Label htmlFor="maxViews">Maks. wyświetleń</Label>
               <Input
                 id="maxViews"
                 type="number"
@@ -113,15 +124,15 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
               />
             </div>
             <div className="space-y-2">
-              <Label>Category</Label>
+              <Label>Kategoria</Label>
               <Select value={formData.category} onValueChange={(v) => handleChange('category', v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {CATEGORIES.map(cat => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -130,22 +141,22 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="url">Website/Affiliate URL</Label>
+            <Label htmlFor="url">URL strony / Link partnerski</Label>
             <Input
               id="url"
               type="url"
               value={formData.url}
               onChange={(e) => handleChange('url', e.target.value)}
-              placeholder="https://... (affiliate link opens in iframe)"
+              placeholder="https://..."
             />
             <p className="text-xs text-slate-500">
-              Paste your affiliate link here. The page will be displayed in an iframe with a countdown timer.
+              Wklej link partnerski (np. z TradeDoubler). Strona otworzy się w nowej karcie podczas oglądania reklamy.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Affiliate Network</Label>
+              <Label>Sieć afiliacyjna</Label>
               <Select value={formData.affiliate_network} onValueChange={(v) => handleChange('affiliate_network', v)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -160,18 +171,18 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="affiliateId">Campaign ID (optional)</Label>
+              <Label htmlFor="affiliateId">ID kampanii (opcjonalne)</Label>
               <Input
                 id="affiliateId"
                 value={formData.affiliate_id}
                 onChange={(e) => handleChange('affiliate_id', e.target.value)}
-                placeholder="e.g. 12345"
+                placeholder="np. 12345"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image">Image URL</Label>
+            <Label htmlFor="image">URL obrazka</Label>
             <Input
               id="image"
               type="url"
@@ -189,9 +200,9 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="paused">Paused</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="active">Aktywna</SelectItem>
+                  <SelectItem value="paused">Wstrzymana</SelectItem>
+                  <SelectItem value="completed">Zakończona</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -199,7 +210,7 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              Anuluj
             </Button>
             <Button 
               type="submit" 
@@ -207,7 +218,7 @@ export default function AdForm({ isOpen, onClose, onSubmit, editingAd, isLoading
               className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
             >
               {isLoading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-              {editingAd ? 'Update' : 'Create'}
+              {editingAd ? 'Zapisz' : 'Utwórz'}
             </Button>
           </div>
         </form>
