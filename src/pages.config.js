@@ -51,6 +51,13 @@ import AdViewer from './pages/AdViewer';
 import AdminPanel from './pages/AdminPanel';
 import Dashboard from './pages/Dashboard';
 import EarnAds from './pages/EarnAds';
+import Shop from './pages/Shop';
+import Missions from './pages/Missions';
+import Ranking from './pages/Ranking';
+import Payments from './pages/Payments';
+import Referrals from './pages/Referrals';
+import Cashback from './pages/Cashback';
+import BattlePass from './pages/BattlePass';
 import __Layout from './Layout.jsx';
 
 
@@ -59,6 +66,13 @@ export const PAGES = {
     "AdminPanel": AdminPanel,
     "Dashboard": Dashboard,
     "EarnAds": EarnAds,
+    "Shop": Shop,
+    "Missions": Missions,
+    "Ranking": Ranking,
+    "Payments": Payments,
+    "Referrals": Referrals,
+    "Cashback": Cashback,
+    "BattlePass": BattlePass,
 }
 
 export const pagesConfig = {
