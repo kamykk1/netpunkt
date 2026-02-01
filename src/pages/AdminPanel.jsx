@@ -6,14 +6,15 @@ import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { 
-  LayoutDashboard, Plus, Eye, Users, DollarSign, 
-  TrendingUp, Loader2, Pencil, Trash2, AlertTriangle,
-  ArrowLeft, Gift
+  LayoutDashboard, Plus, Eye, Users, Coins, TrendingUp, Loader2, 
+  Pencil, Trash2, AlertTriangle, ArrowLeft, Gift, Settings, 
+  Mail, ShoppingBag, Target, Zap, Shield, CreditCard, BarChart3
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,9 +25,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import AdminStatsCard from '@/components/admin/AdminStatsCard';
-import AdForm from '@/components/admin/AdForm';
-import PaymentRequestsTable from '@/components/admin/PaymentRequestsTable';
+import AdminAdForm from '@/components/admin/AdminAdForm';
+import AdminSettingsForm from '@/components/admin/AdminSettingsForm';
+import AdminEmailCampaigns from '@/components/admin/AdminEmailCampaigns';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
@@ -59,9 +60,14 @@ export default function AdminPanel() {
     queryFn: () => base44.entities.AdView.list('-created_date', 100)
   });
 
-  const { data: allReferralBonuses = [] } = useQuery({
-    queryKey: ['allReferralBonuses'],
-    queryFn: () => base44.entities.ReferralBonus.list('-created_date')
+  const { data: settings = [] } = useQuery({
+    queryKey: ['siteSettings'],
+    queryFn: () => base44.entities.SiteSettings.list()
+  });
+
+  const { data: fraudScores = [] } = useQuery({
+    queryKey: ['fraudScores'],
+    queryFn: () => base44.entities.FraudScore.filter({ risk_level: 'high' }, '-score', 10)
   });
 
   const createAdMutation = useMutation({
@@ -99,41 +105,61 @@ export default function AdminPanel() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allPayments'] });
-      toast.success('Wniosek o wypłatę zaktualizowany!');
+      toast.success('Status wypłaty zaktualizowany!');
     }
   });
 
-  const formatCurrency = (cents) => `${((cents || 0) / 100).toFixed(2)} zł`;
+  const updateUserMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.User.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allUsers'] });
+      toast.success('Użytkownik zaktualizowany!');
+    }
+  });
 
-  const totalEarnings = allViews.reduce((sum, v) => sum + (v.reward_earned || 0), 0);
+  const getSetting = (key, defaultValue) => {
+    const setting = settings.find(s => s.setting_key === key);
+    return setting ? setting.setting_value : defaultValue;
+  };
+
+  const pointRate = parseFloat(getSetting('point_rate', '0.10'));
+  const totalPointsEarned = allViews.reduce((sum, v) => sum + (v.reward_earned || 0), 0);
   const pendingPayments = paymentRequests.filter(p => p.status === 'pending');
-  const totalPaid = paymentRequests.filter(p => p.status === 'paid').reduce((sum, p) => sum + p.amount, 0);
-  const totalReferralBonuses = allReferralBonuses.reduce((sum, b) => sum + (b.bonus_amount || 0), 0);
-  const usersWithReferrals = users.filter(u => u.referred_by).length;
+  const totalUsers = users.length;
+  const activeAds = ads.filter(a => a.status === 'active').length;
 
   const statusColors = {
-    active: 'bg-emerald-100 text-emerald-700',
-    paused: 'bg-amber-100 text-amber-700',
-    completed: 'bg-slate-100 text-slate-700'
+    pending: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+    active: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+    paused: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
+    completed: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    rejected: 'bg-red-500/20 text-red-400 border-red-500/30'
+  };
+
+  const adTypeLabels = {
+    ptc: 'PTC',
+    ptr: 'PTR',
+    ptv: 'PTV',
+    email: 'Email'
   };
 
   if (userLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
       </div>
     );
   }
 
-  if (user?.role !== 'admin') {
+  if (user?.role !== 'admin' && !user?.is_moderator) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
         <div className="text-center">
           <AlertTriangle className="w-16 h-16 mx-auto text-amber-500 mb-4" />
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Brak dostępu</h1>
-          <p className="text-slate-500 mb-6">Nie masz uprawnień do wyświetlenia tej strony.</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Brak dostępu</h1>
+          <p className="text-slate-400 mb-6">Nie masz uprawnień do tej strony.</p>
           <Link to={createPageUrl('Dashboard')}>
-            <Button className="bg-emerald-500 hover:bg-emerald-600">
+            <Button className="bg-purple-600 hover:bg-purple-700">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Wróć do panelu
             </Button>
@@ -144,210 +170,403 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-[#0a0a0f] py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
         >
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Panel administratora</h1>
-            <p className="text-slate-500 mt-1">Zarządzaj reklamami i wypłatami</p>
+            <h1 className="text-3xl font-bold text-white">Panel Administratora</h1>
+            <p className="text-slate-400 mt-1">Zarządzaj platformą CashCrusader</p>
           </div>
           <Link to={createPageUrl('Dashboard')}>
-            <Button variant="outline">
+            <Button variant="outline" className="border-purple-500/30 text-white hover:bg-purple-500/10">
               <LayoutDashboard className="w-4 h-4 mr-2" />
               Panel użytkownika
             </Button>
           </Link>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <AdminStatsCard
-            title="Użytkownicy"
-            value={users.length}
-            icon={Users}
-            color="blue"
-          />
-          <AdminStatsCard
-            title="Aktywne reklamy"
-            value={ads.filter(a => a.status === 'active').length}
-            icon={Eye}
-            color="emerald"
-          />
-          <AdminStatsCard
-            title="Łączne zarobki"
-            value={formatCurrency(totalEarnings)}
-            icon={TrendingUp}
-            color="purple"
-            subtitle="Za reklamy"
-          />
-          <AdminStatsCard
-            title="Bonusy za polecenia"
-            value={formatCurrency(totalReferralBonuses)}
-            icon={Gift}
-            color="rose"
-            subtitle={`${usersWithReferrals} poleconych`}
-          />
-          <AdminStatsCard
-            title="Oczekujące wypłaty"
-            value={pendingPayments.length}
-            icon={DollarSign}
-            color="amber"
-          />
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-sm">Użytkownicy</p>
+                  <p className="text-2xl font-bold text-white">{totalUsers}</p>
+                </div>
+                <Users className="w-8 h-8 text-purple-400" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-sm">Aktywne reklamy</p>
+                  <p className="text-2xl font-bold text-white">{activeAds}</p>
+                </div>
+                <Eye className="w-8 h-8 text-cyan-400" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-sm">Punkty wypłacone</p>
+                  <p className="text-2xl font-bold text-white">{totalPointsEarned.toLocaleString()}</p>
+                </div>
+                <Coins className="w-8 h-8 text-yellow-400" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-sm">Wartość</p>
+                  <p className="text-2xl font-bold text-emerald-400">{(totalPointsEarned * pointRate).toFixed(2)} zł</p>
+                </div>
+                <TrendingUp className="w-8 h-8 text-emerald-400" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-slate-400 text-sm">Oczekujące wypłaty</p>
+                  <p className="text-2xl font-bold text-amber-400">{pendingPayments.length}</p>
+                </div>
+                <CreditCard className="w-8 h-8 text-amber-400" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
+        {/* Tabs */}
         <Tabs defaultValue="ads" className="space-y-6">
-          <TabsList className="bg-white border border-slate-200">
-            <TabsTrigger value="ads" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-              Reklamy
+          <TabsList className="bg-[#1a1a2e] border border-purple-500/20 p-1 flex-wrap h-auto">
+            <TabsTrigger value="ads" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Eye className="w-4 h-4 mr-2" /> Reklamy
             </TabsTrigger>
-            <TabsTrigger value="payments" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-              Wnioski o wypłatę
+            <TabsTrigger value="payments" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <CreditCard className="w-4 h-4 mr-2" /> Wypłaty
             </TabsTrigger>
-            <TabsTrigger value="users" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-              Użytkownicy
+            <TabsTrigger value="users" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Users className="w-4 h-4 mr-2" /> Użytkownicy
+            </TabsTrigger>
+            <TabsTrigger value="emails" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Mail className="w-4 h-4 mr-2" /> Kampanie Email
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Settings className="w-4 h-4 mr-2" /> Ustawienia
+            </TabsTrigger>
+            <TabsTrigger value="fraud" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Shield className="w-4 h-4 mr-2" /> Anti-Fraud
             </TabsTrigger>
           </TabsList>
 
+          {/* Ads Tab */}
           <TabsContent value="ads">
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-              <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-slate-900">Wszystkie reklamy</h2>
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="text-white">Wszystkie reklamy</CardTitle>
                 <Button
                   onClick={() => { setEditingAd(null); setShowAdForm(true); }}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+                  className="bg-gradient-to-r from-purple-600 to-cyan-600"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Dodaj nową
+                  Dodaj reklamę
                 </Button>
-              </div>
-              
-              {adsLoading ? (
-                <div className="flex justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Tytuł</TableHead>
-                      <TableHead>Nagroda</TableHead>
-                      <TableHead>Wyświetlenia</TableHead>
-                      <TableHead>Czas</TableHead>
-                      <TableHead>Kategoria</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Akcje</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {ads.map((ad) => (
-                      <TableRow key={ad.id}>
-                        <TableCell className="font-medium">{ad.title}</TableCell>
-                        <TableCell>{formatCurrency(ad.reward_amount)}</TableCell>
-                        <TableCell>{ad.current_views || 0} / {ad.max_views}</TableCell>
-                        <TableCell>{ad.view_duration || 30}s</TableCell>
-                        <TableCell className="capitalize">{ad.category}</TableCell>
-                        <TableCell>
-                          <Badge className={statusColors[ad.status]}>{ad.status}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => { setEditingAd(ad); setShowAdForm(true); }}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setDeleteAd(ad)}
-                              className="text-red-600 border-red-200 hover:bg-red-50"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </div>
+              </CardHeader>
+              <CardContent>
+                {adsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-purple-500/20">
+                          <TableHead className="text-slate-400">Tytuł</TableHead>
+                          <TableHead className="text-slate-400">Typ</TableHead>
+                          <TableHead className="text-slate-400">Punkty</TableHead>
+                          <TableHead className="text-slate-400">Wyświetlenia</TableHead>
+                          <TableHead className="text-slate-400">Czas</TableHead>
+                          <TableHead className="text-slate-400">Status</TableHead>
+                          <TableHead className="text-slate-400">Akcje</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {ads.map((ad) => (
+                          <TableRow key={ad.id} className="border-purple-500/20">
+                            <TableCell className="text-white font-medium">{ad.title}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="border-purple-500/30 text-purple-400">
+                                {adTypeLabels[ad.ad_type] || 'PTC'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-yellow-400">{ad.points_reward} pkt</TableCell>
+                            <TableCell className="text-slate-300">{ad.current_views || 0} / {ad.max_views}</TableCell>
+                            <TableCell className="text-slate-300">{ad.view_duration || 30}s</TableCell>
+                            <TableCell>
+                              <Badge className={statusColors[ad.status]}>{ad.status}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-purple-500/30 text-white hover:bg-purple-500/10"
+                                  onClick={() => { setEditingAd(ad); setShowAdForm(true); }}
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                                  onClick={() => setDeleteAd(ad)}
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
+          {/* Payments Tab */}
           <TabsContent value="payments">
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-              <div className="p-6 border-b border-slate-100">
-                <h2 className="text-xl font-semibold text-slate-900">Wnioski o wypłatę</h2>
-              </div>
-              <PaymentRequestsTable
-                requests={paymentRequests}
-                onApprove={(req) => updatePaymentMutation.mutate({ id: req.id, status: 'approved' })}
-                onReject={(req) => updatePaymentMutation.mutate({ id: req.id, status: 'rejected' })}
-                onMarkPaid={(req) => updatePaymentMutation.mutate({ id: req.id, status: 'paid' })}
-                isLoading={updatePaymentMutation.isPending}
-              />
-            </div>
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white">Wnioski o wypłatę</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-purple-500/20">
+                        <TableHead className="text-slate-400">Użytkownik</TableHead>
+                        <TableHead className="text-slate-400">Punkty</TableHead>
+                        <TableHead className="text-slate-400">Wartość</TableHead>
+                        <TableHead className="text-slate-400">Metoda</TableHead>
+                        <TableHead className="text-slate-400">Status</TableHead>
+                        <TableHead className="text-slate-400">Data</TableHead>
+                        <TableHead className="text-slate-400">Akcje</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paymentRequests.map((req) => (
+                        <TableRow key={req.id} className="border-purple-500/20">
+                          <TableCell className="text-white">{req.user_email}</TableCell>
+                          <TableCell className="text-yellow-400">{req.amount} pkt</TableCell>
+                          <TableCell className="text-emerald-400">{(req.amount * pointRate).toFixed(2)} zł</TableCell>
+                          <TableCell className="text-slate-300 capitalize">{req.payment_method}</TableCell>
+                          <TableCell>
+                            <Badge className={statusColors[req.status]}>{req.status}</Badge>
+                          </TableCell>
+                          <TableCell className="text-slate-400">
+                            {new Date(req.created_date).toLocaleDateString('pl-PL')}
+                          </TableCell>
+                          <TableCell>
+                            {req.status === 'pending' && (
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  className="bg-emerald-600 hover:bg-emerald-700"
+                                  onClick={() => updatePaymentMutation.mutate({ id: req.id, status: 'approved' })}
+                                >
+                                  Zatwierdź
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-red-500/30 text-red-400"
+                                  onClick={() => updatePaymentMutation.mutate({ id: req.id, status: 'rejected' })}
+                                >
+                                  Odrzuć
+                                </Button>
+                              </div>
+                            )}
+                            {req.status === 'approved' && (
+                              <Button
+                                size="sm"
+                                className="bg-purple-600 hover:bg-purple-700"
+                                onClick={() => updatePaymentMutation.mutate({ id: req.id, status: 'paid' })}
+                              >
+                                Wypłacono
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
+          {/* Users Tab */}
           <TabsContent value="users">
-            <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-              <div className="p-6 border-b border-slate-100">
-                <h2 className="text-xl font-semibold text-slate-900">Wszyscy użytkownicy</h2>
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Imię</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Saldo</TableHead>
-                    <TableHead>Łączne zarobki</TableHead>
-                    <TableHead>Z poleceń</TableHead>
-                    <TableHead>Obejrzane</TableHead>
-                    <TableHead>Polecony przez</TableHead>
-                    <TableHead>Rola</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((u) => {
-                    const referrer = u.referred_by ? users.find(user => user.id === u.referred_by) : null;
-                    return (
-                      <TableRow key={u.id}>
-                        <TableCell className="font-medium">{u.full_name || '-'}</TableCell>
-                        <TableCell>{u.email}</TableCell>
-                        <TableCell>{formatCurrency(u.balance)}</TableCell>
-                        <TableCell>{formatCurrency(u.total_earned)}</TableCell>
-                        <TableCell>
-                          {u.referral_earnings > 0 ? (
-                            <span className="text-purple-600 font-medium">{formatCurrency(u.referral_earnings)}</span>
-                          ) : '-'}
-                        </TableCell>
-                        <TableCell>{u.ads_viewed || 0}</TableCell>
-                        <TableCell>
-                          {referrer ? (
-                            <span className="text-sm text-slate-500">{referrer.full_name || referrer.email}</span>
-                          ) : '-'}
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'}>
-                            {u.role || 'user'}
-                          </Badge>
-                        </TableCell>
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white">Wszyscy użytkownicy</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-purple-500/20">
+                        <TableHead className="text-slate-400">Imię</TableHead>
+                        <TableHead className="text-slate-400">Email</TableHead>
+                        <TableHead className="text-slate-400">Punkty</TableHead>
+                        <TableHead className="text-slate-400">Poziom</TableHead>
+                        <TableHead className="text-slate-400">Reklamy</TableHead>
+                        <TableHead className="text-slate-400">Fraud Score</TableHead>
+                        <TableHead className="text-slate-400">Rola</TableHead>
+                        <TableHead className="text-slate-400">Akcje</TableHead>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                    </TableHeader>
+                    <TableBody>
+                      {users.map((u) => (
+                        <TableRow key={u.id} className="border-purple-500/20">
+                          <TableCell className="text-white font-medium">{u.full_name || '-'}</TableCell>
+                          <TableCell className="text-slate-300">{u.email}</TableCell>
+                          <TableCell className="text-yellow-400">{(u.points_balance || 0).toLocaleString()}</TableCell>
+                          <TableCell className="text-purple-400">Lv.{u.membership_level || 1}</TableCell>
+                          <TableCell className="text-slate-300">{u.ads_viewed || 0}</TableCell>
+                          <TableCell>
+                            <Badge className={
+                              (u.fraud_score || 0) > 70 ? 'bg-red-500/20 text-red-400' :
+                              (u.fraud_score || 0) > 40 ? 'bg-amber-500/20 text-amber-400' :
+                              'bg-emerald-500/20 text-emerald-400'
+                            }>
+                              {u.fraud_score || 0}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={
+                              u.role === 'admin' ? 'bg-purple-500/20 text-purple-400' :
+                              u.is_moderator ? 'bg-cyan-500/20 text-cyan-400' :
+                              'bg-slate-500/20 text-slate-400'
+                            }>
+                              {u.role === 'admin' ? 'Admin' : u.is_moderator ? 'Mod' : 'User'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-purple-500/30 text-purple-400"
+                                onClick={() => updateUserMutation.mutate({ 
+                                  id: u.id, 
+                                  data: { is_moderator: !u.is_moderator } 
+                                })}
+                              >
+                                {u.is_moderator ? 'Usuń Mod' : 'Mod'}
+                              </Button>
+                              {u.is_blocked ? (
+                                <Button
+                                  size="sm"
+                                  className="bg-emerald-600"
+                                  onClick={() => updateUserMutation.mutate({ id: u.id, data: { is_blocked: false } })}
+                                >
+                                  Odblokuj
+                                </Button>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-red-500/30 text-red-400"
+                                  onClick={() => updateUserMutation.mutate({ id: u.id, data: { is_blocked: true } })}
+                                >
+                                  Zablokuj
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Email Campaigns Tab */}
+          <TabsContent value="emails">
+            <AdminEmailCampaigns />
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings">
+            <AdminSettingsForm settings={settings} />
+          </TabsContent>
+
+          {/* Fraud Tab */}
+          <TabsContent value="fraud">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-red-400" />
+                  Wykryte zagrożenia
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {fraudScores.length > 0 ? (
+                  <div className="space-y-4">
+                    {fraudScores.map((fs) => {
+                      const userData = users.find(u => u.id === fs.user_id);
+                      return (
+                        <div key={fs.id} className="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-white font-medium">{userData?.email || fs.user_id}</p>
+                              <p className="text-slate-400 text-sm">Score: {fs.score}/100</p>
+                            </div>
+                            <Badge className={
+                              fs.risk_level === 'critical' ? 'bg-red-500' :
+                              fs.risk_level === 'high' ? 'bg-orange-500' :
+                              'bg-amber-500'
+                            }>
+                              {fs.risk_level}
+                            </Badge>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-slate-400">
+                    <Shield className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>Brak wykrytych zagrożeń</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
 
-      <AdForm
+      {/* Ad Form Modal */}
+      <AdminAdForm
         isOpen={showAdForm}
         onClose={() => { setShowAdForm(false); setEditingAd(null); }}
         onSubmit={(data) => {
@@ -361,19 +580,20 @@ export default function AdminPanel() {
         isLoading={createAdMutation.isPending || updateAdMutation.isPending}
       />
 
+      {/* Delete Confirmation */}
       <AlertDialog open={!!deleteAd} onOpenChange={() => setDeleteAd(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-[#1a1a2e] border-purple-500/30">
           <AlertDialogHeader>
-            <AlertDialogTitle>Usuń reklamę</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-white">Usuń reklamę</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-400">
               Czy na pewno chcesz usunąć "{deleteAd?.title}"? Tej operacji nie można cofnąć.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Anuluj</AlertDialogCancel>
+            <AlertDialogCancel className="border-purple-500/30 text-white">Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteAdMutation.mutate(deleteAd?.id)}
-              className="bg-red-500 hover:bg-red-600"
+              className="bg-red-600 hover:bg-red-700"
             >
               Usuń
             </AlertDialogAction>

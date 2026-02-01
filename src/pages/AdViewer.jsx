@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Loader2, Clock, CheckCircle, DollarSign, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Loader2, Clock, CheckCircle, Coins, ExternalLink, AlertTriangle, Zap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-
-const REFERRAL_BONUS_PERCENT = 10;
 
 export default function AdViewer() {
   const [timeLeft, setTimeLeft] = useState(null);
@@ -33,7 +31,6 @@ export default function AdViewer() {
     enabled: !!adId
   });
 
-  // Sprawdź czy już obejrzane
   const { data: existingView, isLoading: viewLoading } = useQuery({
     queryKey: ['existingView', adId, user?.id],
     queryFn: async () => {
@@ -47,7 +44,19 @@ export default function AdViewer() {
     enabled: !!adId && !!user?.id
   });
 
-  // Timer effect
+  const { data: settings = [] } = useQuery({
+    queryKey: ['siteSettings'],
+    queryFn: () => base44.entities.SiteSettings.list()
+  });
+
+  const getSetting = (key, defaultValue) => {
+    const setting = settings.find(s => s.setting_key === key);
+    return setting ? setting.setting_value : defaultValue;
+  };
+
+  const eventMultiplier = parseFloat(getSetting('event_multiplier', '1'));
+  const referralBonusPercent = parseFloat(getSetting('referral_bonus_percent', '10'));
+
   useEffect(() => {
     if (!started || timeLeft === null || timeLeft <= 0 || completed) return;
 
@@ -68,7 +77,6 @@ export default function AdViewer() {
     if (ad) {
       setTimeLeft(ad.view_duration || 30);
       setStarted(true);
-      // Otwórz stronę reklamową w nowej karcie
       if (ad.url) {
         window.open(ad.url, '_blank');
       }
@@ -79,32 +87,53 @@ export default function AdViewer() {
     if (!ad || !user || claiming) return;
     setClaiming(true);
 
+    const basePoints = ad.points_reward || 0;
+    const multiplier = eventMultiplier * (user.active_boost_multiplier || 1) * (ad.event_multiplier || 1);
+    const finalPoints = Math.floor(basePoints * multiplier);
+    const newBalance = (user.points_balance || 0) + finalPoints;
+
+    // Zapisz wyświetlenie
     const adView = await base44.entities.AdView.create({
       user_id: user.id,
       user_email: user.email,
       advertisement_id: ad.id,
       advertisement_title: ad.title,
-      reward_earned: ad.reward_amount,
+      reward_earned: finalPoints,
       completed: true
     });
 
+    // Aktualizuj reklamę
     await base44.entities.Advertisement.update(ad.id, {
       current_views: (ad.current_views || 0) + 1
     });
 
+    // Aktualizuj użytkownika
     await base44.auth.updateMe({
-      balance: (user.balance || 0) + ad.reward_amount,
-      total_earned: (user.total_earned || 0) + ad.reward_amount,
+      points_balance: newBalance,
+      total_points_earned: (user.total_points_earned || 0) + finalPoints,
       ads_viewed: (user.ads_viewed || 0) + 1
+    });
+
+    // Zapisz historię punktów
+    await base44.entities.PointsHistory.create({
+      user_id: user.id,
+      user_email: user.email,
+      amount: finalPoints,
+      balance_after: newBalance,
+      type: 'ad_view',
+      description: `Obejrzenie reklamy: ${ad.title}`,
+      reference_id: adView.id
     });
 
     // Bonus za polecenie
     if (user.referred_by) {
-      const bonusAmount = Math.floor(ad.reward_amount * REFERRAL_BONUS_PERCENT / 100);
+      const bonusAmount = Math.floor(finalPoints * referralBonusPercent / 100);
       if (bonusAmount > 0) {
         const referrers = await base44.entities.User.filter({ id: user.referred_by });
         if (referrers.length > 0) {
           const referrer = referrers[0];
+          const referrerNewBalance = (referrer.points_balance || 0) + bonusAmount;
+          
           await base44.entities.ReferralBonus.create({
             referrer_id: referrer.id,
             referrer_email: referrer.email,
@@ -113,10 +142,21 @@ export default function AdViewer() {
             ad_view_id: adView.id,
             bonus_amount: bonusAmount
           });
+          
           await base44.entities.User.update(referrer.id, {
-            balance: (referrer.balance || 0) + bonusAmount,
-            total_earned: (referrer.total_earned || 0) + bonusAmount,
+            points_balance: referrerNewBalance,
+            total_points_earned: (referrer.total_points_earned || 0) + bonusAmount,
             referral_earnings: (referrer.referral_earnings || 0) + bonusAmount
+          });
+
+          await base44.entities.PointsHistory.create({
+            user_id: referrer.id,
+            user_email: referrer.email,
+            amount: bonusAmount,
+            balance_after: referrerNewBalance,
+            type: 'referral_bonus',
+            description: `Bonus za polecenie: ${user.email}`,
+            reference_id: adView.id
           });
         }
       }
@@ -127,15 +167,13 @@ export default function AdViewer() {
     setClaimed(true);
   };
 
-  const formatCurrency = (cents) => `${((cents || 0) / 100).toFixed(2)} zł`;
-
   const isLoading = userLoading || adLoading || viewLoading;
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-emerald-500 mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-purple-500 mx-auto mb-4" />
           <p className="text-slate-400">Ładowanie reklamy...</p>
         </div>
       </div>
@@ -144,7 +182,7 @@ export default function AdViewer() {
 
   if (!ad) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
         <div className="text-center text-white p-8">
           <AlertTriangle className="w-16 h-16 mx-auto text-amber-500 mb-4" />
           <h1 className="text-2xl font-bold mb-2">Nie znaleziono reklamy</h1>
@@ -156,14 +194,14 @@ export default function AdViewer() {
 
   if (existingView) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
         <div className="text-center text-white p-8">
           <CheckCircle className="w-16 h-16 mx-auto text-emerald-500 mb-4" />
           <h1 className="text-2xl font-bold mb-2">Już obejrzane</h1>
-          <p className="text-slate-400 mb-6">Już zarobiłeś na tej reklamie.</p>
+          <p className="text-slate-400 mb-6">Już zarobiłeś punkty za tę reklamę.</p>
           <Button 
             onClick={() => window.close()} 
-            className="bg-emerald-500 hover:bg-emerald-600"
+            className="bg-purple-600 hover:bg-purple-700"
           >
             Zamknij kartę
           </Button>
@@ -173,8 +211,12 @@ export default function AdViewer() {
   }
 
   if (claimed) {
+    const basePoints = ad.points_reward || 0;
+    const multiplier = eventMultiplier * (user?.active_boost_multiplier || 1);
+    const finalPoints = Math.floor(basePoints * multiplier);
+
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
         <motion.div 
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -184,16 +226,16 @@ export default function AdViewer() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
-            className="w-24 h-24 mx-auto bg-emerald-500/20 rounded-full flex items-center justify-center mb-6"
+            className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mb-6 border border-purple-500/30"
           >
-            <CheckCircle className="w-12 h-12 text-emerald-500" />
+            <Zap className="w-12 h-12 text-yellow-400" />
           </motion.div>
           <h1 className="text-3xl font-bold mb-2">Gratulacje!</h1>
-          <p className="text-2xl text-emerald-400 font-semibold mb-2">+{formatCurrency(ad.reward_amount)}</p>
-          <p className="text-slate-400 mb-6">Nagroda została dodana do Twojego salda.</p>
+          <p className="text-4xl text-yellow-400 font-bold mb-2">+{finalPoints} pkt</p>
+          <p className="text-slate-400 mb-6">Punkty zostały dodane do Twojego salda.</p>
           <Button 
             onClick={() => window.close()} 
-            className="bg-emerald-500 hover:bg-emerald-600"
+            className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
           >
             Zamknij kartę
           </Button>
@@ -202,24 +244,30 @@ export default function AdViewer() {
     );
   }
 
+  const basePoints = ad.points_reward || 0;
+  const multiplier = eventMultiplier * (user?.active_boost_multiplier || 1);
+  const finalPoints = Math.floor(basePoints * multiplier);
   const progress = ad && timeLeft !== null ? ((ad.view_duration - timeLeft) / ad.view_duration) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center justify-center p-4">
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="w-full max-w-lg bg-slate-800/50 backdrop-blur-xl rounded-3xl border border-slate-700 overflow-hidden"
+        className="w-full max-w-lg bg-[#1a1a2e]/80 backdrop-blur-xl rounded-3xl border border-purple-500/30 overflow-hidden"
       >
-        {/* Nagłówek z nagrodą */}
-        <div className="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 p-6 border-b border-slate-700">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-purple-500/20 to-cyan-500/20 p-6 border-b border-purple-500/20">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-slate-400 text-sm">Nagroda za obejrzenie</p>
               <p className="text-3xl font-bold text-white flex items-center gap-2">
-                <DollarSign className="w-8 h-8 text-emerald-500" />
-                {formatCurrency(ad.reward_amount)}
+                <Coins className="w-8 h-8 text-yellow-400" />
+                {finalPoints} pkt
               </p>
+              {multiplier > 1 && (
+                <p className="text-yellow-400 text-sm">🔥 Mnożnik x{multiplier}</p>
+              )}
             </div>
             <div className="text-right">
               <p className="text-slate-400 text-sm">Czas oglądania</p>
@@ -228,7 +276,7 @@ export default function AdViewer() {
           </div>
         </div>
 
-        {/* Treść reklamy */}
+        {/* Content */}
         <div className="p-6">
           {ad.image_url && (
             <img 
@@ -243,18 +291,18 @@ export default function AdViewer() {
           {!started ? (
             <Button
               onClick={startViewing}
-              className="w-full h-14 text-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+              className="w-full h-14 text-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
             >
               <ExternalLink className="w-5 h-5 mr-2" />
               Rozpocznij oglądanie
             </Button>
           ) : !completed ? (
             <div className="space-y-4">
-              <div className="bg-slate-700/50 rounded-2xl p-6 text-center">
-                <Clock className="w-12 h-12 text-amber-500 mx-auto mb-3" />
+              <div className="bg-slate-800/50 rounded-2xl p-6 text-center border border-purple-500/20">
+                <Clock className="w-12 h-12 text-purple-400 mx-auto mb-3" />
                 <p className="text-slate-400 mb-2">Pozostały czas</p>
                 <p className="text-5xl font-mono font-bold text-white mb-4">{timeLeft}s</p>
-                <Progress value={progress} className="h-3" />
+                <Progress value={progress} className="h-3 bg-slate-700" />
                 <p className="text-sm text-slate-500 mt-3">
                   Przeglądaj stronę reklamową w nowej karcie...
                 </p>
@@ -264,20 +312,19 @@ export default function AdViewer() {
             <Button
               onClick={claimReward}
               disabled={claiming}
-              className="w-full h-14 text-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
+              className="w-full h-14 text-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
             >
               {claiming ? (
                 <Loader2 className="w-5 h-5 animate-spin mr-2" />
               ) : (
                 <CheckCircle className="w-5 h-5 mr-2" />
               )}
-              Odbierz {formatCurrency(ad.reward_amount)}
+              Odbierz {finalPoints} pkt
             </Button>
           )}
         </div>
       </motion.div>
 
-      {/* Instrukcja */}
       {started && !completed && (
         <motion.p 
           initial={{ opacity: 0 }}
@@ -285,7 +332,7 @@ export default function AdViewer() {
           className="text-slate-500 text-sm mt-6 text-center max-w-md"
         >
           💡 Strona reklamowa została otwarta w nowej karcie. Poczekaj aż licznik się skończy, 
-          następnie wróć tutaj aby odebrać nagrodę.
+          następnie wróć tutaj aby odebrać punkty.
         </motion.p>
       )}
     </div>
