@@ -47,16 +47,18 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AdViewer from './pages/AdViewer';
 import AdminPanel from './pages/AdminPanel';
 import Dashboard from './pages/Dashboard';
-import AdViewer from './pages/AdViewer';
+import EarnAds from './pages/EarnAds';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AdViewer": AdViewer,
     "AdminPanel": AdminPanel,
     "Dashboard": Dashboard,
-    "AdViewer": AdViewer,
+    "EarnAds": EarnAds,
 }
 
 export const pagesConfig = {

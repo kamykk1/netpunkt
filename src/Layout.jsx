@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  LayoutDashboard, Settings, LogOut, Menu, X, 
-  DollarSign, Shield, User
+  LayoutDashboard, Shield, Menu, X, Coins, ShoppingBag, 
+  Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
+  Gift, Star, Crown
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
@@ -17,58 +18,93 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const location = useLocation();
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
 
-  const formatCurrency = (cents) => `$${((cents || 0) / 100).toFixed(2)}`;
-
   const getInitials = (name) => {
     if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
+  const getMembershipBadge = (level) => {
+    const badges = {
+      1: { name: 'Bronze', color: 'bg-amber-600' },
+      2: { name: 'Silver', color: 'bg-slate-400' },
+      3: { name: 'Gold', color: 'bg-yellow-500' },
+      4: { name: 'Platinum', color: 'bg-cyan-400' },
+      5: { name: 'Diamond', color: 'bg-purple-500' },
+    };
+    return badges[level] || badges[1];
+  };
+
+  const badge = getMembershipBadge(user?.membership_level);
+
   const navItems = [
     { name: 'Panel', icon: LayoutDashboard, page: 'Dashboard' },
-    ...(user?.role === 'admin' ? [{ name: 'Administracja', icon: Shield, page: 'AdminPanel' }] : [])
+    { name: 'Zarabiaj', icon: Coins, page: 'EarnAds' },
+    { name: 'Misje', icon: Target, page: 'Missions' },
+    { name: 'Sklep', icon: ShoppingBag, page: 'Shop' },
+    { name: 'Ranking', icon: Trophy, page: 'Ranking' },
+    { name: 'Cashback', icon: Gift, page: 'Cashback' },
+    { name: 'Battle Pass', icon: Zap, page: 'BattlePass' },
+    ...(user?.is_advertiser ? [{ name: 'Reklamodawca', icon: TrendingUp, page: 'AdvertiserPanel' }] : []),
+    ...(user?.role === 'admin' || user?.is_moderator ? [{ name: 'Admin', icon: Shield, page: 'AdminPanel' }] : [])
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#0a0a0f]">
       <style>{`
         :root {
-          --primary: 16 185 129;
+          --primary: 139 92 246;
           --primary-foreground: 255 255 255;
+          --neon-purple: #8b5cf6;
+          --neon-cyan: #06b6d4;
+          --neon-pink: #ec4899;
+          --neon-green: #10b981;
+        }
+        .neon-glow {
+          box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+        .neon-text {
+          text-shadow: 0 0 10px rgba(139, 92, 246, 0.8), 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+        .gradient-border {
+          background: linear-gradient(135deg, #8b5cf6, #06b6d4, #ec4899);
+          padding: 1px;
         }
       `}</style>
       
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
+      <header className="sticky top-0 z-50 bg-[#0f0f18]/90 backdrop-blur-xl border-b border-purple-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link to={createPageUrl('Dashboard')} className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center neon-glow">
+                <Zap className="w-6 h-6 text-white" />
               </div>
-              <span className="font-bold text-xl text-slate-900 hidden sm:block">EarnView</span>
+              <span className="font-bold text-xl text-white neon-text hidden sm:block">CashCrusader</span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-1">
               {navItems.map((item) => {
                 const isActive = currentPageName === item.page;
                 return (
                   <Link key={item.page} to={createPageUrl(item.page)}>
                     <Button
                       variant="ghost"
-                      className={`gap-2 ${isActive ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:text-slate-900'}`}
+                      size="sm"
+                      className={`gap-2 ${isActive 
+                        ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50' 
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
                     >
                       <item.icon className="w-4 h-4" />
                       {item.name}
@@ -80,37 +116,55 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Right Section */}
             <div className="flex items-center gap-4">
-              {/* Balance Display */}
-              <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full">
-                <DollarSign className="w-4 h-4 text-emerald-600" />
-                <span className="font-semibold text-emerald-700">{formatCurrency(user?.balance)}</span>
+              {/* Points Display */}
+              <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 rounded-full border border-purple-500/30">
+                <Coins className="w-4 h-4 text-yellow-400" />
+                <span className="font-bold text-white">{(user?.points_balance || 0).toLocaleString()}</span>
+                <span className="text-slate-400 text-sm">pkt</span>
               </div>
+
+              {/* Membership Badge */}
+              <Badge className={`${badge.color} text-white hidden sm:flex`}>
+                <Crown className="w-3 h-3 mr-1" />
+                {badge.name}
+              </Badge>
 
               {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-purple-500/30">
                     <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-500 text-white">
+                      <AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-500 text-white">
                         {getInitials(user?.full_name)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-[#1a1a2e] border-purple-500/30 text-white">
                   <div className="px-2 py-1.5">
                     <p className="font-medium text-sm">{user?.full_name}</p>
-                    <p className="text-xs text-slate-500">{user?.email}</p>
+                    <p className="text-xs text-slate-400">{user?.email}</p>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="sm:hidden">
-                    <DollarSign className="w-4 h-4 mr-2" />
-                    Balance: {formatCurrency(user?.balance)}
+                  <DropdownMenuSeparator className="bg-purple-500/20" />
+                  <DropdownMenuItem className="sm:hidden text-slate-300">
+                    <Coins className="w-4 h-4 mr-2 text-yellow-400" />
+                    {(user?.points_balance || 0).toLocaleString()} pkt
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="sm:hidden" />
-                  <DropdownMenuItem onClick={() => base44.auth.logout()}>
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Log out
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('Payments')} className="text-slate-300 hover:text-white">
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      Wypłaty
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('Referrals')} className="text-slate-300 hover:text-white">
+                      <Users className="w-4 h-4 mr-2" />
+                      Polecenia
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-purple-500/20" />
+                  <DropdownMenuItem onClick={() => base44.auth.logout()} className="text-red-400">
+                    Wyloguj się
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -119,7 +173,7 @@ export default function Layout({ children, currentPageName }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className="lg:hidden text-white"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -135,7 +189,7 @@ export default function Layout({ children, currentPageName }) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-slate-100 bg-white"
+              className="lg:hidden border-t border-purple-500/20 bg-[#0f0f18]"
             >
               <nav className="px-4 py-3 space-y-1">
                 {navItems.map((item) => {
@@ -148,7 +202,9 @@ export default function Layout({ children, currentPageName }) {
                     >
                       <Button
                         variant="ghost"
-                        className={`w-full justify-start gap-3 ${isActive ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600'}`}
+                        className={`w-full justify-start gap-3 ${isActive 
+                          ? 'bg-purple-500/20 text-purple-400' 
+                          : 'text-slate-400 hover:text-white'}`}
                       >
                         <item.icon className="w-5 h-5" />
                         {item.name}
@@ -163,21 +219,21 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Main Content */}
-      <main>
+      <main className="min-h-[calc(100vh-64px)]">
         {children}
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-100 py-6 mt-auto">
+      <footer className="bg-[#0f0f18] border-t border-purple-500/20 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                <DollarSign className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
               </div>
-              <span className="font-semibold text-slate-700">EarnView</span>
+              <span className="font-bold text-white">CashCrusader</span>
             </div>
-            <p className="text-sm text-slate-500">© 2024 EarnView. All rights reserved.</p>
+            <p className="text-sm text-slate-500">© 2024 CashCrusader. Wszelkie prawa zastrzeżone.</p>
           </div>
         </div>
       </footer>

@@ -1,69 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { toast } from 'sonner';
-import { Wallet, Eye, TrendingUp, DollarSign, Loader2, Users } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createPageUrl } from '@/utils';
+import { 
+  Coins, Eye, TrendingUp, Users, Gift, Target, Trophy,
+  Zap, ArrowRight, Clock, Star, Crown, Loader2
+} from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import StatsCard from '@/components/dashboard/StatsCard';
-import AdCard from '@/components/dashboard/AdCard';
-import PaymentRequestModal from '@/components/payments/PaymentRequestModal';
-import PaymentHistory from '@/components/payments/PaymentHistory';
-import ReferralSection from '@/components/referrals/ReferralSection';
-
-const REFERRAL_BONUS_PERCENT = 10;
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 export default function Dashboard() {
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [viewedAds, setViewedAds] = useState(new Set());
   const queryClient = useQueryClient();
 
-  // Sprawdź kod polecający w URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get('ref');
-    if (refCode) {
-      localStorage.setItem('referral_code', refCode);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, []);
-
-  const { data: user, isLoading: userLoading } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
 
-  const { data: ads = [], isLoading: adsLoading } = useQuery({
-    queryKey: ['ads'],
-    queryFn: () => base44.entities.Advertisement.filter({ status: 'active' })
+  const { data: settings = [] } = useQuery({
+    queryKey: ['siteSettings'],
+    queryFn: () => base44.entities.SiteSettings.list()
   });
 
-  const { data: myViews = [] } = useQuery({
-    queryKey: ['myViews', user?.id],
-    queryFn: () => base44.entities.AdView.filter({ user_id: user?.id }),
+  const { data: pointsHistory = [] } = useQuery({
+    queryKey: ['pointsHistory', user?.id],
+    queryFn: () => base44.entities.PointsHistory.filter({ user_id: user?.id }, '-created_date', 10),
     enabled: !!user?.id
   });
 
-  const { data: myPayments = [] } = useQuery({
-    queryKey: ['myPayments', user?.id],
-    queryFn: () => base44.entities.PaymentRequest.filter({ user_id: user?.id }, '-created_date'),
-    enabled: !!user?.id
+  const { data: levels = [] } = useQuery({
+    queryKey: ['membershipLevels'],
+    queryFn: () => base44.entities.MembershipLevel.list('level')
   });
 
-  const { data: referredUsers = [] } = useQuery({
-    queryKey: ['referredUsers', user?.id],
-    queryFn: () => base44.entities.User.filter({ referred_by: user?.id }),
-    enabled: !!user?.id
+  const { data: missions = [] } = useQuery({
+    queryKey: ['activeMissions'],
+    queryFn: () => base44.entities.Mission.filter({ status: 'active' }, null, 5)
   });
 
-  const { data: referralBonuses = [] } = useQuery({
-    queryKey: ['referralBonuses', user?.id],
-    queryFn: () => base44.entities.ReferralBonus.filter({ referrer_id: user?.id }),
-    enabled: !!user?.id
-  });
-
-  // Wygeneruj kod polecający jeśli użytkownik go nie ma
+  // Generuj kod polecający
   useEffect(() => {
     const generateReferralCode = async () => {
       if (user && !user.referral_code) {
@@ -75,197 +53,263 @@ export default function Dashboard() {
     generateReferralCode();
   }, [user]);
 
-  // Przetwórz polecenie jeśli użytkownik został polecony
-  useEffect(() => {
-    const processReferral = async () => {
-      if (user && !user.referred_by) {
-        const storedRefCode = localStorage.getItem('referral_code');
-        if (storedRefCode && storedRefCode !== user.referral_code) {
-          const referrers = await base44.entities.User.filter({ referral_code: storedRefCode });
-          if (referrers.length > 0 && referrers[0].id !== user.id) {
-            await base44.auth.updateMe({ referred_by: referrers[0].id });
-            queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-            localStorage.removeItem('referral_code');
-          }
-        }
-      }
-    };
-    processReferral();
-  }, [user]);
+  const getSetting = (key, defaultValue) => {
+    const setting = settings.find(s => s.setting_key === key);
+    return setting ? setting.setting_value : defaultValue;
+  };
 
-  useEffect(() => {
-    if (myViews.length > 0) {
-      const completedAds = new Set(myViews.filter(v => v.completed).map(v => v.advertisement_id));
-      setViewedAds(completedAds);
-    }
-  }, [myViews]);
+  const pointRate = parseFloat(getSetting('point_rate', '0.10'));
 
-  const paymentRequestMutation = useMutation({
-    mutationFn: async (data) => {
-      await base44.entities.PaymentRequest.create({
-        user_id: user.id,
-        user_email: user.email,
-        user_name: user.full_name,
-        ...data
-      });
+  const currentLevel = levels.find(l => l.level === user?.membership_level) || { name: 'Bronze', level: 1 };
+  const nextLevel = levels.find(l => l.level === (user?.membership_level || 1) + 1);
+  const progressToNext = nextLevel 
+    ? ((user?.total_points_earned || 0) / nextLevel.min_points_earned) * 100 
+    : 100;
 
-      await base44.auth.updateMe({
-        balance: (user.balance || 0) - data.amount
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      queryClient.invalidateQueries({ queryKey: ['myPayments'] });
-      setShowPaymentModal(false);
-      toast.success('Wniosek o wypłatę został złożony!');
-    }
-  });
+  const typeIcons = {
+    ad_view: <Eye className="w-4 h-4" />,
+    referral_bonus: <Users className="w-4 h-4" />,
+    withdrawal: <TrendingUp className="w-4 h-4" />,
+    mission: <Target className="w-4 h-4" />,
+    cashback: <Gift className="w-4 h-4" />,
+    daily_bonus: <Star className="w-4 h-4" />,
+  };
 
-  const formatCurrency = (cents) => `${((cents || 0) / 100).toFixed(2)} zł`;
-
-  const availableAds = ads.filter(ad => 
-    !viewedAds.has(ad.id) && 
-    (ad.current_views || 0) < (ad.max_views || Infinity)
-  );
-
-  // Odśwież dane po powrocie do karty
-  useEffect(() => {
-    const handleFocus = () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      queryClient.invalidateQueries({ queryKey: ['myViews'] });
-      queryClient.invalidateQueries({ queryKey: ['ads'] });
-    };
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, [queryClient]);
-
-  if (userLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-[#0a0a0f] py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-slate-900">
-            Witaj, {user?.full_name?.split(' ')[0] || 'Użytkowniku'}!
+          <h1 className="text-3xl font-bold text-white">
+            Witaj, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
+              {user?.full_name?.split(' ')[0] || 'Użytkowniku'}
+            </span>!
           </h1>
-          <p className="text-slate-500 mt-1">Zarabiaj oglądając reklamy</p>
+          <p className="text-slate-400 mt-1">Zarabiaj punkty oglądając reklamy</p>
         </motion.div>
 
+        {/* Main Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Saldo"
-            value={formatCurrency(user?.balance)}
-            icon={Wallet}
-            gradient="bg-gradient-to-br from-emerald-500 to-teal-500"
-            subtitle="Dostępne do wypłaty"
-          />
-          <StatsCard
-            title="Łączne zarobki"
-            value={formatCurrency(user?.total_earned)}
-            icon={TrendingUp}
-            gradient="bg-gradient-to-br from-blue-500 to-indigo-500"
-          />
-          <StatsCard
-            title="Obejrzane reklamy"
-            value={user?.ads_viewed || 0}
-            icon={Eye}
-            gradient="bg-gradient-to-br from-purple-500 to-pink-500"
-          />
-          <StatsCard
-            title="Wypłacone"
-            value={formatCurrency(user?.total_withdrawn)}
-            icon={DollarSign}
-            gradient="bg-gradient-to-br from-amber-500 to-orange-500"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600/20 to-purple-900/20 border border-purple-500/30 p-6"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="relative">
+              <div className="flex items-center justify-between mb-4">
+                <Coins className="w-8 h-8 text-yellow-400" />
+                <span className="text-xs text-slate-400">1 pkt = {pointRate.toFixed(2)} zł</span>
+              </div>
+              <p className="text-4xl font-bold text-white mb-1">
+                {(user?.points_balance || 0).toLocaleString()}
+              </p>
+              <p className="text-slate-400 text-sm">Saldo punktów</p>
+              <p className="text-emerald-400 text-sm mt-2">
+                ≈ {((user?.points_balance || 0) * pointRate).toFixed(2)} zł
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-600/20 to-cyan-900/20 border border-cyan-500/30 p-6"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl" />
+            <div className="relative">
+              <TrendingUp className="w-8 h-8 text-cyan-400 mb-4" />
+              <p className="text-4xl font-bold text-white mb-1">
+                {(user?.total_points_earned || 0).toLocaleString()}
+              </p>
+              <p className="text-slate-400 text-sm">Łącznie zarobionych</p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-600/20 to-pink-900/20 border border-pink-500/30 p-6"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/10 rounded-full blur-3xl" />
+            <div className="relative">
+              <Eye className="w-8 h-8 text-pink-400 mb-4" />
+              <p className="text-4xl font-bold text-white mb-1">
+                {user?.ads_viewed || 0}
+              </p>
+              <p className="text-slate-400 text-sm">Obejrzanych reklam</p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600/20 to-emerald-900/20 border border-emerald-500/30 p-6"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl" />
+            <div className="relative">
+              <Users className="w-8 h-8 text-emerald-400 mb-4" />
+              <p className="text-4xl font-bold text-white mb-1">
+                {user?.referral_count || 0}
+              </p>
+              <p className="text-slate-400 text-sm">Poleconych użytkowników</p>
+            </div>
+          </motion.div>
         </div>
 
-        <Tabs defaultValue="ads" className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <TabsList className="bg-white border border-slate-200">
-              <TabsTrigger value="ads" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-                Dostępne reklamy ({availableAds.length})
-              </TabsTrigger>
-              <TabsTrigger value="referrals" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-                <Users className="w-4 h-4 mr-1.5" />
-                Polecenia
-              </TabsTrigger>
-              <TabsTrigger value="payments" className="data-[state=active]:bg-emerald-50 data-[state=active]:text-emerald-700">
-                Wypłaty
-              </TabsTrigger>
-            </TabsList>
-            
-            <Button
-              onClick={() => setShowPaymentModal(true)}
-              disabled={(user?.balance || 0) < 500}
-              className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600"
-            >
-              <DollarSign className="w-4 h-4 mr-2" />
-              Wypłać środki
-            </Button>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Level Progress */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-2"
+          >
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-yellow-400" />
+                  Poziom członkostwa
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">{currentLevel.level}</span>
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">{currentLevel.name}</p>
+                      <p className="text-slate-400 text-sm">Mnożnik: x{currentLevel.points_multiplier || 1}</p>
+                    </div>
+                  </div>
+                  {nextLevel && (
+                    <div className="text-right">
+                      <p className="text-slate-400 text-sm">Następny poziom</p>
+                      <p className="text-white font-semibold">{nextLevel.name}</p>
+                    </div>
+                  )}
+                </div>
+                <Progress value={Math.min(progressToNext, 100)} className="h-3 bg-slate-700" />
+                <p className="text-slate-400 text-sm mt-2">
+                  {nextLevel 
+                    ? `${(user?.total_points_earned || 0).toLocaleString()} / ${nextLevel.min_points_earned.toLocaleString()} pkt`
+                    : 'Maksymalny poziom osiągnięty!'}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <TabsContent value="ads">
-            {adsLoading ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
-              </div>
-            ) : availableAds.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {availableAds.map((ad) => (
-                  <AdCard
-                    key={ad.id}
-                    ad={ad}
-                    isCompleted={viewedAds.has(ad.id)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-16 bg-white rounded-2xl border border-slate-100"
-              >
-                <Eye className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                <h3 className="text-xl font-semibold text-slate-700 mb-2">Brak dostępnych reklam</h3>
-                <p className="text-slate-500">Sprawdź później, aby znaleźć nowe możliwości zarobku</p>
-              </motion.div>
-            )}
-          </TabsContent>
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white">Szybkie akcje</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Link to={createPageUrl('EarnAds')}>
+                  <Button className="w-full justify-between bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
+                    <span className="flex items-center gap-2">
+                      <Zap className="w-4 h-4" />
+                      Zarabiaj punkty
+                    </span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link to={createPageUrl('Missions')}>
+                  <Button variant="outline" className="w-full justify-between border-purple-500/30 text-white hover:bg-purple-500/10">
+                    <span className="flex items-center gap-2">
+                      <Target className="w-4 h-4" />
+                      Misje dzienne
+                    </span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link to={createPageUrl('Shop')}>
+                  <Button variant="outline" className="w-full justify-between border-purple-500/30 text-white hover:bg-purple-500/10">
+                    <span className="flex items-center gap-2">
+                      <Gift className="w-4 h-4" />
+                      Sklep z nagrodami
+                    </span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
 
-          <TabsContent value="referrals">
-            <ReferralSection 
-              user={user} 
-              referredUsers={referredUsers}
-              referralBonuses={referralBonuses}
-            />
-          </TabsContent>
-
-          <TabsContent value="payments">
-            <div className="bg-white rounded-2xl border border-slate-100 p-6">
-              <h2 className="text-xl font-semibold text-slate-900 mb-6">Historia wypłat</h2>
-              <PaymentHistory payments={myPayments} />
-            </div>
-          </TabsContent>
-        </Tabs>
+        {/* Points History */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-8"
+        >
+          <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-white">Historia punktów</CardTitle>
+              <Link to={createPageUrl('PointsHistory')}>
+                <Button variant="ghost" size="sm" className="text-purple-400 hover:text-purple-300">
+                  Zobacz wszystko
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardHeader>
+            <CardContent>
+              {pointsHistory.length > 0 ? (
+                <div className="space-y-3">
+                  {pointsHistory.map((entry) => (
+                    <div
+                      key={entry.id}
+                      className="flex items-center justify-between p-3 rounded-xl bg-slate-800/50 border border-slate-700/50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${entry.amount > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                          {typeIcons[entry.type] || <Coins className="w-4 h-4" />}
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">{entry.description || entry.type}</p>
+                          <p className="text-slate-400 text-xs flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(entry.created_date).toLocaleDateString('pl-PL')}
+                          </p>
+                        </div>
+                      </div>
+                      <span className={`font-bold ${entry.amount > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {entry.amount > 0 ? '+' : ''}{entry.amount} pkt
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-slate-400">
+                  <Coins className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <p>Brak historii punktów</p>
+                  <p className="text-sm">Zacznij zarabiać oglądając reklamy!</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
-
-      <PaymentRequestModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        onSubmit={(data) => paymentRequestMutation.mutate(data)}
-        currentBalance={user?.balance || 0}
-        isLoading={paymentRequestMutation.isPending}
-      />
     </div>
   );
 }
