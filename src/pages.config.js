@@ -58,6 +58,7 @@ import Payments from './pages/Payments';
 import Referrals from './pages/Referrals';
 import Cashback from './pages/Cashback';
 import BattlePass from './pages/BattlePass';
+import PointsHistory from './pages/PointsHistory';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "Referrals": Referrals,
     "Cashback": Cashback,
     "BattlePass": BattlePass,
+    "PointsHistory": PointsHistory,
 }
 
 export const pagesConfig = {
