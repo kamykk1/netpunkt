@@ -28,6 +28,10 @@ import {
 import AdminAdForm from '@/components/admin/AdminAdForm';
 import AdminSettingsForm from '@/components/admin/AdminSettingsForm';
 import AdminEmailCampaigns from '@/components/admin/AdminEmailCampaigns';
+import AdminEmailTemplates from '@/components/admin/AdminEmailTemplates';
+import AdminPartnerPrograms from '@/components/admin/AdminPartnerPrograms';
+import AdminContactMessages from '@/components/admin/AdminContactMessages';
+import AdminPayoutSchedule from '@/components/admin/AdminPayoutSchedule';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
@@ -269,6 +273,18 @@ export default function AdminPanel() {
             </TabsTrigger>
             <TabsTrigger value="fraud" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <Shield className="w-4 h-4 mr-2" /> Anti-Fraud
+            </TabsTrigger>
+            <TabsTrigger value="templates" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Mail className="w-4 h-4 mr-2" /> Szablony
+            </TabsTrigger>
+            <TabsTrigger value="partners" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Users className="w-4 h-4 mr-2" /> Partnerzy
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Mail className="w-4 h-4 mr-2" /> Wiadomości
+            </TabsTrigger>
+            <TabsTrigger value="payouts" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <CreditCard className="w-4 h-4 mr-2" /> Wypłaty
             </TabsTrigger>
           </TabsList>
 
@@ -561,6 +577,26 @@ export default function AdminPanel() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Email Templates Tab */}
+          <TabsContent value="templates">
+            <AdminEmailTemplates />
+          </TabsContent>
+
+          {/* Partner Programs Tab */}
+          <TabsContent value="partners">
+            <AdminPartnerPrograms />
+          </TabsContent>
+
+          {/* Contact Messages Tab */}
+          <TabsContent value="messages">
+            <AdminContactMessages />
+          </TabsContent>
+
+          {/* Payouts Schedule Tab */}
+          <TabsContent value="payouts">
+            <AdminPayoutSchedule paymentRequests={paymentRequests} users={users} />
           </TabsContent>
         </Tabs>
       </div>
