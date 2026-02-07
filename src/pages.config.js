@@ -49,32 +49,36 @@
  */
 import AdViewer from './pages/AdViewer';
 import AdminPanel from './pages/AdminPanel';
+import BattlePass from './pages/BattlePass';
+import Cashback from './pages/Cashback';
 import Dashboard from './pages/Dashboard';
 import EarnAds from './pages/EarnAds';
-import Shop from './pages/Shop';
 import Missions from './pages/Missions';
-import Ranking from './pages/Ranking';
 import Payments from './pages/Payments';
-import Referrals from './pages/Referrals';
-import Cashback from './pages/Cashback';
-import BattlePass from './pages/BattlePass';
 import PointsHistory from './pages/PointsHistory';
+import Ranking from './pages/Ranking';
+import Referrals from './pages/Referrals';
+import Shop from './pages/Shop';
+import AdvertiserPanel from './pages/AdvertiserPanel';
+import Contact from './pages/Contact';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AdViewer": AdViewer,
     "AdminPanel": AdminPanel,
+    "BattlePass": BattlePass,
+    "Cashback": Cashback,
     "Dashboard": Dashboard,
     "EarnAds": EarnAds,
-    "Shop": Shop,
     "Missions": Missions,
-    "Ranking": Ranking,
     "Payments": Payments,
-    "Referrals": Referrals,
-    "Cashback": Cashback,
-    "BattlePass": BattlePass,
     "PointsHistory": PointsHistory,
+    "Ranking": Ranking,
+    "Referrals": Referrals,
+    "Shop": Shop,
+    "AdvertiserPanel": AdvertiserPanel,
+    "Contact": Contact,
 }
 
 export const pagesConfig = {
