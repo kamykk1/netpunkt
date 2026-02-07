@@ -14,9 +14,12 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import AdvertiserCampaignForm from '@/components/advertiser/AdvertiserCampaignForm';
-import AdvertiserFraudDashboard from '@/components/advertiser/AdvertiserFraudDashboard';
-import AdvertiserBilling from '@/components/advertiser/AdvertiserBilling';
+import AdvertiserCampaignForm from '@/components/advertiser/AdvertiserCampaignForm.jsx';
+import AdvertiserFraudDashboard from '@/components/advertiser/AdvertiserFraudDashboard.jsx';
+import AdvertiserBilling from '@/components/advertiser/AdvertiserBilling.jsx';
+import NoCodeBuilder from '@/components/advertiser/NoCodeBuilder.jsx';
+import ProductFeedCreator from '@/components/advertiser/ProductFeedCreator.jsx';
+import AdvancedTargeting from '@/components/advertiser/AdvancedTargeting.jsx';
 
 export default function AdvertiserPanel() {
   const [showCampaignForm, setShowCampaignForm] = useState(false);
@@ -181,8 +184,17 @@ export default function AdvertiserPanel() {
             <TabsTrigger value="campaigns" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <Target className="w-4 h-4 mr-2" /> Kampanie
             </TabsTrigger>
+            <TabsTrigger value="builder" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Pencil className="w-4 h-4 mr-2" /> No-Code Builder
+            </TabsTrigger>
+            <TabsTrigger value="products" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Eye className="w-4 h-4 mr-2" /> Produkty
+            </TabsTrigger>
+            <TabsTrigger value="targeting" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Target className="w-4 h-4 mr-2" /> Targetowanie
+            </TabsTrigger>
             <TabsTrigger value="billing" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <CreditCard className="w-4 h-4 mr-2" /> Billing / Faktury
+              <CreditCard className="w-4 h-4 mr-2" /> Billing
             </TabsTrigger>
             {advertiserFraudEnabled && (
               <TabsTrigger value="fraud" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
@@ -327,6 +339,42 @@ export default function AdvertiserPanel() {
                     <p className="text-sm">Utwórz pierwszą kampanię reklamową</p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* No-Code Builder Tab */}
+          <TabsContent value="builder">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white">White-Label Builder</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <NoCodeBuilder onSave={(config) => console.log('Saved config:', config)} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Products Tab */}
+          <TabsContent value="products">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white">Dynamiczne kreacje produktowe</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ProductFeedCreator onSelectProduct={(config) => console.log('Product config:', config)} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Targeting Tab */}
+          <TabsContent value="targeting">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white">Zaawansowane targetowanie</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdvancedTargeting onChange={(config) => console.log('Targeting:', config)} />
               </CardContent>
             </Card>
           </TabsContent>
