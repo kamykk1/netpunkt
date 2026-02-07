@@ -61,6 +61,7 @@ import Referrals from './pages/Referrals';
 import Shop from './pages/Shop';
 import AdvertiserPanel from './pages/AdvertiserPanel';
 import Contact from './pages/Contact';
+import Partners from './pages/Partners';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "Shop": Shop,
     "AdvertiserPanel": AdvertiserPanel,
     "Contact": Contact,
+    "Partners": Partners,
 }
 
 export const pagesConfig = {
