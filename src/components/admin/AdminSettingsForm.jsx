@@ -13,19 +13,27 @@ const DEFAULT_SETTINGS = {
   point_rate: '0.10',
   min_withdrawal_points: '1000',
   referral_bonus_percent: '10',
+  referral_bonus_level2: '5',
+  referral_bonus_level3: '2',
+  registration_bonus: '100',
+  purchase_points_rate: '0.01',
   event_multiplier: '1',
   event_active: 'false',
   event_name: '',
   max_daily_ads: '50',
   invoices_enabled: 'true',
   vat_rate: '23',
-  company_name: 'CashCrusader',
+  company_name: 'Zapunktowani.eu',
   company_nip: '',
   company_address: '',
   paypal_enabled: 'true',
   stripe_enabled: 'true',
   tpay_enabled: 'true',
   faucetpay_enabled: 'false',
+  bank_transfer_enabled: 'true',
+  crypto_enabled: 'false',
+  advertiser_fraud_dashboard: 'true',
+  payout_schedule: 'weekly',
 };
 
 export default function AdminSettingsForm({ settings }) {
@@ -132,21 +140,71 @@ export default function AdminSettingsForm({ settings }) {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Users className="w-5 h-5 text-cyan-400" />
-            System poleceń
+            System poleceń (MLM)
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label className="text-slate-300">Prowizja od poleceń (%)</Label>
-            <Input
-              type="number"
-              min="0"
-              max="50"
-              value={formData.referral_bonus_percent || ''}
-              onChange={(e) => handleChange('referral_bonus_percent', e.target.value)}
-              className="bg-slate-800 border-purple-500/30 text-white max-w-xs"
-            />
-            <p className="text-xs text-slate-500">Procent punktów przyznawanych polecającemu</p>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label className="text-slate-300">Poziom 1 (%)</Label>
+              <Input
+                type="number"
+                min="0"
+                max="50"
+                value={formData.referral_bonus_percent || ''}
+                onChange={(e) => handleChange('referral_bonus_percent', e.target.value)}
+                className="bg-slate-800 border-purple-500/30 text-white"
+              />
+              <p className="text-xs text-slate-500">Bezpośrednie polecenia</p>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-300">Poziom 2 (%)</Label>
+              <Input
+                type="number"
+                min="0"
+                max="30"
+                value={formData.referral_bonus_level2 || ''}
+                onChange={(e) => handleChange('referral_bonus_level2', e.target.value)}
+                className="bg-slate-800 border-purple-500/30 text-white"
+              />
+              <p className="text-xs text-slate-500">Poleceni przez poleconych</p>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-300">Poziom 3 (%)</Label>
+              <Input
+                type="number"
+                min="0"
+                max="20"
+                value={formData.referral_bonus_level3 || ''}
+                onChange={(e) => handleChange('referral_bonus_level3', e.target.value)}
+                className="bg-slate-800 border-purple-500/30 text-white"
+              />
+              <p className="text-xs text-slate-500">Trzeci poziom sieci</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-slate-300">Bonus za rejestrację (pkt)</Label>
+              <Input
+                type="number"
+                min="0"
+                value={formData.registration_bonus || ''}
+                onChange={(e) => handleChange('registration_bonus', e.target.value)}
+                className="bg-slate-800 border-purple-500/30 text-white"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-300">Punkty za zakupy (pkt/zł)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.purchase_points_rate || ''}
+                onChange={(e) => handleChange('purchase_points_rate', e.target.value)}
+                className="bg-slate-800 border-purple-500/30 text-white"
+              />
+              <p className="text-xs text-slate-500">np. 0.01 = 1 pkt za 100 zł</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -203,38 +261,71 @@ export default function AdminSettingsForm({ settings }) {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <CreditCard className="w-5 h-5 text-emerald-400" />
-            Metody płatności
+            Metody wypłat
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
-              <span className="text-slate-300">PayPal</span>
+              <span className="text-slate-300">🏦 Przelew bankowy</span>
+              <Switch
+                checked={formData.bank_transfer_enabled === 'true'}
+                onCheckedChange={(checked) => handleChange('bank_transfer_enabled', String(checked))}
+              />
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
+              <span className="text-slate-300">💳 PayPal</span>
               <Switch
                 checked={formData.paypal_enabled === 'true'}
                 onCheckedChange={(checked) => handleChange('paypal_enabled', String(checked))}
               />
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
-              <span className="text-slate-300">Stripe</span>
+              <span className="text-slate-300">💎 Stripe</span>
               <Switch
                 checked={formData.stripe_enabled === 'true'}
                 onCheckedChange={(checked) => handleChange('stripe_enabled', String(checked))}
               />
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
-              <span className="text-slate-300">TPay</span>
+              <span className="text-slate-300">💰 TPay</span>
               <Switch
                 checked={formData.tpay_enabled === 'true'}
                 onCheckedChange={(checked) => handleChange('tpay_enabled', String(checked))}
               />
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
-              <span className="text-slate-300">FaucetPay</span>
+              <span className="text-slate-300">🪙 FaucetPay</span>
               <Switch
                 checked={formData.faucetpay_enabled === 'true'}
                 onCheckedChange={(checked) => handleChange('faucetpay_enabled', String(checked))}
               />
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
+              <span className="text-slate-300">₿ Krypto</span>
+              <Switch
+                checked={formData.crypto_enabled === 'true'}
+                onCheckedChange={(checked) => handleChange('crypto_enabled', String(checked))}
+              />
+            </div>
+          </div>
+          <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white font-medium">Harmonogram wypłat</p>
+                <p className="text-slate-400 text-sm">Automatyczne przetwarzanie wniosków</p>
+              </div>
+              <select
+                value={formData.payout_schedule || 'weekly'}
+                onChange={(e) => handleChange('payout_schedule', e.target.value)}
+                className="bg-slate-800 border border-purple-500/30 text-white rounded-md px-3 py-2"
+              >
+                <option value="daily">Codziennie</option>
+                <option value="weekly">Raz w tygodniu</option>
+                <option value="biweekly">Co 2 tygodnie</option>
+                <option value="monthly">Raz w miesiącu</option>
+                <option value="manual">Ręcznie</option>
+              </select>
             </div>
           </div>
         </CardContent>
