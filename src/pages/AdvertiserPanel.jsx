@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { 
   TrendingUp, Plus, Eye, Coins, CreditCard, BarChart3, Target,
   Loader2, Pencil, Pause, Play, Trash2, FileText, AlertTriangle,
-  CheckCircle, XCircle, Clock, Shield
+  CheckCircle, XCircle, Clock, Shield, Brain, Wand2, Sparkles
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,10 +20,14 @@ import AdvertiserBilling from '@/components/advertiser/AdvertiserBilling.jsx';
 import NoCodeBuilder from '@/components/advertiser/NoCodeBuilder.jsx';
 import ProductFeedCreator from '@/components/advertiser/ProductFeedCreator.jsx';
 import AdvancedTargeting from '@/components/advertiser/AdvancedTargeting.jsx';
+import AIAdGenerator from '@/components/advertiser/AIAdGenerator.jsx';
+import AIBidOptimizer from '@/components/advertiser/AIBidOptimizer.jsx';
+import AIPredictiveAnalysis from '@/components/advertiser/AIPredictiveAnalysis.jsx';
 
 export default function AdvertiserPanel() {
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
+  const [creativeData, setCreativeData] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
@@ -192,6 +196,15 @@ export default function AdvertiserPanel() {
             </TabsTrigger>
             <TabsTrigger value="targeting" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <Target className="w-4 h-4 mr-2" /> Targetowanie
+            </TabsTrigger>
+            <TabsTrigger value="ai-generator" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Wand2 className="w-4 h-4 mr-2" /> AI Teksty
+            </TabsTrigger>
+            <TabsTrigger value="ai-bids" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Sparkles className="w-4 h-4 mr-2" /> AI Stawki
+            </TabsTrigger>
+            <TabsTrigger value="ai-analysis" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Brain className="w-4 h-4 mr-2" /> AI Analiza
             </TabsTrigger>
             <TabsTrigger value="billing" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <CreditCard className="w-4 h-4 mr-2" /> Billing
@@ -375,6 +388,60 @@ export default function AdvertiserPanel() {
               </CardHeader>
               <CardContent>
                 <AdvancedTargeting onChange={(config) => console.log('Targeting:', config)} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* AI Ad Generator Tab */}
+          <TabsContent value="ai-generator">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Wand2 className="w-5 h-5 text-yellow-400" />
+                  Generator tekstów AI
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AIAdGenerator 
+                  onApply={(data) => {
+                    setCreativeData(prev => ({ ...prev, [data.type]: data.text }));
+                  }} 
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* AI Bid Optimizer Tab */}
+          <TabsContent value="ai-bids">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-cyan-400" />
+                  Optymalizacja stawek AI
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AIBidOptimizer 
+                  onApplyBid={(bid) => console.log('Apply bid:', bid)} 
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* AI Predictive Analysis Tab */}
+          <TabsContent value="ai-analysis">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Brain className="w-5 h-5 text-pink-400" />
+                  Analiza predykcyjna AI
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AIPredictiveAnalysis 
+                  creativeData={creativeData} 
+                  onOptimize={(suggestions) => console.log('Optimize:', suggestions)}
+                />
               </CardContent>
             </Card>
           </TabsContent>
