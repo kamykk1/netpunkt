@@ -25,13 +25,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import AdminAdForm from '@/components/admin/AdminAdForm';
-import AdminSettingsForm from '@/components/admin/AdminSettingsForm';
-import AdminEmailCampaigns from '@/components/admin/AdminEmailCampaigns';
-import AdminEmailTemplates from '@/components/admin/AdminEmailTemplates';
-import AdminPartnerPrograms from '@/components/admin/AdminPartnerPrograms';
-import AdminContactMessages from '@/components/admin/AdminContactMessages';
-import AdminPayoutSchedule from '@/components/admin/AdminPayoutSchedule';
+import AdminAdForm from '@/components/admin/AdminAdForm.jsx';
+import AdminSettingsForm from '@/components/admin/AdminSettingsForm.jsx';
+import AdminEmailCampaigns from '@/components/admin/AdminEmailCampaigns.jsx';
+import AdminEmailTemplates from '@/components/admin/AdminEmailTemplates.jsx';
+import AdminPartnerPrograms from '@/components/admin/AdminPartnerPrograms.jsx';
+import AdminContactMessages from '@/components/admin/AdminContactMessages.jsx';
+import AdminPayoutSchedule from '@/components/admin/AdminPayoutSchedule.jsx';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
