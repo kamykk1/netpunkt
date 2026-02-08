@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import NotificationCenter from '@/components/notifications/NotificationCenter.jsx';
 
 export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -130,6 +131,9 @@ export default function Layout({ children, currentPageName }) {
                 <Crown className="w-3 h-3 mr-1" />
                 {badge.name}
               </Badge>
+
+              {/* Notifications */}
+              <NotificationCenter userId={user?.id} />
 
               {/* User Menu */}
               <DropdownMenu>

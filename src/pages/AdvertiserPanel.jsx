@@ -6,7 +6,8 @@ import { toast } from 'sonner';
 import { 
   TrendingUp, Plus, Eye, Coins, CreditCard, BarChart3, Target,
   Loader2, Pencil, Pause, Play, Trash2, FileText, AlertTriangle,
-  CheckCircle, XCircle, Clock, Shield, Brain, Wand2, Sparkles
+  CheckCircle, XCircle, Clock, Shield, Brain, Wand2, Sparkles,
+  Link2, Code, Bell, PieChart
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,10 @@ import AdvancedTargeting from '@/components/advertiser/AdvancedTargeting.jsx';
 import AIAdGenerator from '@/components/advertiser/AIAdGenerator.jsx';
 import AIBidOptimizer from '@/components/advertiser/AIBidOptimizer.jsx';
 import AIPredictiveAnalysis from '@/components/advertiser/AIPredictiveAnalysis.jsx';
+import MarketingIntegrations from '@/components/advertiser/MarketingIntegrations.jsx';
+import TrackingPixelsManager from '@/components/advertiser/TrackingPixelsManager.jsx';
+import AdvancedCampaignReporting from '@/components/advertiser/AdvancedCampaignReporting.jsx';
+import NotificationSettingsPanel from '@/components/notifications/NotificationSettingsPanel.jsx';
 
 export default function AdvertiserPanel() {
   const [showCampaignForm, setShowCampaignForm] = useState(false);
@@ -205,6 +210,18 @@ export default function AdvertiserPanel() {
             </TabsTrigger>
             <TabsTrigger value="ai-analysis" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <Brain className="w-4 h-4 mr-2" /> AI Analiza
+            </TabsTrigger>
+            <TabsTrigger value="reporting" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <PieChart className="w-4 h-4 mr-2" /> Raporty
+            </TabsTrigger>
+            <TabsTrigger value="integrations" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Link2 className="w-4 h-4 mr-2" /> Integracje
+            </TabsTrigger>
+            <TabsTrigger value="pixels" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Code className="w-4 h-4 mr-2" /> Pixele
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Bell className="w-4 h-4 mr-2" /> Powiadomienia
             </TabsTrigger>
             <TabsTrigger value="billing" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <CreditCard className="w-4 h-4 mr-2" /> Billing
@@ -444,6 +461,26 @@ export default function AdvertiserPanel() {
                 />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Reporting Tab */}
+          <TabsContent value="reporting">
+            <AdvancedCampaignReporting campaigns={campaigns} />
+          </TabsContent>
+
+          {/* Integrations Tab */}
+          <TabsContent value="integrations">
+            <MarketingIntegrations advertiserId={user?.id} />
+          </TabsContent>
+
+          {/* Tracking Pixels Tab */}
+          <TabsContent value="pixels">
+            <TrackingPixelsManager advertiserId={user?.id} campaigns={campaigns} />
+          </TabsContent>
+
+          {/* Notifications Tab */}
+          <TabsContent value="notifications">
+            <NotificationSettingsPanel userId={user?.id} />
           </TabsContent>
 
           {/* Billing Tab */}
