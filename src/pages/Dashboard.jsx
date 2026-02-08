@@ -27,7 +27,13 @@ export default function Dashboard() {
 
   const { data: pointsHistory = [] } = useQuery({
     queryKey: ['pointsHistory', user?.id],
-    queryFn: () => base44.entities.PointsHistory.filter({ user_id: user?.id }, '-created_date', 10),
+    queryFn: () => base44.entities.PointsHistory.filter({ user_id: user?.id }, '-created_date', 100),
+    enabled: !!user?.id
+  });
+
+  const { data: adViews = [] } = useQuery({
+    queryKey: ['adViews', user?.id],
+    queryFn: () => base44.entities.AdView.filter({ user_id: user?.id }, '-created_date', 100),
     enabled: !!user?.id
   });
 

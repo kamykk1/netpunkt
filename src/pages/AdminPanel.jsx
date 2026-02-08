@@ -32,6 +32,9 @@ import AdminEmailTemplates from '@/components/admin/AdminEmailTemplates.jsx';
 import AdminPartnerPrograms from '@/components/admin/AdminPartnerPrograms.jsx';
 import AdminContactMessages from '@/components/admin/AdminContactMessages.jsx';
 import AdminPayoutSchedule from '@/components/admin/AdminPayoutSchedule.jsx';
+import AdminSubscriptions from '@/components/admin/AdminSubscriptions.jsx';
+import AdminInvoices from '@/components/admin/AdminInvoices.jsx';
+import AdminTransactionHistory from '@/components/admin/AdminTransactionHistory.jsx';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
