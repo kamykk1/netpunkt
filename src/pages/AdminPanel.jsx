@@ -8,7 +8,8 @@ import { createPageUrl } from '@/utils';
 import { 
   LayoutDashboard, Plus, Eye, Users, Coins, TrendingUp, Loader2, 
   Pencil, Trash2, AlertTriangle, ArrowLeft, Gift, Settings, 
-  Mail, ShoppingBag, Target, Zap, Shield, CreditCard, BarChart3
+  Mail, ShoppingBag, Target, Zap, Shield, CreditCard, BarChart3,
+  Crown, FileText
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -288,6 +289,15 @@ export default function AdminPanel() {
             </TabsTrigger>
             <TabsTrigger value="payouts" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <CreditCard className="w-4 h-4 mr-2" /> Wypłaty
+            </TabsTrigger>
+            <TabsTrigger value="subscriptions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Crown className="w-4 h-4 mr-2" /> Subskrypcje
+            </TabsTrigger>
+            <TabsTrigger value="invoices" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <FileText className="w-4 h-4 mr-2" /> Faktury
+            </TabsTrigger>
+            <TabsTrigger value="transactions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <TrendingUp className="w-4 h-4 mr-2" /> Transakcje
             </TabsTrigger>
           </TabsList>
 
@@ -600,6 +610,21 @@ export default function AdminPanel() {
           {/* Payouts Schedule Tab */}
           <TabsContent value="payouts">
             <AdminPayoutSchedule paymentRequests={paymentRequests} users={users} />
+          </TabsContent>
+
+          {/* Subscriptions Tab */}
+          <TabsContent value="subscriptions">
+            <AdminSubscriptions />
+          </TabsContent>
+
+          {/* Invoices Tab */}
+          <TabsContent value="invoices">
+            <AdminInvoices />
+          </TabsContent>
+
+          {/* Transactions Tab */}
+          <TabsContent value="transactions">
+            <AdminTransactionHistory />
           </TabsContent>
         </Tabs>
       </div>

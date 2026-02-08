@@ -6,11 +6,15 @@ import { motion } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { 
   Coins, Eye, TrendingUp, Users, Gift, Target, Trophy,
-  Zap, ArrowRight, Clock, Star, Crown, Loader2
+  Zap, ArrowRight, Clock, Star, Crown, Loader2, BarChart3, Globe
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ProgressCharts from '@/components/dashboard/ProgressCharts.jsx';
+import GeographicReachMap from '@/components/dashboard/GeographicReachMap.jsx';
+import PartnerTransactionsPanel from '@/components/partners/PartnerTransactionsPanel.jsx';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -314,6 +318,39 @@ export default function Dashboard() {
               )}
             </CardContent>
           </Card>
+        </motion.div>
+        {/* Analytics Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-8"
+        >
+          <Tabs defaultValue="charts" className="space-y-6">
+            <TabsList className="bg-[#1a1a2e] border border-purple-500/20 p-1">
+              <TabsTrigger value="charts" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+                <BarChart3 className="w-4 h-4 mr-2" /> Statystyki
+              </TabsTrigger>
+              <TabsTrigger value="map" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+                <Globe className="w-4 h-4 mr-2" /> Mapa zasięgu
+              </TabsTrigger>
+              <TabsTrigger value="partners" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+                <Users className="w-4 h-4 mr-2" /> Transakcje partnerskie
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="charts">
+              <ProgressCharts pointsHistory={pointsHistory} adViews={adViews} />
+            </TabsContent>
+
+            <TabsContent value="map">
+              <GeographicReachMap />
+            </TabsContent>
+
+            <TabsContent value="partners">
+              <PartnerTransactionsPanel userId={user?.id} />
+            </TabsContent>
+          </Tabs>
         </motion.div>
       </div>
     </div>
