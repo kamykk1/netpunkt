@@ -163,9 +163,9 @@ export default function AdvertiserCampaignForm({ isOpen, onClose, editingCampaig
                 <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                   {CAMPAIGN_TYPES.map(type => (
-                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                    <SelectItem key={type.value} value={type.value} className="text-white hover:bg-purple-500/20">{type.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -281,9 +281,9 @@ export default function AdvertiserCampaignForm({ isOpen, onClose, editingCampaig
                 <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                   {CATEGORIES.map(cat => (
-                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                    <SelectItem key={cat.value} value={cat.value} className="text-white hover:bg-purple-500/20">{cat.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
