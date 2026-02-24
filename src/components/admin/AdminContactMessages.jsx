@@ -116,10 +116,10 @@ export default function AdminContactMessages() {
               <SelectTrigger className="w-36 bg-slate-800 border-purple-500/30 text-white">
                 <SelectValue placeholder="Dział" />
               </SelectTrigger>
-              <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
-                <SelectItem value="all">Wszystkie działy</SelectItem>
+              <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
+                <SelectItem value="all" className="text-white">Wszystkie działy</SelectItem>
                 {Object.entries(DEPARTMENT_CONFIG).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>{config.label}</SelectItem>
+                  <SelectItem key={key} value={key} className="text-white">{config.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -127,10 +127,10 @@ export default function AdminContactMessages() {
               <SelectTrigger className="w-36 bg-slate-800 border-purple-500/30 text-white">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
-                <SelectItem value="all">Wszystkie</SelectItem>
+              <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
+                <SelectItem value="all" className="text-white">Wszystkie</SelectItem>
                 {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>{config.label}</SelectItem>
+                  <SelectItem key={key} value={key} className="text-white">{config.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -219,9 +219,9 @@ export default function AdminContactMessages() {
                     <SelectTrigger className="w-32 bg-slate-800 border-purple-500/30 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                       {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                        <SelectItem key={key} value={key}>{config.label}</SelectItem>
+                        <SelectItem key={key} value={key} className="text-white">{config.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
