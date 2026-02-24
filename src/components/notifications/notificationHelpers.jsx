@@ -1,3 +1,4 @@
+
 import { base44 } from '@/api/base44Client';
 
 /**
@@ -21,14 +22,7 @@ export async function sendNotification({ userId, userEmail, type, title, message
       to: userEmail,
       from_name: 'netpunkt.pl',
       subject: title,
-      body: `
-        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0f0f18;color:#fff;padding:24px;border-radius:12px;">
-          <h2 style="color:#8b5cf6;">${title}</h2>
-          <p style="color:#cbd5e1;">${message}</p>
-          <hr style="border-color:#8b5cf630;margin:16px 0;"/>
-          <p style="color:#64748b;font-size:12px;">Powiadomienie z platformy <strong>netpunkt.pl</strong></p>
-        </div>
-      `
+      body: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0f0f18;color:#fff;padding:24px;border-radius:12px;"><h2 style="color:#8b5cf6;">${title}</h2><p style="color:#cbd5e1;">${message}</p><hr style="border-color:#8b5cf630;margin:16px 0;"/><p style="color:#64748b;font-size:12px;">Powiadomienie z platformy <strong>netpunkt.pl</strong></p></div>`
     });
   }
 }
