@@ -41,6 +41,11 @@ export default function AdminRecruitment() {
   const [editingApp, setEditingApp] = useState(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [empTypeFilter, setEmpTypeFilter] = useState('all');
+  const [salaryMin, setSalaryMin] = useState('');
+  const [salaryMax, setSalaryMax] = useState('');
+  const [sortBy, setSortBy] = useState('created_date_desc');
 
   const { data: offers = [] } = useQuery({
     queryKey: ['jobOffers'],
@@ -87,11 +92,27 @@ export default function AdminRecruitment() {
 
   const offerApps = applications.filter(a => a.job_offer_id === activeOffer?.id);
 
-  const filteredApps = offerApps.filter(a => {
-    const matchStatus = statusFilter === 'all' || a.status === statusFilter;
-    const matchSearch = !search || [a.candidate_name, a.candidate_email, a.keywords, a.cv_text]
-      .some(f => f?.toLowerCase().includes(search.toLowerCase()));
-    return matchStatus && matchSearch;
+  const filteredApps = offerApps
+    .filter(a => {
+      const matchStatus = statusFilter === 'all' || a.status === statusFilter;
+      const matchSearch = !search || [a.candidate_name, a.candidate_email, a.keywords, a.cv_text]
+        .some(f => f?.toLowerCase().includes(search.toLowerCase()));
+      return matchStatus && matchSearch;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'created_date_desc') return new Date(b.created_date) - new Date(a.created_date);
+      if (sortBy === 'created_date_asc') return new Date(a.created_date) - new Date(b.created_date);
+      if (sortBy === 'rating_desc') return (b.rating || 0) - (a.rating || 0);
+      if (sortBy === 'status') return a.status.localeCompare(b.status);
+      return 0;
+    });
+
+  const filteredOffers = offers.filter(o => {
+    const matchLoc = !locationFilter || o.location?.toLowerCase().includes(locationFilter.toLowerCase());
+    const matchEmp = empTypeFilter === 'all' || o.employment_type === empTypeFilter;
+    const matchSalMin = !salaryMin || (o.salary_to >= parseInt(salaryMin));
+    const matchSalMax = !salaryMax || (o.salary_from <= parseInt(salaryMax));
+    return matchLoc && matchEmp && matchSalMin && matchSalMax;
   });
 
   const statusCounts = Object.keys(STATUS_CONFIG).reduce((acc, k) => {
