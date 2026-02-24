@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Plus, Eye, Users, Coins, TrendingUp, Loader2, 
   Pencil, Trash2, AlertTriangle, ArrowLeft, Gift, Settings, 
   Mail, ShoppingBag, Target, Zap, Shield, CreditCard, BarChart3,
-  Crown, FileText
+  Crown, FileText, Flag, Gamepad2
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ import AdminPayoutSchedule from '@/components/admin/AdminPayoutSchedule.jsx';
 import AdminSubscriptions from '@/components/admin/AdminSubscriptions.jsx';
 import AdminInvoices from '@/components/admin/AdminInvoices.jsx';
 import AdminTransactionHistory from '@/components/admin/AdminTransactionHistory.jsx';
+import AdminGameReports from '@/components/admin/AdminGameReports.jsx';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
@@ -298,6 +299,9 @@ export default function AdminPanel() {
             </TabsTrigger>
             <TabsTrigger value="transactions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <TrendingUp className="w-4 h-4 mr-2" /> Transakcje
+            </TabsTrigger>
+            <TabsTrigger value="game_reports" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Flag className="w-4 h-4 mr-2" /> Zgłoszenia Gier
             </TabsTrigger>
           </TabsList>
 
@@ -625,6 +629,20 @@ export default function AdminPanel() {
           {/* Transactions Tab */}
           <TabsContent value="transactions">
             <AdminTransactionHistory />
+          </TabsContent>
+
+          {/* Game Reports Tab */}
+          <TabsContent value="game_reports">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Flag className="w-5 h-5 text-red-400" /> Zgłoszenia z Gier
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdminGameReports />
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
