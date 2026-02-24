@@ -38,6 +38,7 @@ import AdminInvoices from '@/components/admin/AdminInvoices.jsx';
 import AdminTransactionHistory from '@/components/admin/AdminTransactionHistory.jsx';
 import AdminGameReports from '@/components/admin/AdminGameReports.jsx';
 import AdminRecruitment from '@/components/admin/AdminRecruitment.jsx';
+import AdminUsersList from '@/components/admin/AdminUsersList.jsx';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
