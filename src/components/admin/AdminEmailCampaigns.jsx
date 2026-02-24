@@ -260,7 +260,7 @@ export default function AdminEmailCampaigns() {
 
       {/* Form Modal */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="sm:max-w-lg bg-[#1a1a2e] border-purple-500/30">
+        <DialogContent className="sm:max-w-lg bg-[#1a1a2e] border-purple-500/30 text-white">
           <DialogHeader>
             <DialogTitle className="text-white">
               {editingCampaign ? 'Edytuj kampanię' : 'Nowa kampania email'}

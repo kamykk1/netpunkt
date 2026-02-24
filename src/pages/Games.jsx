@@ -420,9 +420,9 @@ export default function Games() {
                 <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                   {Object.entries(GAME_TYPES).map(([k, g]) => (
-                    <SelectItem key={k} value={k}>{g.name}</SelectItem>
+                    <SelectItem key={k} value={k} className="text-white">{g.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
