@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Brain, Loader2, TrendingUp, TrendingDown, AlertTriangle,
   CheckCircle, XCircle, Eye, MousePointer, Clock, Sparkles,
-  BarChart3, PieChart, Activity
+  BarChart3, PieChart, Activity, Shield
 } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 

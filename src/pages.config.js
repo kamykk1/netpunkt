@@ -63,6 +63,7 @@ import Ranking from './pages/Ranking';
 import Referrals from './pages/Referrals';
 import Shop from './pages/Shop';
 import AdvertiserRegister from './pages/AdvertiserRegister';
+import AdvertiserSubscriptions from './pages/AdvertiserSubscriptions';
 import __Layout from './Layout.jsx';
 
 
@@ -83,6 +84,7 @@ export const PAGES = {
     "Referrals": Referrals,
     "Shop": Shop,
     "AdvertiserRegister": AdvertiserRegister,
+    "AdvertiserSubscriptions": AdvertiserSubscriptions,
 }
 
 export const pagesConfig = {
