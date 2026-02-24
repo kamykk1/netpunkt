@@ -189,7 +189,7 @@ export default function AdvertiserBilling({ user }) {
                 <Button
                   key={amount}
                   variant="outline"
-                  className={`border-purple-500/30 ${topUpAmount === amount.toString() ? 'bg-purple-500/20 border-purple-500' : ''} text-white`}
+                  className={`border-purple-500/30 text-white ${topUpAmount === amount.toString() ? 'bg-purple-500/20 border-purple-500' : 'bg-transparent'}`}
                   onClick={() => setTopUpAmount(amount.toString())}
                 >
                   {amount} zł

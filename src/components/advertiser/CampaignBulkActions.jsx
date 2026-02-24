@@ -112,19 +112,19 @@ export default function CampaignBulkActions({ campaigns, onEdit }) {
                 onClick={() => handleBulkStatus('active')} disabled={bulkUpdateMutation.isPending}>
                 <Play className="w-3 h-3 mr-1" /> Wznów
               </Button>
-              <Button size="sm" variant="outline" className="border-amber-500/30 text-amber-400"
+              <Button size="sm" variant="outline" className="border-amber-500/30 text-amber-400 bg-transparent"
                 onClick={() => handleBulkStatus('paused')} disabled={bulkUpdateMutation.isPending}>
                 <Pause className="w-3 h-3 mr-1" /> Wstrzymaj
               </Button>
-              <Button size="sm" variant="outline" className="border-cyan-500/30 text-cyan-400"
+              <Button size="sm" variant="outline" className="border-cyan-500/30 text-cyan-400 bg-transparent"
                 onClick={() => setShowBudgetModal(true)}>
                 <DollarSign className="w-3 h-3 mr-1" /> Zmień budżet
               </Button>
-              <Button size="sm" variant="outline" className="border-red-500/30 text-red-400"
+              <Button size="sm" variant="outline" className="border-red-500/30 text-red-400 bg-transparent"
                 onClick={() => deleteMutation.mutate(selected)} disabled={deleteMutation.isPending}>
                 <Trash2 className="w-3 h-3 mr-1" /> Usuń
               </Button>
-              <Button size="sm" variant="ghost" className="text-slate-400" onClick={clearSelection}>
+              <Button size="sm" variant="ghost" className="text-slate-400 bg-transparent" onClick={clearSelection}>
                 <X className="w-3 h-3 mr-1" /> Anuluj
               </Button>
             </div>
@@ -222,35 +222,35 @@ export default function CampaignBulkActions({ campaigns, onEdit }) {
 
                   <div className="flex gap-2 flex-wrap">
                     {campaign.status === 'active' && (
-                      <Button size="sm" variant="outline" className="border-amber-500/30 text-amber-400"
+                      <Button size="sm" variant="outline" className="border-amber-500/30 text-amber-400 bg-transparent"
                         onClick={() => bulkUpdateMutation.mutate({ ids: [campaign.id], data: { status: 'paused' } })}>
                         <Pause className="w-3 h-3 mr-1" /> Wstrzymaj
                       </Button>
                     )}
                     {campaign.status === 'paused' && (
-                      <Button size="sm" className="bg-emerald-600"
+                      <Button size="sm" className="bg-emerald-600 text-white"
                         onClick={() => bulkUpdateMutation.mutate({ ids: [campaign.id], data: { status: 'active' } })}>
                         <Play className="w-3 h-3 mr-1" /> Wznów
                       </Button>
                     )}
                     {['draft', 'rejected'].includes(campaign.status) && (
-                      <Button size="sm" variant="outline" className="border-purple-500/30 text-purple-400"
+                      <Button size="sm" variant="outline" className="border-purple-500/30 text-purple-400 bg-transparent"
                         onClick={() => onEdit(campaign)}>
                         <Pencil className="w-3 h-3 mr-1" /> Edytuj
                       </Button>
                     )}
                     {campaign.status === 'draft' && (
-                      <Button size="sm" className="bg-purple-600"
+                      <Button size="sm" className="bg-purple-600 text-white"
                         onClick={() => bulkUpdateMutation.mutate({ ids: [campaign.id], data: { status: 'pending_review' } })}>
                         Wyślij do akceptacji
                       </Button>
                     )}
-                    <Button size="sm" variant="outline" className="border-cyan-500/30 text-cyan-400"
+                    <Button size="sm" variant="outline" className="border-cyan-500/30 text-cyan-400 bg-transparent"
                       onClick={() => copyMutation.mutate(campaign)} disabled={copyMutation.isPending}>
                       <Copy className="w-3 h-3 mr-1" /> Kopiuj
                     </Button>
                     {['draft', 'rejected'].includes(campaign.status) && (
-                      <Button size="sm" variant="outline" className="border-red-500/30 text-red-400"
+                      <Button size="sm" variant="outline" className="border-red-500/30 text-red-400 bg-transparent"
                         onClick={() => deleteMutation.mutate([campaign.id])}>
                         <Trash2 className="w-3 h-3" />
                       </Button>
@@ -281,7 +281,7 @@ export default function CampaignBulkActions({ campaigns, onEdit }) {
               />
             </div>
             <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setShowBudgetModal(false)} className="flex-1">Anuluj</Button>
+              <Button variant="outline" onClick={() => setShowBudgetModal(false)} className="flex-1 text-white border-slate-600 bg-transparent">Anuluj</Button>
               <Button onClick={handleBulkBudget} className="flex-1 bg-purple-600">Zastosuj</Button>
             </div>
           </div>

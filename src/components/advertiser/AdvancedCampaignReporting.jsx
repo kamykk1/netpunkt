@@ -184,11 +184,11 @@ export default function AdvancedCampaignReporting({ campaigns = [] }) {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" className="border-emerald-500/30 text-emerald-400" onClick={exportCSV}>
+              <Button variant="outline" className="border-emerald-500/30 text-emerald-400 bg-transparent" onClick={exportCSV}>
                 <Download className="w-4 h-4 mr-2" />
                 CSV
               </Button>
-              <Button variant="outline" className="border-cyan-500/30 text-cyan-400" onClick={exportPDF}>
+              <Button variant="outline" className="border-cyan-500/30 text-cyan-400 bg-transparent" onClick={exportPDF}>
                 <FileText className="w-4 h-4 mr-2" />
                 PDF
               </Button>
