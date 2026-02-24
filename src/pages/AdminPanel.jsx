@@ -582,19 +582,6 @@ export default function AdminPanel() {
             </Card>
           </TabsContent>
 
-          {/* Game Reports Tab */}
-          <TabsContent value="game_reports">
-            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Flag className="w-5 h-5 text-red-400" /> Zgłoszenia z Gier
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AdminGameReports />
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </div>
 
