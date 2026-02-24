@@ -249,12 +249,7 @@ export default function Layout({ children, currentPageName }) {
       <footer className="bg-[#0f0f18] border-t border-purple-500/20 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-white">netpunkt.pl</span>
-            </div>
+            <span className="logo-text text-xl">netpunkt.pl</span>
             <p className="text-sm text-slate-500">© 2025 netpunkt.pl. Wszelkie prawa zastrzeżone.</p>
           </div>
         </div>
