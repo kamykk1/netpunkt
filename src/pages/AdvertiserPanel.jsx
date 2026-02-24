@@ -375,6 +375,18 @@ export default function AdvertiserPanel() {
             <div className="space-y-6">
               <AdvertiserBilling user={user} />
               <ExchangeRatesTable />
+              <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl flex items-center justify-between">
+                <div>
+                  <p className="text-white font-medium">Zarządzaj subskrypcją i fakturami</p>
+                  <p className="text-slate-400 text-sm">Zmień plan, pobierz faktury, zarządzaj kartą płatniczą</p>
+                </div>
+                <Link to={createPageUrl('AdvertiserSubscriptions')}>
+                  <Button className="bg-purple-600 shrink-0">
+                    <CreditCard className="w-4 h-4 mr-2" />
+                    Subskrypcje
+                  </Button>
+                </Link>
+              </div>
             </div>
           </TabsContent>
 
