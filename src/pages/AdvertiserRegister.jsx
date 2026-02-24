@@ -403,16 +403,6 @@ export default function AdvertiserRegister() {
                           placeholder="Kowalski" className="bg-slate-800 border-purple-500/30 text-white" />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-slate-300">PESEL</Label>
-                        <Input value={formData.pesel} onChange={e => set('pesel', e.target.value)}
-                          placeholder="12345678901" className="bg-slate-800 border-purple-500/30 text-white" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-slate-300">Nr dowodu osobistego</Label>
-                        <Input value={formData.id_number} onChange={e => set('id_number', e.target.value)}
-                          placeholder="ABC123456" className="bg-slate-800 border-purple-500/30 text-white" />
-                      </div>
-                      <div className="space-y-2">
                         <Label className="text-slate-300">Data urodzenia</Label>
                         <Input type="date" value={formData.birth_date} onChange={e => set('birth_date', e.target.value)}
                           className="bg-slate-800 border-purple-500/30 text-white" />
@@ -449,7 +439,7 @@ export default function AdvertiserRegister() {
                       placeholder="https://twojafirma.pl" className="bg-slate-800 border-purple-500/30 text-white" />
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <Label className="text-slate-300">E-mail do faktur</Label>
+                    <Label className="text-slate-300">Adres e-mail</Label>
                     <Input value={formData.billing_email} onChange={e => set('billing_email', e.target.value)}
                       placeholder={user?.email} className="bg-slate-800 border-purple-500/30 text-white" />
                   </div>

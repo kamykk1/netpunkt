@@ -50,6 +50,8 @@
 import AdViewer from './pages/AdViewer';
 import AdminPanel from './pages/AdminPanel';
 import AdvertiserPanel from './pages/AdvertiserPanel';
+import AdvertiserRegister from './pages/AdvertiserRegister';
+import AdvertiserSubscriptions from './pages/AdvertiserSubscriptions';
 import BattlePass from './pages/BattlePass';
 import Cashback from './pages/Cashback';
 import Contact from './pages/Contact';
@@ -62,8 +64,6 @@ import PointsHistory from './pages/PointsHistory';
 import Ranking from './pages/Ranking';
 import Referrals from './pages/Referrals';
 import Shop from './pages/Shop';
-import AdvertiserRegister from './pages/AdvertiserRegister';
-import AdvertiserSubscriptions from './pages/AdvertiserSubscriptions';
 import __Layout from './Layout.jsx';
 
 
@@ -71,6 +71,8 @@ export const PAGES = {
     "AdViewer": AdViewer,
     "AdminPanel": AdminPanel,
     "AdvertiserPanel": AdvertiserPanel,
+    "AdvertiserRegister": AdvertiserRegister,
+    "AdvertiserSubscriptions": AdvertiserSubscriptions,
     "BattlePass": BattlePass,
     "Cashback": Cashback,
     "Contact": Contact,
@@ -83,8 +85,6 @@ export const PAGES = {
     "Ranking": Ranking,
     "Referrals": Referrals,
     "Shop": Shop,
-    "AdvertiserRegister": AdvertiserRegister,
-    "AdvertiserSubscriptions": AdvertiserSubscriptions,
 }
 
 export const pagesConfig = {
