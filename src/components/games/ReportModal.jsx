@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Flag, Loader2 } from 'lucide-react';
+import { notifyAdmins } from '@/components/notifications/notificationHelpers.js';
 
 const REASONS = ['Oszustwo / cheating', 'Wulgarne wiadomości', 'Spam', 'Groźby', 'Inne'];
 
@@ -17,7 +18,7 @@ export default function ReportModal({ open, onClose, currentUser, reportedUser, 
   const handleSubmit = async () => {
     if (!reason) { toast.error('Wybierz powód zgłoszenia'); return; }
     setSending(true);
-    await base44.entities.GameReport.create({
+    const report = await base44.entities.GameReport.create({
       reporter_id: currentUser.id,
       reporter_email: currentUser.email,
       reported_user_id: reportedUser.id,
@@ -26,6 +27,14 @@ export default function ReportModal({ open, onClose, currentUser, reportedUser, 
       game_type: gameType,
       reason,
       description
+    });
+
+    await notifyAdmins({
+      type: 'system',
+      title: `Nowe zgłoszenie z gry: ${gameType}`,
+      message: `Użytkownik ${currentUser.email} zgłosił gracza ${reportedUser.display_name || reportedUser.email}. Powód: ${reason}`,
+      referenceId: report.id,
+      referenceType: 'other'
     });
     toast.success('Zgłoszenie wysłane do administracji');
     setSending(false);
