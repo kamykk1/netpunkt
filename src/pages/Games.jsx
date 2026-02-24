@@ -224,8 +224,18 @@ export default function Games() {
               <CardContent>
                 <Loader2 className="w-12 h-12 animate-spin text-purple-500 mx-auto mb-4" />
                 <h2 className="text-white text-xl font-semibold mb-2">Oczekiwanie na gracza...</h2>
-                <p className="text-slate-400 mb-4">Pokaż ten link znajomemu lub poczekaj na kogoś z lobby</p>
-                <Badge className="bg-slate-700 text-slate-300">ID Pokoju: {activeRoom.id?.slice(0,8)}</Badge>
+                <p className="text-slate-400 mb-4">Zaproś znajomego przez prywatny link lub poczekaj na kogoś z lobby</p>
+                <div className="flex items-center gap-2 justify-center flex-wrap">
+                  <Badge className="bg-slate-700 text-slate-300">ID Pokoju: {activeRoom.id?.slice(0,8)}</Badge>
+                  <Button size="sm" variant="outline" className="border-purple-500/40 text-purple-300 bg-transparent"
+                    onClick={() => {
+                      const url = `${window.location.origin}${window.location.pathname}?join_room=${activeRoom.id}`;
+                      navigator.clipboard.writeText(url);
+                      toast.success('Link skopiowany! Wyślij go znajomemu.');
+                    }}>
+                    <Copy className="w-3.5 h-3.5 mr-1" /> Kopiuj link
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ) : (
