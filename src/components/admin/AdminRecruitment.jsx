@@ -132,14 +132,32 @@ export default function AdminRecruitment() {
         </Button>
       </div>
 
+      {/* Offer filters */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-3 bg-slate-800/30 rounded-xl border border-slate-700/50">
+        <Input value={locationFilter} onChange={e => setLocationFilter(e.target.value)} placeholder="Filtruj lokalizację..."
+          className="bg-slate-800 border-purple-500/30 text-white h-8 text-xs" />
+        <Select value={empTypeFilter} onValueChange={setEmpTypeFilter}>
+          <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-8 text-xs"><SelectValue placeholder="Typ zatrudnienia" /></SelectTrigger>
+          <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+            <SelectItem value="all">Wszystkie typy</SelectItem>
+            {Object.entries(EMP_TYPES).map(([k,v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Input type="number" value={salaryMin} onChange={e => setSalaryMin(e.target.value)} placeholder="Min. wynagrodzenie"
+          className="bg-slate-800 border-purple-500/30 text-white h-8 text-xs" />
+        <Input type="number" value={salaryMax} onChange={e => setSalaryMax(e.target.value)} placeholder="Max. wynagrodzenie"
+          className="bg-slate-800 border-purple-500/30 text-white h-8 text-xs" />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Offers list */}
         <div className="space-y-2">
-          <h4 className="text-slate-400 text-sm font-medium uppercase tracking-wide mb-3">Oferty pracy</h4>
-          {offers.length === 0 && (
-            <div className="text-center py-8 text-slate-500 text-sm">Brak ofert pracy</div>
+          <h4 className="text-slate-400 text-sm font-medium uppercase tracking-wide mb-3">Oferty pracy ({filteredOffers.length})</h4>
+          {filteredOffers.length === 0 && (
+            <div className="text-center py-8 text-slate-500 text-sm">Brak ofert spełniających filtry</div>
           )}
-          {offers.map(offer => {
+          {filteredOffers.map(offer => {
+            const appCount = applications.filter(a => a.job_offer_id === offer.id).length;
             const appCount = applications.filter(a => a.job_offer_id === offer.id).length;
             return (
               <div key={offer.id}
