@@ -548,11 +548,6 @@ export default function AdminPanel() {
             <AdminPartnerPrograms />
           </TabsContent>
 
-          {/* Contact Messages Tab */}
-          <TabsContent value="messages">
-            <AdminContactMessages />
-          </TabsContent>
-
           {/* Payouts Schedule Tab */}
           <TabsContent value="payouts">
             <AdminPayoutSchedule paymentRequests={paymentRequests} users={users} />
