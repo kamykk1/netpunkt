@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import { 
   TrendingUp, Plus, Eye, Coins, CreditCard, BarChart3, Target,
   Loader2, Pencil, Pause, Play, Trash2, FileText, AlertTriangle,
@@ -28,11 +29,14 @@ import MarketingIntegrations from '@/components/advertiser/MarketingIntegrations
 import TrackingPixelsManager from '@/components/advertiser/TrackingPixelsManager.jsx';
 import AdvancedCampaignReporting from '@/components/advertiser/AdvancedCampaignReporting.jsx';
 import NotificationSettingsPanel from '@/components/notifications/NotificationSettingsPanel.jsx';
+import CampaignBulkActions from '@/components/advertiser/CampaignBulkActions.jsx';
+import { ExchangeRatesTable, CurrencySelector, formatCurrency } from '@/components/advertiser/CurrencySelector.jsx';
 
 export default function AdvertiserPanel() {
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [creativeData, setCreativeData] = useState(null);
+  const [currency, setCurrency] = useState('PLN');
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
@@ -90,20 +94,15 @@ export default function AdvertiserPanel() {
   if (!user?.is_advertiser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
-        <div className="text-center">
+        <div className="text-center max-w-sm px-4">
           <TrendingUp className="w-16 h-16 mx-auto text-purple-500 mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Panel Reklamodawcy</h2>
-          <p className="text-slate-400 mb-6">Aby uzyskać dostęp, aktywuj konto reklamodawcy</p>
-          <Button
-            onClick={async () => {
-              await base44.auth.updateMe({ is_advertiser: true });
-              queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-              toast.success('Konto reklamodawcy aktywowane!');
-            }}
-            className="bg-gradient-to-r from-purple-600 to-cyan-600"
-          >
-            Aktywuj konto reklamodawcy
-          </Button>
+          <p className="text-slate-400 mb-6">Załóż konto reklamodawcy i dotrzyj do tysięcy użytkowników!</p>
+          <Link to={createPageUrl('AdvertiserRegister')}>
+            <Button className="w-full bg-gradient-to-r from-purple-600 to-cyan-600 mb-3">
+              Zarejestruj konto reklamodawcy
+            </Button>
+          </Link>
         </div>
       </div>
     );
@@ -122,10 +121,11 @@ export default function AdvertiserPanel() {
             <h1 className="text-3xl font-bold text-white">Panel Reklamodawcy</h1>
             <p className="text-slate-400 mt-1">Zarządzaj kampaniami reklamowymi</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            <CurrencySelector value={currency} onChange={setCurrency} />
             <div className="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 rounded-full border border-purple-500/30">
               <span className="text-slate-400 text-sm">Saldo: </span>
-              <span className="text-white font-bold">{((user?.advertiser_balance || 0) / 100).toFixed(2)} zł</span>
+              <span className="text-white font-bold">{formatCurrency(user?.advertiser_balance || 0, currency)}</span>
             </div>
             <Button
               onClick={() => { setEditingCampaign(null); setShowCampaignForm(true); }}
@@ -245,123 +245,10 @@ export default function AdvertiserPanel() {
                     <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
                   </div>
                 ) : campaigns.length > 0 ? (
-                  <div className="space-y-4">
-                    {campaigns.map((campaign) => {
-                      const config = statusConfig[campaign.status] || statusConfig.draft;
-                      const Icon = config.icon;
-                      const progress = campaign.target_views 
-                        ? (campaign.current_views / campaign.target_views) * 100 
-                        : 0;
-                      
-                      return (
-                        <motion.div
-                          key={campaign.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="p-4 rounded-xl bg-slate-800/50 border border-purple-500/20"
-                        >
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h3 className="text-white font-semibold">{campaign.name}</h3>
-                              <p className="text-slate-400 text-sm">{campaign.title}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge className={config.color}>
-                                <Icon className="w-3 h-3 mr-1" />
-                                {config.label}
-                              </Badge>
-                              <Badge variant="outline" className="border-purple-500/30 text-purple-400">
-                                {campaign.campaign_type?.toUpperCase()}
-                              </Badge>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-4 gap-4 mb-3 text-sm">
-                            <div>
-                              <p className="text-slate-500">Budżet</p>
-                              <p className="text-white">{(campaign.budget_total / 100).toFixed(2)} zł</p>
-                            </div>
-                            <div>
-                              <p className="text-slate-500">Wydano</p>
-                              <p className="text-emerald-400">{(campaign.budget_spent / 100).toFixed(2)} zł</p>
-                            </div>
-                            <div>
-                              <p className="text-slate-500">Wyświetlenia</p>
-                              <p className="text-white">{campaign.current_views || 0} / {campaign.target_views || '∞'}</p>
-                            </div>
-                            <div>
-                              <p className="text-slate-500">Koszt/akcję</p>
-                              <p className="text-white">{(campaign.cost_per_action / 100).toFixed(2)} zł</p>
-                            </div>
-                          </div>
-
-                          {campaign.target_views && (
-                            <Progress value={progress} className="h-2 bg-slate-700 mb-3" />
-                          )}
-
-                          {campaign.status === 'rejected' && campaign.rejection_reason && (
-                            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 mb-3">
-                              <p className="text-red-400 text-sm">
-                                <AlertTriangle className="w-4 h-4 inline mr-1" />
-                                Powód odrzucenia: {campaign.rejection_reason}
-                              </p>
-                            </div>
-                          )}
-
-                          <div className="flex gap-2">
-                            {campaign.status === 'active' && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-amber-500/30 text-amber-400"
-                                onClick={() => updateCampaignMutation.mutate({ id: campaign.id, data: { status: 'paused' } })}
-                              >
-                                <Pause className="w-4 h-4 mr-1" /> Wstrzymaj
-                              </Button>
-                            )}
-                            {campaign.status === 'paused' && (
-                              <Button
-                                size="sm"
-                                className="bg-emerald-600"
-                                onClick={() => updateCampaignMutation.mutate({ id: campaign.id, data: { status: 'active' } })}
-                              >
-                                <Play className="w-4 h-4 mr-1" /> Wznów
-                              </Button>
-                            )}
-                            {['draft', 'rejected'].includes(campaign.status) && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-purple-500/30 text-purple-400"
-                                onClick={() => { setEditingCampaign(campaign); setShowCampaignForm(true); }}
-                              >
-                                <Pencil className="w-4 h-4 mr-1" /> Edytuj
-                              </Button>
-                            )}
-                            {campaign.status === 'draft' && (
-                              <Button
-                                size="sm"
-                                className="bg-purple-600"
-                                onClick={() => updateCampaignMutation.mutate({ id: campaign.id, data: { status: 'pending_review' } })}
-                              >
-                                Wyślij do akceptacji
-                              </Button>
-                            )}
-                            {['draft', 'rejected'].includes(campaign.status) && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-red-500/30 text-red-400"
-                                onClick={() => deleteCampaignMutation.mutate(campaign.id)}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
+                  <CampaignBulkActions 
+                    campaigns={campaigns}
+                    onEdit={(campaign) => { setEditingCampaign(campaign); setShowCampaignForm(true); }}
+                  />
                 ) : (
                   <div className="text-center py-8 text-slate-400">
                     <Target className="w-12 h-12 mx-auto mb-3 opacity-50" />
@@ -485,7 +372,10 @@ export default function AdvertiserPanel() {
 
           {/* Billing Tab */}
           <TabsContent value="billing">
-            <AdvertiserBilling user={user} />
+            <div className="space-y-6">
+              <AdvertiserBilling user={user} />
+              <ExchangeRatesTable />
+            </div>
           </TabsContent>
 
           {/* Fraud Tab */}
