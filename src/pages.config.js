@@ -64,6 +64,7 @@ import PointsHistory from './pages/PointsHistory';
 import Ranking from './pages/Ranking';
 import Referrals from './pages/Referrals';
 import Shop from './pages/Shop';
+import Games from './pages/Games';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +86,7 @@ export const PAGES = {
     "Ranking": Ranking,
     "Referrals": Referrals,
     "Shop": Shop,
+    "Games": Games,
 }
 
 export const pagesConfig = {
