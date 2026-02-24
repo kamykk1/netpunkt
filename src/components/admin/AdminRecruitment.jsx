@@ -199,9 +199,30 @@ export default function AdminRecruitment() {
             <div className="space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h4 className="text-white font-medium">{activeOffer.title}</h4>
-                <Button size="sm" onClick={() => setAppForm({ ...EMPTY_APP })} className="bg-emerald-600 hover:bg-emerald-700">
-                  <Plus className="w-3 h-3 mr-1" /> Dodaj kandydata
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-7 text-xs w-40"><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                      <SelectItem value="created_date_desc">Najnowsze</SelectItem>
+                      <SelectItem value="created_date_asc">Najstarsze</SelectItem>
+                      <SelectItem value="rating_desc">Najlepsza ocena</SelectItem>
+                      <SelectItem value="status">Wg statusu</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button size="sm" onClick={() => setAppForm({ ...EMPTY_APP })} className="bg-emerald-600 hover:bg-emerald-700">
+                    <Plus className="w-3 h-3 mr-1" /> Dodaj
+                  </Button>
+                </div>
+              </div>
+
+              {/* Progress widget */}
+              <div className="grid grid-cols-3 gap-1.5">
+                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
+                  <div key={k} className={`px-2 py-1.5 rounded-lg border text-center ${v.color} border-current/20`} style={{borderColor:'currentColor',opacity:0.9}}>
+                    <p className="font-bold text-sm">{statusCounts[k] || 0}</p>
+                    <p className="text-xs opacity-80 leading-tight">{v.label}</p>
+                  </div>
+                ))}
               </div>
 
               {/* Status pipeline */}
