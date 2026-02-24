@@ -32,16 +32,39 @@ export default function GameChat({ roomId, currentUser, opponent, chatEnabled, o
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!text.trim() || !chatEnabled || currentUser?.chat_blocked) return;
-    setSending(true);
+  const moderateAndSend = async (raw) => {
+    // AI moderation
+    let moderated = raw;
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Jesteś moderatorem czatu gry. Sprawdź tę wiadomość po polsku lub angielsku.
+Jeśli zawiera wulgaryzmy, groźby lub mowę nienawiści - zastąp obraźliwe słowa gwiazdkami (***).
+Jeśli wiadomość jest normalna - zwróć ją bez zmian.
+Wiadomość: "${raw}"`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            message: { type: "string" },
+            was_moderated: { type: "boolean" }
+          }
+        }
+      });
+      moderated = result.message || raw;
+      if (result.was_moderated) toast.warning('Twoja wiadomość została ocenzurowana przez moderatora AI.');
+    } catch {}
     await base44.entities.GameChat.create({
       room_id: roomId,
       sender_id: currentUser.id,
       sender_email: currentUser.email,
       sender_name: currentUser.display_name || currentUser.full_name,
-      message: text.trim()
+      message: moderated
     });
+  };
+
+  const sendMessage = async () => {
+    if (!text.trim() || !chatEnabled || currentUser?.chat_blocked) return;
+    setSending(true);
+    await moderateAndSend(text.trim());
     setText('');
     setSending(false);
   };
