@@ -34,6 +34,13 @@ const DEFAULT_SETTINGS = {
   crypto_enabled: 'false',
   advertiser_fraud_dashboard: 'true',
   payout_schedule: 'weekly',
+  games_enabled: 'true',
+  games_chat_enabled: 'true',
+  quiz_enabled: 'true',
+  memory_enabled: 'true',
+  minesweeper_enabled: 'true',
+  snake_enabled: 'true',
+  scratch_enabled: 'true',
 };
 
 export default function AdminSettingsForm({ settings }) {
