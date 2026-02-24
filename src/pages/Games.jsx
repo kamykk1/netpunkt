@@ -434,6 +434,17 @@ export default function Games() {
                 className="bg-slate-800 border-purple-500/30 text-white" placeholder="0 = bez stawki" />
               <p className="text-slate-500 text-xs">Twoje saldo: {(user?.points_balance || 0).toLocaleString()} pkt</p>
             </div>
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+              <Lock className="w-4 h-4 text-slate-400" />
+              <div className="flex-1">
+                <p className="text-white text-sm">Prywatny pokój</p>
+                <p className="text-slate-500 text-xs">Tylko osoby z linkiem mogą dołączyć</p>
+              </div>
+              <button onClick={() => setNewGame(p => ({ ...p, is_private: !p.is_private }))}
+                className={`w-10 h-5 rounded-full transition-colors relative ${newGame.is_private ? 'bg-purple-600' : 'bg-slate-600'}`}>
+                <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${newGame.is_private ? 'translate-x-5' : 'translate-x-0.5'}`} />
+              </button>
+            </div>
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => setShowCreate(false)} className="flex-1 border-slate-600 text-slate-300 bg-transparent">Anuluj</Button>
               <Button onClick={() => createMutation.mutate()} disabled={createMutation.isPending}
