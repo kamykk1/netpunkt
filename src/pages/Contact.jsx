@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { notifyAdmins } from '@/components/notifications/notificationHelpers.js';
+import { notifyAdmins } from '@/components/notifications/notificationHelpers.jsx';
 
 const DEPARTMENTS = [
   { value: 'advertising', label: 'Reklama', icon: Megaphone, email: 'reklama@netpunkt.pl', description: 'Pytania o kampanie reklamowe' },

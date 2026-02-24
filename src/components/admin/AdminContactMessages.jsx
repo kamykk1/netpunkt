@@ -12,7 +12,7 @@ import {
   MessageSquare, Mail, AlertTriangle, ShoppingBag, Megaphone,
   Loader2, Reply, CheckCircle, Clock, Eye
 } from 'lucide-react';
-import { sendNotification } from '@/components/notifications/notificationHelpers.js';
+import { sendNotification } from '@/components/notifications/notificationHelpers.jsx';
 
 const DEPARTMENT_CONFIG = {
   advertising: { icon: Megaphone, color: 'text-purple-400', label: 'Reklama' },

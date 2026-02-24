@@ -31,7 +31,7 @@ import AdvancedCampaignReporting from '@/components/advertiser/AdvancedCampaignR
 import NotificationSettingsPanel from '@/components/notifications/NotificationSettingsPanel.jsx';
 import CampaignBulkActions from '@/components/advertiser/CampaignBulkActions.jsx';
 import { ExchangeRatesTable, CurrencySelector, formatCurrency } from '@/components/advertiser/CurrencySelector.jsx';
-import { sendNotification } from '@/components/notifications/notificationHelpers.js';
+import { sendNotification } from '@/components/notifications/notificationHelpers.jsx';
 
 export default function AdvertiserPanel() {
   const [showCampaignForm, setShowCampaignForm] = useState(false);

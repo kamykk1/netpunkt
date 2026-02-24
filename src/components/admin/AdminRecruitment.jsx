@@ -16,7 +16,7 @@ import {
   Briefcase, Plus, Search, Star, User, FileText, Pencil, 
   Trash2, ChevronDown, Phone, Mail, Calendar, X
 } from 'lucide-react';
-import { notifyAdmins } from '@/components/notifications/notificationHelpers.js';
+import { notifyAdmins } from '@/components/notifications/notificationHelpers.jsx';
 
 const STATUS_CONFIG = {
   cv_received:  { label: 'CV przesłano',   color: 'bg-slate-500/20 text-slate-300' },
