@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { notifyAdmins } from '@/components/notifications/notificationHelpers.js';
 
 const DEPARTMENTS = [
   { value: 'advertising', label: 'Reklama', icon: Megaphone, email: 'reklama@netpunkt.pl', description: 'Pytania o kampanie reklamowe' },
@@ -61,7 +62,7 @@ Odpowiedz krótko i pomocnie po polsku. Jeśli nie możesz pomóc, zasugeruj kon
       }
 
       // Zapisz wiadomość do bazy
-      await base44.entities.ContactMessage.create({
+      const saved = await base44.entities.ContactMessage.create({
         user_id: user?.id,
         user_email: user?.email || data.email,
         user_name: user?.full_name || data.name,
@@ -70,6 +71,15 @@ Odpowiedz krótko i pomocnie po polsku. Jeśli nie możesz pomóc, zasugeruj kon
         message: data.message,
         status: 'new',
         ai_response: aiResponse || null
+      });
+
+      // Powiadom adminów
+      await notifyAdmins({
+        type: 'message_received',
+        title: `Nowa wiadomość: ${data.subject}`,
+        message: `Dział: ${DEPARTMENTS.find(d=>d.value===data.department)?.label} · Od: ${user?.email || data.email}`,
+        referenceId: saved.id,
+        referenceType: 'message'
       });
 
       // Wyślij email do odpowiedniego działu
