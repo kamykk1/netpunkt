@@ -103,9 +103,9 @@ export default function Dashboard() {
           className="mb-8"
         >
           <h1 className="text-3xl font-bold text-white">
-            Witaj, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
+            Witaj,{' '}<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">
               {user?.full_name?.split(' ')[0] || 'Użytkowniku'}
-            </span>!
+            </span>
           </h1>
           <p className="text-slate-400 mt-1">Zarabiaj punkty oglądając reklamy</p>
         </motion.div>

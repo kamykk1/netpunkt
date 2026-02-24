@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Shield, Menu, X, Coins, ShoppingBag, 
   Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
-  Gift, Star, Crown, Gamepad2
+  Gift, Star, Crown, Gamepad2, Bolt
 } from 'lucide-react';
 import UserAvatar from '@/components/profile/UserAvatar.jsx';
 import AvatarPicker from '@/components/profile/AvatarPicker.jsx';

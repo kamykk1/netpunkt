@@ -57,6 +57,7 @@ import Cashback from './pages/Cashback';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import EarnAds from './pages/EarnAds';
+import Games from './pages/Games';
 import Missions from './pages/Missions';
 import Partners from './pages/Partners';
 import Payments from './pages/Payments';
@@ -64,7 +65,6 @@ import PointsHistory from './pages/PointsHistory';
 import Ranking from './pages/Ranking';
 import Referrals from './pages/Referrals';
 import Shop from './pages/Shop';
-import Games from './pages/Games';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +79,7 @@ export const PAGES = {
     "Contact": Contact,
     "Dashboard": Dashboard,
     "EarnAds": EarnAds,
+    "Games": Games,
     "Missions": Missions,
     "Partners": Partners,
     "Payments": Payments,
@@ -86,7 +87,6 @@ export const PAGES = {
     "Ranking": Ranking,
     "Referrals": Referrals,
     "Shop": Shop,
-    "Games": Games,
 }
 
 export const pagesConfig = {

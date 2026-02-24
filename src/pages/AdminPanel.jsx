@@ -193,7 +193,7 @@ export default function AdminPanel() {
             <p className="text-slate-400 mt-1">Zarządzaj platformą netpunkt.pl</p>
           </div>
           <Link to={createPageUrl('Dashboard')}>
-            <Button variant="outline" className="border-purple-500/30 text-white hover:bg-purple-500/10">
+            <Button variant="outline" className="border-purple-500/30 text-slate-300 hover:bg-purple-500/10 hover:text-white bg-transparent">
               <LayoutDashboard className="w-4 h-4 mr-2" />
               Panel użytkownika
             </Button>
