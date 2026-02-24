@@ -61,6 +61,19 @@ export default function Games() {
     });
   }, [siteSettings]);
 
+  // Auto-join from invite link
+  useEffect(() => {
+    if (!user) return;
+    const params = new URLSearchParams(window.location.search);
+    const joinId = params.get('join_room');
+    if (!joinId) return;
+    base44.entities.GameRoom.filter({ id: joinId }).then(async (res) => {
+      const room = res[0];
+      if (!room || room.status !== 'waiting' || room.player1_id === user.id) return;
+      joinMutation.mutate(room);
+    });
+  }, [user]);
+
   // Subscribe to room updates (join, finish)
   useEffect(() => {
     if (!activeRoom?.id) return;
