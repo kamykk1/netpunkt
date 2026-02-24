@@ -12,6 +12,7 @@ import {
   MessageSquare, Mail, AlertTriangle, ShoppingBag, Megaphone,
   Loader2, Reply, CheckCircle, Clock, Eye
 } from 'lucide-react';
+import { sendNotification } from '@/components/notifications/notificationHelpers.js';
 
 const DEPARTMENT_CONFIG = {
   advertising: { icon: Megaphone, color: 'text-purple-400', label: 'Reklama' },
@@ -51,16 +52,32 @@ export default function AdminContactMessages() {
     mutationFn: async ({ message, reply }) => {
       await base44.integrations.Core.SendEmail({
         to: message.user_email,
+        from_name: 'netpunkt.pl',
         subject: `Re: ${message.subject}`,
         body: `
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#0f0f18;color:#fff;padding:24px;border-radius:12px;">
+          <h2 style="color:#8b5cf6;">Odpowiedź na Twoje zgłoszenie</h2>
           <p>Witaj ${message.user_name || 'Użytkowniku'},</p>
-          <p>${reply}</p>
-          <hr>
-          <p><small>W odpowiedzi na Twoje zgłoszenie:</small></p>
-          <blockquote>${message.message}</blockquote>
-          <p>Pozdrawiamy,<br>Zespół netpunkt.pl</p>
+          <p style="color:#cbd5e1;">${reply}</p>
+          <hr style="border-color:#8b5cf630;margin:16px 0;"/>
+          <p style="font-size:12px;color:#64748b;">W odpowiedzi na: <em>${message.subject}</em></p>
+          <p style="font-size:12px;color:#64748b;">Zespół <strong>netpunkt.pl</strong></p>
+          </div>
         `
       });
+
+      // In-app notification for user
+      if (message.user_id) {
+        await sendNotification({
+          userId: message.user_id,
+          userEmail: message.user_email,
+          type: 'message_received',
+          title: `Odpowiedź na: ${message.subject}`,
+          message: reply.length > 120 ? reply.slice(0, 120) + '…' : reply,
+          referenceId: message.id,
+          referenceType: 'message'
+        });
+      }
 
       await base44.entities.ContactMessage.update(message.id, {
         status: 'resolved',
