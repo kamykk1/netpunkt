@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Save, Coins, Users, Percent, Zap, CreditCard, Shield } from 'lucide-react';
+import { Loader2, Save, Coins, Users, Percent, Zap, CreditCard, Shield, Gamepad2 } from 'lucide-react';
 
 const DEFAULT_SETTINGS = {
   point_rate: '0.10',
