@@ -158,7 +158,6 @@ export default function AdminRecruitment() {
           )}
           {filteredOffers.map(offer => {
             const appCount = applications.filter(a => a.job_offer_id === offer.id).length;
-            const appCount = applications.filter(a => a.job_offer_id === offer.id).length;
             return (
               <div key={offer.id}
                 onClick={() => setActiveOffer(offer)}
