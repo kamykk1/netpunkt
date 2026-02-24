@@ -11,8 +11,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { 
   CreditCard, Plus, FileText, Download, Loader2, 
-  CheckCircle, Clock, XCircle 
+  CheckCircle, Clock, XCircle, BarChart3
 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import BillingReports from './BillingReports.jsx';
 
 export default function AdvertiserBilling({ user }) {
   const [showTopUp, setShowTopUp] = useState(false);
@@ -68,6 +70,19 @@ export default function AdvertiserBilling({ user }) {
 
   return (
     <div className="space-y-6">
+      <Tabs defaultValue="overview">
+        <TabsList className="bg-[#1a1a2e] border border-purple-500/20 mb-4">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <CreditCard className="w-4 h-4 mr-2" /> Saldo i faktury
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <BarChart3 className="w-4 h-4 mr-2" /> Raporty finansowe
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="reports">
+          <BillingReports user={user} />
+        </TabsContent>
+        <TabsContent value="overview">
       {/* Balance & Top Up */}
       <Card className="bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border-purple-500/30">
         <CardContent className="p-6">
@@ -174,6 +189,8 @@ export default function AdvertiserBilling({ user }) {
         </CardContent>
       </Card>
 
+        </TabsContent>
+      </Tabs>
       {/* Top Up Modal */}
       <Dialog open={showTopUp} onOpenChange={setShowTopUp}>
         <DialogContent className="sm:max-w-md bg-[#1a1a2e] border-purple-500/30">
