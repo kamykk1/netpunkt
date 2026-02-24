@@ -106,9 +106,21 @@ export default function Games() {
         current_turn: room.player1_id,
         game_state: JSON.stringify({})
       });
-      // Fetch opponent
+      // Fetch opponent (player1) and notify them
       const p1users = await base44.entities.User.filter({ id: room.player1_id });
-      setOpponent(p1users[0] || null);
+      const p1 = p1users[0] || null;
+      setOpponent(p1);
+      if (p1) {
+        const gameName = GAME_TYPES[room.game_type]?.name || room.game_type;
+        await sendNotification({
+          userId: p1.id, userEmail: p1.email,
+          type: 'status_update',
+          title: `Gracz dołączył do Twojej gry!`,
+          message: `${user.full_name || user.email} dołączył do Twojej gry ${gameName}. Czas zacząć!`,
+          referenceId: room.id,
+          referenceType: 'other'
+        });
+      }
       return updated;
     },
     onSuccess: (room) => {
