@@ -31,6 +31,7 @@ import AdvancedCampaignReporting from '@/components/advertiser/AdvancedCampaignR
 import NotificationSettingsPanel from '@/components/notifications/NotificationSettingsPanel.jsx';
 import CampaignBulkActions from '@/components/advertiser/CampaignBulkActions.jsx';
 import { ExchangeRatesTable, CurrencySelector, formatCurrency } from '@/components/advertiser/CurrencySelector.jsx';
+import { sendNotification } from '@/components/notifications/notificationHelpers.js';
 
 export default function AdvertiserPanel() {
   const [showCampaignForm, setShowCampaignForm] = useState(false);
@@ -47,7 +48,37 @@ export default function AdvertiserPanel() {
   const { data: campaigns = [], isLoading } = useQuery({
     queryKey: ['myCampaigns', user?.id],
     queryFn: () => base44.entities.AdvertiserCampaign.filter({ advertiser_id: user?.id }, '-created_date'),
-    enabled: !!user?.id
+    enabled: !!user?.id,
+    onSuccess: async (data) => {
+      if (!user?.id) return;
+      for (const c of data) {
+        // Low budget warning
+        if (c.status === 'active' && c.budget_total > 0) {
+          const pct = (c.budget_spent || 0) / c.budget_total;
+          if (pct >= 0.8) {
+            await sendNotification({
+              userId: user.id, userEmail: user.email,
+              type: 'campaign_budget_low',
+              title: `Niski budżet kampanii: ${c.name}`,
+              message: `Kampania "${c.name}" zużyła ${Math.round(pct * 100)}% budżetu. Doładuj konto, aby kontynuować.`,
+              referenceId: c.id, referenceType: 'campaign',
+              sendEmail: true
+            });
+          }
+        }
+        // Completed campaign notification
+        if (c.status === 'completed') {
+          await sendNotification({
+            userId: user.id, userEmail: user.email,
+            type: 'campaign_goal_reached',
+            title: `Kampania zakończona: ${c.name}`,
+            message: `Kampania "${c.name}" osiągnęła cel (${c.current_views || 0} wyświetleń).`,
+            referenceId: c.id, referenceType: 'campaign',
+            sendEmail: true
+          });
+        }
+      }
+    }
   });
 
   const { data: settings = [] } = useQuery({
