@@ -26,7 +26,7 @@ export default function AIPredictiveAnalysis({ creativeData, onOptimize }) {
 
     // Analiza AI kreacji
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Jako ekspert od reklam online, przeanalizuj kreację reklamową i przewidź jej skuteczność.
+      prompt: `Jesteś ekspertem analitycznym AI specjalizującym się w reklamach cyfrowych i wykrywaniu fraudów. Przeprowadź SZCZEGÓŁOWĄ analizę predykcyjną kreacji reklamowej.
 
 DANE KREACJI:
 - Nagłówek: ${creativeData.headline || 'brak'}
@@ -36,20 +36,32 @@ DANE KREACJI:
 - Kategoria: ${creativeData.category || 'ogólna'}
 - Ma obrazek: ${creativeData.hasImage ? 'tak' : 'nie'}
 
-Oceń następujące aspekty w skali 0-100:
-1. Siła nagłówka (headline_score)
-2. Przekonujący opis (description_score)
-3. Skuteczność CTA (cta_score)
-4. Spójność przekazu (coherence_score)
-5. Potencjał wirusowy (viral_score)
-6. Wiarygodność (trust_score)
+WYMAGANE OCENY (0-100):
+1. headline_score - siła nagłówka
+2. description_score - jakość opisu
+3. cta_score - skuteczność CTA
+4. coherence_score - spójność przekazu
+5. viral_score - potencjał viralowy
+6. trust_score - wiarygodność
 
-Dodatkowo podaj:
-- Przewidywany CTR (predicted_ctr) jako liczba %
-- Główne problemy (issues) jako tablica stringów
-- Sugestie ulepszeń (improvements) jako tablica stringów
-- Ogólna ocena (overall_rating) jako liczba 1-10
-- Krótkie podsumowanie (summary)`,
+ANALIZA FRAUDU (SZCZEGÓŁOWA):
+- fraud_risk_score: 0-100 (ryzyko clickfraud i bot traffic)
+- fraud_indicators: lista konkretnych sygnałów ryzyka fraudu dla tej kreacji
+- anti_fraud_tips: konkretne sposoby minimalizacji ryzyka
+
+PROGNOZY WYDAJNOŚCI:
+- predicted_ctr: % CTR
+- predicted_conversion_rate: % współczynnik konwersji  
+- predicted_roi: % zwrot z inwestycji
+- performance_forecast: "słaby" | "przeciętny" | "dobry" | "świetny"
+- best_time_to_run: najlepsze pory emisji (string np. "9-11, 18-21")
+
+PROBLEMY I ULEPSZENIA:
+- issues: lista 3-5 problemów z uzasadnieniem
+- improvements: lista 5 konkretnych ulepszeń z przykładami zmian
+- ab_test_suggestion: co przetestować A/B (string)
+- overall_rating: 1-10
+- summary: 3-zdaniowe podsumowanie z prognozą`,
       response_json_schema: {
         type: "object",
         properties: {
@@ -59,9 +71,17 @@ Dodatkowo podaj:
           coherence_score: { type: "number" },
           viral_score: { type: "number" },
           trust_score: { type: "number" },
+          fraud_risk_score: { type: "number" },
+          fraud_indicators: { type: "array", items: { type: "string" } },
+          anti_fraud_tips: { type: "array", items: { type: "string" } },
           predicted_ctr: { type: "number" },
+          predicted_conversion_rate: { type: "number" },
+          predicted_roi: { type: "number" },
+          performance_forecast: { type: "string" },
+          best_time_to_run: { type: "string" },
           issues: { type: "array", items: { type: "string" } },
           improvements: { type: "array", items: { type: "string" } },
+          ab_test_suggestion: { type: "string" },
           overall_rating: { type: "number" },
           summary: { type: "string" }
         }

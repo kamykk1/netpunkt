@@ -65,7 +65,7 @@ export default function AIBidOptimizer({ onApplyBid, historicalData }) {
 
     // Generuj rekomendacje AI
     const aiResult = await base44.integrations.Core.InvokeLLM({
-      prompt: `Jako ekspert od optymalizacji kampanii reklamowych, przeanalizuj dane i podaj rekomendacje:
+      prompt: `Jesteś ekspertem od real-time optymalizacji kampanii reklamowych. Przeanalizuj dane i podaj natychmiastowe, konkretne rekomendacje oparte na aktualnych trendach rynkowych.
 
 DANE KAMPANII:
 - Typ: ${campaignConfig.label}
@@ -77,16 +77,41 @@ DANE KAMPANII:
 OBLICZONE WARTOŚCI:
 - Optymalna stawka: ${optimalBid.toFixed(3)} PLN
 - Szacowany CTR: ${estimatedCtr.toFixed(1)}%
-- Szacowane wyświetlenia: ${estimatedImpressions}
+- Szacowane wyświetlenia/dzień: ${estimatedImpressions}
+- Szacowane kliknięcia/dzień: ${estimatedClicks}
+- Szacowany koszt/dzień: ${(optimalBid * estimatedClicks).toFixed(2)} PLN
 
-Podaj 3-4 konkretne wskazówki optymalizacyjne i ocenę potencjału kampanii (1-10).`,
+Uwzględnij w analizie:
+1. Aktualne trendy cenowe dla kategorii ${categoryConfig.label} na rynku polskim
+2. Optymalne godziny emisji dla tego typu kampanii
+3. Sugestię harmonogramu stawek (bid scheduling) - kiedy podnosić/obniżać stawki
+4. Analizę konkurencyjności stawki relative do rynku
+
+Zwróć:
+- tips: 5 KONKRETNYCH, MIERZALNYCH wskazówek z danymi liczbowymi
+- potentialScore: ocena 1-10
+- riskLevel: "Niskie" / "Średnie" / "Wysokie"
+- summary: 2-zdaniowe podsumowanie
+- bid_schedule: obiekt z peak_hours (tablica godzin np [9,10,11,18,19,20]), off_peak_multiplier (np 0.7), peak_multiplier (np 1.3)
+- competitor_level: "niska" | "srednia" | "wysoka" konkurencja w tej niszy
+- recommended_daily_cap: sugerowany dzienny limit budżetu jako liczba PLN`,
       response_json_schema: {
         type: "object",
         properties: {
           tips: { type: "array", items: { type: "string" } },
           potentialScore: { type: "number" },
           riskLevel: { type: "string" },
-          summary: { type: "string" }
+          summary: { type: "string" },
+          bid_schedule: {
+            type: "object",
+            properties: {
+              peak_hours: { type: "array", items: { type: "number" } },
+              off_peak_multiplier: { type: "number" },
+              peak_multiplier: { type: "number" }
+            }
+          },
+          competitor_level: { type: "string" },
+          recommended_daily_cap: { type: "number" }
         }
       }
     });
@@ -276,13 +301,15 @@ Podaj 3-4 konkretne wskazówki optymalizacyjne i ocenę potencjału kampanii (1-
           {/* AI Tips */}
           <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <CardTitle className="text-white flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-yellow-400" />
-                  Rekomendacje AI
+                  Rekomendacje real-time AI
                 </CardTitle>
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 text-sm">Potencjał:</span>
+                  <Badge className="bg-slate-700 text-slate-300">
+                    Konkurencja: {recommendation.competitor_level || 'średnia'}
+                  </Badge>
                   <Badge className={`${
                     recommendation.potentialScore >= 7 ? 'bg-emerald-500' :
                     recommendation.potentialScore >= 5 ? 'bg-yellow-500' : 'bg-red-500'
@@ -294,7 +321,7 @@ Podaj 3-4 konkretne wskazówki optymalizacyjne i ocenę potencjału kampanii (1-
             </CardHeader>
             <CardContent>
               <p className="text-slate-300 mb-4">{recommendation.summary}</p>
-              <div className="space-y-2">
+              <div className="space-y-2 mb-4">
                 {recommendation.tips?.map((tip, i) => (
                   <div key={i} className="flex items-start gap-2 p-2 bg-slate-800/50 rounded-lg">
                     <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
@@ -302,12 +329,39 @@ Podaj 3-4 konkretne wskazówki optymalizacyjne i ocenę potencjału kampanii (1-
                   </div>
                 ))}
               </div>
-              {recommendation.riskLevel && (
-                <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-400" />
-                  <span className="text-yellow-300 text-sm">Poziom ryzyka: {recommendation.riskLevel}</span>
+
+              {/* Bid Schedule */}
+              {recommendation.bid_schedule && (
+                <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg mb-4">
+                  <p className="text-cyan-300 font-medium text-sm mb-2">📅 Harmonogram stawek (Bid Scheduling)</p>
+                  <div className="grid grid-cols-3 gap-3 text-center text-xs">
+                    <div>
+                      <p className="text-slate-400">Godziny szczytu</p>
+                      <p className="text-white font-bold">{recommendation.bid_schedule.peak_hours?.slice(0,4).join(', ')}h</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-400">Mnożnik szczyt</p>
+                      <p className="text-emerald-400 font-bold">x{recommendation.bid_schedule.peak_multiplier}</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-400">Mnożnik off-peak</p>
+                      <p className="text-amber-400 font-bold">x{recommendation.bid_schedule.off_peak_multiplier}</p>
+                    </div>
+                  </div>
                 </div>
               )}
+
+              {recommendation.recommended_daily_cap && (
+                <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg mb-4 flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-purple-400" />
+                  <span className="text-purple-300 text-sm">Sugerowany dzienny cap budżetu: <strong>{recommendation.recommended_daily_cap} PLN</strong></span>
+                </div>
+              )}
+
+              <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-yellow-400" />
+                <span className="text-yellow-300 text-sm">Poziom ryzyka: {recommendation.riskLevel}</span>
+              </div>
             </CardContent>
           </Card>
         </div>

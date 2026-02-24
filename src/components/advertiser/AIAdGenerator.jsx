@@ -51,7 +51,7 @@ export default function AIAdGenerator({ onApply, productData }) {
     const toneLabel = TONES.find(t => t.id === input.tone)?.label || 'profesjonalny';
     
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Jesteś ekspertem od copywritingu reklamowego. Stwórz teksty reklamowe dla produktu/usługi.
+      prompt: `Jesteś ekspertem od copywritingu reklamowego z 15-letnim doświadczeniem. Stwórz ZRÓŻNICOWANE teksty reklamowe dla produktu/usługi.
 
 DANE PRODUKTU:
 - Nazwa: ${input.productName}
@@ -63,18 +63,22 @@ WYMAGANIA:
 - Ton: ${toneLabel}
 - Język: ${input.language === 'pl' ? 'polski' : input.language === 'en' ? 'angielski' : 'niemiecki'}
 
-Wygeneruj 3 warianty każdego elementu:
-1. Nagłówki (max 60 znaków każdy) - chwytliwe, przyciągające uwagę
-2. Opisy (max 150 znaków każdy) - zachęcające do działania
-3. CTA (max 20 znaków każdy) - motywujące do kliknięcia
+Wygeneruj 5 MAKSYMALNIE ZRÓŻNICOWANYCH wariantów każdego elementu (różne struktury, emocje, podejścia):
+1. Nagłówki (max 60 znaków) - użyj różnych technik: pytanie, liczba, korzyść, problem, tajemnica
+2. Opisy (max 150 znaków) - różne kąty: dowód społeczny, pilność, wartość, strach przed stratą, aspiracje
+3. CTA (max 20 znaków) - od energicznych po spokojne, różne verby i emocje
+4. Dla każdego wariantu podaj krótkie uzasadnienie dlaczego zadziała (variant_notes - tablica stringów)
+5. Rekomendację który wariant ma największy potencjał CTR (top_variant_index - liczba 0-4)
 
-Zwróć JSON z tablicami: headlines, descriptions, ctas`,
+Zwróć JSON z: headlines, descriptions, ctas (każda tablica po 5 elementów), variant_notes (5 elementów), top_variant_index`,
       response_json_schema: {
         type: "object",
         properties: {
           headlines: { type: "array", items: { type: "string" } },
           descriptions: { type: "array", items: { type: "string" } },
-          ctas: { type: "array", items: { type: "string" } }
+          ctas: { type: "array", items: { type: "string" } },
+          variant_notes: { type: "array", items: { type: "string" } },
+          top_variant_index: { type: "number" }
         }
       }
     });
@@ -199,32 +203,31 @@ Zwróć JSON z tablicami: headlines, descriptions, ctas`,
             <CardHeader className="pb-2">
               <CardTitle className="text-white flex items-center gap-2 text-base">
                 <Type className="w-4 h-4 text-cyan-400" />
-                Nagłówki
+                Nagłówki ({results.headlines?.length || 0} wariantów)
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {results.headlines?.map((headline, i) => (
-                <div key={i} className="flex items-center gap-2 p-3 bg-slate-800/50 rounded-lg group">
-                  <span className="text-white flex-1">{headline}</span>
-                  <Badge variant="outline" className="text-slate-400 text-xs">
-                    {headline.length}/60
-                  </Badge>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 opacity-0 group-hover:opacity-100"
-                    onClick={() => copyToClipboard(headline, `h${i}`)}
-                  >
+                <div key={i} className={`flex items-start gap-2 p-3 rounded-lg group border transition-all ${
+                  i === results.top_variant_index ? 'bg-purple-500/10 border-purple-500/30' : 'bg-slate-800/50 border-transparent'
+                }`}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-slate-500 text-xs">#{i + 1}</span>
+                      {i === results.top_variant_index && <Badge className="bg-purple-500 text-xs py-0">⭐ Top</Badge>}
+                    </div>
+                    <span className="text-white block">{headline}</span>
+                    {results.variant_notes?.[i] && (
+                      <span className="text-slate-500 text-xs italic">{results.variant_notes[i]}</span>
+                    )}
+                  </div>
+                  <Badge variant="outline" className="text-slate-400 text-xs shrink-0">{headline.length}/60</Badge>
+                  <Button size="icon" variant="ghost" className="h-8 w-8 opacity-0 group-hover:opacity-100 shrink-0"
+                    onClick={() => copyToClipboard(headline, `h${i}`)}>
                     {copiedField === `h${i}` ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="opacity-0 group-hover:opacity-100 border-purple-500/30"
-                    onClick={() => applyText('headline', headline)}
-                  >
-                    Użyj
-                  </Button>
+                  <Button size="sm" variant="outline" className="opacity-0 group-hover:opacity-100 border-purple-500/30 shrink-0"
+                    onClick={() => applyText('headline', headline)}>Użyj</Button>
                 </div>
               ))}
             </CardContent>
@@ -235,32 +238,25 @@ Zwróć JSON z tablicami: headlines, descriptions, ctas`,
             <CardHeader className="pb-2">
               <CardTitle className="text-white flex items-center gap-2 text-base">
                 <FileText className="w-4 h-4 text-pink-400" />
-                Opisy
+                Opisy ({results.descriptions?.length || 0} wariantów)
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               {results.descriptions?.map((desc, i) => (
-                <div key={i} className="flex items-start gap-2 p-3 bg-slate-800/50 rounded-lg group">
-                  <span className="text-white flex-1 text-sm">{desc}</span>
-                  <Badge variant="outline" className="text-slate-400 text-xs shrink-0">
-                    {desc.length}/150
-                  </Badge>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 opacity-0 group-hover:opacity-100 shrink-0"
-                    onClick={() => copyToClipboard(desc, `d${i}`)}
-                  >
+                <div key={i} className={`flex items-start gap-2 p-3 rounded-lg group border transition-all ${
+                  i === results.top_variant_index ? 'bg-pink-500/10 border-pink-500/20' : 'bg-slate-800/50 border-transparent'
+                }`}>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-slate-500 text-xs block mb-0.5">#{i + 1}</span>
+                    <span className="text-white text-sm block">{desc}</span>
+                  </div>
+                  <Badge variant="outline" className="text-slate-400 text-xs shrink-0">{desc.length}/150</Badge>
+                  <Button size="icon" variant="ghost" className="h-8 w-8 opacity-0 group-hover:opacity-100 shrink-0"
+                    onClick={() => copyToClipboard(desc, `d${i}`)}>
                     {copiedField === `d${i}` ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="opacity-0 group-hover:opacity-100 border-purple-500/30 shrink-0"
-                    onClick={() => applyText('description', desc)}
-                  >
-                    Użyj
-                  </Button>
+                  <Button size="sm" variant="outline" className="opacity-0 group-hover:opacity-100 border-purple-500/30 shrink-0"
+                    onClick={() => applyText('description', desc)}>Użyj</Button>
                 </div>
               ))}
             </CardContent>
