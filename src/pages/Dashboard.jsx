@@ -234,7 +234,7 @@ export default function Dashboard() {
                 <CardTitle className="text-white">Szybkie akcje</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Link to={createPageUrl('EarnAds')}>
+                <Link to={createPageUrl('EarnAds')} className="block">
                   <Button className="w-full justify-between bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
                     <span className="flex items-center gap-2">
                       <Zap className="w-4 h-4" />
@@ -243,7 +243,7 @@ export default function Dashboard() {
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
-                <Link to={createPageUrl('Missions')}>
+                <Link to={createPageUrl('Missions')} className="block">
                   <Button variant="outline" className="w-full justify-between border-purple-500/30 text-white hover:bg-purple-500/10">
                     <span className="flex items-center gap-2">
                       <Target className="w-4 h-4" />
@@ -252,7 +252,7 @@ export default function Dashboard() {
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
-                <Link to={createPageUrl('Shop')}>
+                <Link to={createPageUrl('Shop')} className="block">
                   <Button variant="outline" className="w-full justify-between border-purple-500/30 text-white hover:bg-purple-500/10">
                     <span className="flex items-center gap-2">
                       <Gift className="w-4 h-4" />
