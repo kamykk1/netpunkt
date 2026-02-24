@@ -475,93 +475,14 @@ export default function AdminPanel() {
             </Card>
           </TabsContent>
 
-          {/* Users Tab */}
+          {/* Users Tab - Free users only */}
           <TabsContent value="users">
-            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
-              <CardHeader>
-                <CardTitle className="text-white">Wszyscy użytkownicy</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-purple-500/20">
-                        <TableHead className="text-slate-400">Imię</TableHead>
-                        <TableHead className="text-slate-400">Email</TableHead>
-                        <TableHead className="text-slate-400">Punkty</TableHead>
-                        <TableHead className="text-slate-400">Poziom</TableHead>
-                        <TableHead className="text-slate-400">Reklamy</TableHead>
-                        <TableHead className="text-slate-400">Fraud Score</TableHead>
-                        <TableHead className="text-slate-400">Rola</TableHead>
-                        <TableHead className="text-slate-400">Akcje</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {users.map((u) => (
-                        <TableRow key={u.id} className="border-purple-500/20">
-                          <TableCell className="text-white font-medium">{u.full_name || '-'}</TableCell>
-                          <TableCell className="text-slate-300">{u.email}</TableCell>
-                          <TableCell className="text-yellow-400">{(u.points_balance || 0).toLocaleString()}</TableCell>
-                          <TableCell className="text-purple-400">Lv.{u.membership_level || 1}</TableCell>
-                          <TableCell className="text-slate-300">{u.ads_viewed || 0}</TableCell>
-                          <TableCell>
-                            <Badge className={
-                              (u.fraud_score || 0) > 70 ? 'bg-red-500/20 text-red-400' :
-                              (u.fraud_score || 0) > 40 ? 'bg-amber-500/20 text-amber-400' :
-                              'bg-emerald-500/20 text-emerald-400'
-                            }>
-                              {u.fraud_score || 0}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={
-                              u.role === 'admin' ? 'bg-purple-500/20 text-purple-400' :
-                              u.is_moderator ? 'bg-cyan-500/20 text-cyan-400' :
-                              'bg-slate-500/20 text-slate-400'
-                            }>
-                              {u.role === 'admin' ? 'Admin' : u.is_moderator ? 'Mod' : 'User'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-purple-500/30 text-purple-400"
-                                onClick={() => updateUserMutation.mutate({ 
-                                  id: u.id, 
-                                  data: { is_moderator: !u.is_moderator } 
-                                })}
-                              >
-                                {u.is_moderator ? 'Usuń Mod' : 'Mod'}
-                              </Button>
-                              {u.is_blocked ? (
-                                <Button
-                                  size="sm"
-                                  className="bg-emerald-600"
-                                  onClick={() => updateUserMutation.mutate({ id: u.id, data: { is_blocked: false } })}
-                                >
-                                  Odblokuj
-                                </Button>
-                              ) : (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="border-red-500/30 text-red-400"
-                                  onClick={() => updateUserMutation.mutate({ id: u.id, data: { is_blocked: true } })}
-                                >
-                                  Zablokuj
-                                </Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
+            <AdminUsersList users={users.filter(u => !u.is_advertiser)} updateUserMutation={updateUserMutation} title="Użytkownicy Free" />
+          </TabsContent>
+
+          {/* Advertisers Tab */}
+          <TabsContent value="advertisers">
+            <AdminUsersList users={users.filter(u => u.is_advertiser)} updateUserMutation={updateUserMutation} title="Reklamodawcy" showAdvertiserBadge />
           </TabsContent>
 
           {/* Email Campaigns Tab */}
