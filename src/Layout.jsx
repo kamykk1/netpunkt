@@ -7,8 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Shield, Menu, X, Coins, ShoppingBag, 
   Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
-  Gift, Star, Crown
+  Gift, Star, Crown, Gamepad2
 } from 'lucide-react';
+import UserAvatar from '@/components/profile/UserAvatar.jsx';
+import AvatarPicker from '@/components/profile/AvatarPicker.jsx';
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -56,6 +58,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Cashback', icon: Gift, page: 'Cashback' },
     { name: 'Battle Pass', icon: Zap, page: 'BattlePass' },
     { name: 'Partnerzy', icon: Users, page: 'Partners' },
+    { name: 'Gry', icon: Gamepad2, page: 'Games' },
     { name: 'Kontakt', icon: Mail, page: 'Contact' },
     ...(user?.is_advertiser ? [{ name: 'Reklamodawca', icon: TrendingUp, page: 'AdvertiserPanel' }] : [{ name: 'Reklama', icon: TrendingUp, page: 'AdvertiserRegister' }]),
     ...(user?.role === 'admin' || user?.is_moderator ? [{ name: 'Admin', icon: Shield, page: 'AdminPanel' }] : [])
@@ -134,6 +137,9 @@ export default function Layout({ children, currentPageName }) {
 
               {/* Notifications */}
               <NotificationCenter userId={user?.id} />
+
+              {/* User Avatar (clickable) */}
+              <AvatarPicker user={user} onUpdated={() => queryClient.invalidateQueries({ queryKey: ['currentUser'] })} />
 
               {/* User Menu */}
               <DropdownMenu>
