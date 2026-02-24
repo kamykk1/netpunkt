@@ -132,9 +132,9 @@ export default function AdminAdForm({ isOpen, onClose, onSubmit, editingAd, isLo
                 <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                   {AD_TYPES.map(type => (
-                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                    <SelectItem key={type.value} value={type.value} className="text-white hover:bg-purple-500/20">{type.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -145,9 +145,9 @@ export default function AdminAdForm({ isOpen, onClose, onSubmit, editingAd, isLo
                 <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                   {CATEGORIES.map(cat => (
-                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                    <SelectItem key={cat.value} value={cat.value} className="text-white hover:bg-purple-500/20">{cat.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -237,9 +237,9 @@ export default function AdminAdForm({ isOpen, onClose, onSubmit, editingAd, isLo
                 <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                   {AFFILIATE_NETWORKS.map(net => (
-                    <SelectItem key={net.value} value={net.value}>{net.label}</SelectItem>
+                    <SelectItem key={net.value} value={net.value} className="text-white hover:bg-purple-500/20">{net.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -283,9 +283,9 @@ export default function AdminAdForm({ isOpen, onClose, onSubmit, editingAd, isLo
                 <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                   {STATUSES.map(s => (
-                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                    <SelectItem key={s.value} value={s.value} className="text-white hover:bg-purple-500/20">{s.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
