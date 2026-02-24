@@ -235,31 +235,60 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Link to={createPageUrl('EarnAds')} className="block">
-                  <Button className="w-full justify-between bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
-                    <span className="flex items-center gap-2">
-                      <Zap className="w-4 h-4" />
-                      Zarabiaj punkty
-                    </span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 cursor-pointer transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center">
+                        <Zap className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">Zarabiaj punkty</p>
+                        <p className="text-white/70 text-xs">Oglądaj reklamy i zbieraj punkty</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Link>
                 <Link to={createPageUrl('Missions')} className="block">
-                  <Button variant="outline" className="w-full justify-between border-purple-500/30 text-white hover:bg-purple-500/10">
-                    <span className="flex items-center gap-2">
-                      <Target className="w-4 h-4" />
-                      Misje dzienne
-                    </span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-purple-500/20 cursor-pointer transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                        <Target className="w-5 h-5 text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">Misje dzienne</p>
+                        <p className="text-slate-400 text-xs">Wykonuj zadania i zdobywaj bonusy</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Link>
                 <Link to={createPageUrl('Shop')} className="block">
-                  <Button variant="outline" className="w-full justify-between border-purple-500/30 text-white hover:bg-purple-500/10">
-                    <span className="flex items-center gap-2">
-                      <Gift className="w-4 h-4" />
-                      Sklep z nagrodami
-                    </span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-purple-500/20 cursor-pointer transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                        <Gift className="w-5 h-5 text-pink-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">Sklep z nagrodami</p>
+                        <p className="text-slate-400 text-xs">Wydaj punkty na nagrody i VIP</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+                <Link to={createPageUrl('Referrals')} className="block">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-purple-500/20 cursor-pointer transition-all group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                        <Users className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">Zaproś znajomych</p>
+                        <p className="text-slate-400 text-xs">Kod: {user?.referral_code || '...'}</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Link>
               </CardContent>
             </Card>
