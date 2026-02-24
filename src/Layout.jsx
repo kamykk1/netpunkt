@@ -104,11 +104,9 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to={createPageUrl('Dashboard')} className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center neon-glow">
-                <span className="text-white font-black text-lg leading-none">N</span>
-              </div>
-              <span className="font-bold text-xl text-white neon-text hidden sm:block">netpunkt.pl</span>
+            <Link to={createPageUrl('Dashboard')} className="flex items-center">
+              <span className="logo-text text-2xl hidden sm:block">netpunkt.pl</span>
+              <span className="logo-text text-2xl sm:hidden">np.</span>
             </Link>
 
             {/* Desktop Navigation */}
