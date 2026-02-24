@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
   Ship, Grid3X3, Circle, Plus, Users, Trophy, Coins, 
-  Loader2, Play, Clock, X, Flag
+  Loader2, Play, Clock, X, Flag, Lock, Link2, Copy
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,6 +21,8 @@ import ReportModal from '@/components/games/ReportModal.jsx';
 import BattleshipGame from '@/components/games/BattleshipGame.jsx';
 import TicTacToeGame from '@/components/games/TicTacToeGame.jsx';
 import Connect4Game from '@/components/games/Connect4Game.jsx';
+import GameRankings from '@/components/games/GameRankings.jsx';
+import GameAchievements from '@/components/games/GameAchievements.jsx';
 
 const GAME_TYPES = {
   battleship: { name: 'Okręty', icon: Ship, color: 'from-blue-600 to-cyan-600', desc: 'Zatop flotę przeciwnika' },
