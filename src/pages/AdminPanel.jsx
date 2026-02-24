@@ -260,51 +260,51 @@ export default function AdminPanel() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="ads" className="space-y-6">
+        <Tabs defaultValue="messages" className="space-y-6">
           <TabsList className="bg-[#1a1a2e] border border-purple-500/20 p-1 flex-wrap h-auto">
-            <TabsTrigger value="ads" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Eye className="w-4 h-4 mr-2" /> Reklamy
-            </TabsTrigger>
-            <TabsTrigger value="payments" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <CreditCard className="w-4 h-4 mr-2" /> Wypłaty
-            </TabsTrigger>
-            <TabsTrigger value="users" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Users className="w-4 h-4 mr-2" /> Użytkownicy
-            </TabsTrigger>
-            <TabsTrigger value="emails" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Mail className="w-4 h-4 mr-2" /> Kampanie Email
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Settings className="w-4 h-4 mr-2" /> Ustawienia
-            </TabsTrigger>
-            <TabsTrigger value="fraud" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Shield className="w-4 h-4 mr-2" /> Anti-Fraud
-            </TabsTrigger>
-            <TabsTrigger value="templates" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Mail className="w-4 h-4 mr-2" /> Szablony
-            </TabsTrigger>
-            <TabsTrigger value="partners" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Users className="w-4 h-4 mr-2" /> Partnerzy
-            </TabsTrigger>
-            <TabsTrigger value="messages" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <TabsTrigger value="messages" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
               <Mail className="w-4 h-4 mr-2" /> Wiadomości
             </TabsTrigger>
-            <TabsTrigger value="payouts" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <TabsTrigger value="ads" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <Eye className="w-4 h-4 mr-2" /> Reklamy
+            </TabsTrigger>
+            <TabsTrigger value="payments" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
               <CreditCard className="w-4 h-4 mr-2" /> Wypłaty
             </TabsTrigger>
-            <TabsTrigger value="subscriptions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <TabsTrigger value="users" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <Users className="w-4 h-4 mr-2" /> Użytkownicy
+            </TabsTrigger>
+            <TabsTrigger value="advertisers" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <TrendingUp className="w-4 h-4 mr-2" /> Reklamodawcy
+            </TabsTrigger>
+            <TabsTrigger value="emails" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <Mail className="w-4 h-4 mr-2" /> Kampanie Email
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <Settings className="w-4 h-4 mr-2" /> Ustawienia
+            </TabsTrigger>
+            <TabsTrigger value="fraud" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <Shield className="w-4 h-4 mr-2" /> Anti-Fraud
+            </TabsTrigger>
+            <TabsTrigger value="templates" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <Mail className="w-4 h-4 mr-2" /> Szablony
+            </TabsTrigger>
+            <TabsTrigger value="partners" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <Users className="w-4 h-4 mr-2" /> Partnerzy
+            </TabsTrigger>
+            <TabsTrigger value="payouts" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <CreditCard className="w-4 h-4 mr-2" /> Harmonogram
+            </TabsTrigger>
+            <TabsTrigger value="subscriptions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
               <Crown className="w-4 h-4 mr-2" /> Subskrypcje
             </TabsTrigger>
-            <TabsTrigger value="invoices" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <TabsTrigger value="invoices" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
               <FileText className="w-4 h-4 mr-2" /> Faktury
             </TabsTrigger>
-            <TabsTrigger value="transactions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <TabsTrigger value="transactions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
               <TrendingUp className="w-4 h-4 mr-2" /> Transakcje
             </TabsTrigger>
-            <TabsTrigger value="game_reports" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
-              <Flag className="w-4 h-4 mr-2" /> Zgłoszenia Gier
-            </TabsTrigger>
-            <TabsTrigger value="recruitment" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+            <TabsTrigger value="recruitment" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
               <Briefcase className="w-4 h-4 mr-2" /> Rekrutacja
             </TabsTrigger>
           </TabsList>
