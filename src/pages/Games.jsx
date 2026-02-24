@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import UserAvatar from '@/components/profile/UserAvatar.jsx';
+import { sendNotification } from '@/components/notifications/notificationHelpers.js';
 import GameChat from '@/components/games/GameChat.jsx';
 import ReportModal from '@/components/games/ReportModal.jsx';
 import BattleshipGame from '@/components/games/BattleshipGame.jsx';
@@ -120,12 +121,38 @@ export default function Games() {
   const handleGameEnd = async (won) => {
     if (!activeRoom) return;
     const bet = activeRoom.bet_points || 0;
+    const gameName = GAME_TYPES[activeRoom.game_type]?.name || activeRoom.game_type;
     if (bet > 0 && won) {
       await base44.auth.updateMe({ points_balance: (user.points_balance || 0) + bet });
       toast.success(`🏆 Wygrałeś ${bet} punktów!`);
     }
     if (won) await base44.auth.updateMe({ games_won: (user.games_won || 0) + 1, games_played: (user.games_played || 0) + 1 });
     else await base44.auth.updateMe({ games_played: (user.games_played || 0) + 1 });
+
+    // In-app notification
+    await sendNotification({
+      userId: user.id, userEmail: user.email,
+      type: 'status_update',
+      title: won ? `🏆 Wygrałeś mecz w ${gameName}!` : `Mecz zakończony w ${gameName}`,
+      message: won
+        ? bet > 0 ? `Gratulacje! Zdobywasz ${bet} punktów.` : 'Gratulacje!'
+        : 'Lepsza próba następnym razem!',
+      referenceId: activeRoom.id,
+      referenceType: 'other'
+    });
+
+    // Notify opponent if known
+    if (opponent?.id) {
+      await sendNotification({
+        userId: opponent.id, userEmail: opponent.email,
+        type: 'status_update',
+        title: won ? `Mecz zakończony w ${gameName}` : `🏆 Wygrałeś mecz w ${gameName}!`,
+        message: won ? 'Twój przeciwnik wygrał.' : 'Gratulacje — wygrałeś!',
+        referenceId: activeRoom.id,
+        referenceType: 'other'
+      });
+    }
+
     queryClient.invalidateQueries({ queryKey: ['currentUser'] });
   };
 
