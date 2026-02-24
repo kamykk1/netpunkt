@@ -68,6 +68,8 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@700;900&display=swap');
+        /* CZCIONKA LOGO: Exo 2 (Bold/Black) — geometryczna, futurystyczna, pełne polskie znaki */
         :root {
           --primary: 139 92 246;
           --primary-foreground: 255 255 255;
@@ -85,6 +87,15 @@ export default function Layout({ children, currentPageName }) {
         .gradient-border {
           background: linear-gradient(135deg, #8b5cf6, #06b6d4, #ec4899);
           padding: 1px;
+        }
+        .logo-text {
+          font-family: 'Exo 2', sans-serif;
+          font-weight: 900;
+          background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: -0.5px;
         }
       `}</style>
       
