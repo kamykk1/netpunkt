@@ -399,6 +399,35 @@ export default function AdminSettingsForm({ settings }) {
         </CardContent>
       </Card>
 
+      {/* Games Settings */}
+      <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Gamepad2 className="w-5 h-5 text-purple-400" />
+            Gry — włącz/wyłącz
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {[
+            { key: 'games_enabled', label: '🎮 Sekcja gier (wszystkie)' },
+            { key: 'games_chat_enabled', label: '💬 Chat w grach' },
+            { key: 'quiz_enabled', label: '🧠 Quiz wiedzy ogólnej' },
+            { key: 'memory_enabled', label: '🃏 Memory (pary kart)' },
+            { key: 'minesweeper_enabled', label: '💣 Saper (Minesweeper)' },
+            { key: 'snake_enabled', label: '🐍 Snake' },
+            { key: 'scratch_enabled', label: '🎰 Zdrapka (nagroda za reklamę)' },
+          ].map(({ key, label }) => (
+            <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
+              <span className="text-slate-300">{label}</span>
+              <Switch
+                checked={formData[key] === 'true'}
+                onCheckedChange={(checked) => handleChange(key, String(checked))}
+              />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
       {/* Submit */}
       <Button 
         type="submit" 
