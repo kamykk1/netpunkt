@@ -58,7 +58,7 @@ export default function AdminContactMessages() {
           <hr>
           <p><small>W odpowiedzi na Twoje zgłoszenie:</small></p>
           <blockquote>${message.message}</blockquote>
-          <p>Pozdrawiamy,<br>Zespół Zapunktowani.eu</p>
+          <p>Pozdrawiamy,<br>Zespół netpunkt.pl</p>
         `
       });
 

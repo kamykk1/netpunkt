@@ -15,10 +15,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const DEPARTMENTS = [
-  { value: 'advertising', label: 'Reklama', icon: Megaphone, email: 'reklama@zapunktowani.eu', description: 'Pytania o kampanie reklamowe' },
-  { value: 'contact', label: 'Kontakt ogólny', icon: HelpCircle, email: 'kontakt@zapunktowani.eu', description: 'Ogólne pytania o serwis' },
-  { value: 'complaints', label: 'Reklamacje', icon: AlertTriangle, email: 'reklamacje@zapunktowani.eu', description: 'Zgłoś problem lub reklamację' },
-  { value: 'purchases', label: 'Zakupy', icon: ShoppingBag, email: 'zakupy@zapunktowani.eu', description: 'Pytania o zamówienia i sklep' },
+  { value: 'advertising', label: 'Reklama', icon: Megaphone, email: 'reklama@netpunkt.pl', description: 'Pytania o kampanie reklamowe' },
+  { value: 'contact', label: 'Kontakt ogólny', icon: HelpCircle, email: 'kontakt@netpunkt.pl', description: 'Ogólne pytania o serwis' },
+  { value: 'complaints', label: 'Reklamacje', icon: AlertTriangle, email: 'reklamacje@netpunkt.pl', description: 'Zgłoś problem lub reklamację' },
+  { value: 'purchases', label: 'Zakupy', icon: ShoppingBag, email: 'zakupy@netpunkt.pl', description: 'Pytania o zamówienia i sklep' },
 ];
 
 export default function Contact() {
@@ -39,7 +39,7 @@ export default function Contact() {
       // Najpierw spróbuj AI
       if (showAiChat) {
         const aiResult = await base44.integrations.Core.InvokeLLM({
-          prompt: `Jesteś asystentem platformy Zapunktowani.eu. Użytkownik napisał wiadomość w dziale "${data.department}":
+          prompt: `Jesteś asystentem platformy netpunkt.pl. Użytkownik napisał wiadomość w dziale "${data.department}":
           
 Temat: ${data.subject}
 Wiadomość: ${data.message}

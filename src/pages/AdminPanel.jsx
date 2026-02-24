@@ -190,7 +190,7 @@ export default function AdminPanel() {
         >
           <div>
             <h1 className="text-3xl font-bold text-white">Panel Administratora</h1>
-            <p className="text-slate-400 mt-1">Zarządzaj platformą CashCrusader</p>
+            <p className="text-slate-400 mt-1">Zarządzaj platformą netpunkt.pl</p>
           </div>
           <Link to={createPageUrl('Dashboard')}>
             <Button variant="outline" className="border-purple-500/30 text-white hover:bg-purple-500/10">

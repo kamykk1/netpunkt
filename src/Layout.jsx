@@ -97,7 +97,7 @@ export default function Layout({ children, currentPageName }) {
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center neon-glow">
                 <Zap className="w-6 h-6 text-white" />
               </div>
-              <span className="font-bold text-xl text-white neon-text hidden sm:block">CashCrusader</span>
+              <span className="font-bold text-xl text-white neon-text hidden sm:block">netpunkt.pl</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -244,9 +244,9 @@ export default function Layout({ children, currentPageName }) {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
                 <Zap className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-white">CashCrusader</span>
+              <span className="font-bold text-white">netpunkt.pl</span>
             </div>
-            <p className="text-sm text-slate-500">© 2024 CashCrusader. Wszelkie prawa zastrzeżone.</p>
+            <p className="text-sm text-slate-500">© 2025 netpunkt.pl. Wszelkie prawa zastrzeżone.</p>
           </div>
         </div>
       </footer>
