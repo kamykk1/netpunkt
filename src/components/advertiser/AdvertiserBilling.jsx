@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BillingReports from './BillingReports.jsx';
-import { sendNotification } from '@/components/notifications/notificationHelpers.js';
+import { sendNotification } from '@/components/notifications/notificationHelpers.jsx';
 
 export default function AdvertiserBilling({ user }) {
   const [showTopUp, setShowTopUp] = useState(false);

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Flag, Loader2 } from 'lucide-react';
-import { notifyAdmins } from '@/components/notifications/notificationHelpers.js';
+import { notifyAdmins } from '@/components/notifications/notificationHelpers.jsx';
 
 const REASONS = ['Oszustwo / cheating', 'Wulgarne wiadomości', 'Spam', 'Groźby', 'Inne'];
 
