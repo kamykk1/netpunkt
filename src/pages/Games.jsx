@@ -33,7 +33,7 @@ const GAME_TYPES = {
 export default function Games() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
-  const [newGame, setNewGame] = useState({ game_type: 'tictactoe', bet_points: 0 });
+  const [newGame, setNewGame] = useState({ game_type: 'tictactoe', bet_points: 0, is_private: false });
   const [activeRoom, setActiveRoom] = useState(null);
   const [opponent, setOpponent] = useState(null);
   const [reportTarget, setReportTarget] = useState(null);
@@ -86,7 +86,8 @@ export default function Games() {
         ...newGame,
         player1_id: user.id,
         player1_email: user.email,
-        status: 'waiting'
+        status: 'waiting',
+        chat_enabled: true
       });
     },
     onSuccess: (room) => {
