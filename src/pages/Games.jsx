@@ -347,6 +347,12 @@ export default function Games() {
           ))}
         </div>
 
+        {/* Rankings & Achievements */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+          <GameRankings />
+          <GameAchievements user={user} />
+        </div>
+
         {/* Open rooms lobby */}
         <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
           <CardHeader>
