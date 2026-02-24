@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BillingReports from './BillingReports.jsx';
+import { sendNotification } from '@/components/notifications/notificationHelpers.js';
 
 export default function AdvertiserBilling({ user }) {
   const [showTopUp, setShowTopUp] = useState(false);
@@ -32,9 +33,19 @@ export default function AdvertiserBilling({ user }) {
       // Symulacja doładowania - w produkcji integracja z Stripe/PayPal/TPay
       const amountGrosze = Math.round(parseFloat(amount) * 100);
       
-      await base44.auth.updateMe({
-        advertiser_balance: (user.advertiser_balance || 0) + amountGrosze
-      });
+      const newBalance = (user.advertiser_balance || 0) + amountGrosze;
+      await base44.auth.updateMe({ advertiser_balance: newBalance });
+
+      // Low balance warning after top-up if still below threshold
+      if (newBalance < 5000) {
+        await sendNotification({
+          userId: user.id, userEmail: user.email,
+          type: 'campaign_budget_low',
+          title: 'Niskie saldo konta reklamodawcy',
+          message: `Twoje saldo wynosi ${(newBalance / 100).toFixed(2)} zł. Doładuj konto, aby kampanie działały bez przerw.`,
+          sendEmail: true
+        });
+      }
 
       await base44.entities.Invoice.create({
         user_id: user.id,
