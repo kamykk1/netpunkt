@@ -16,6 +16,7 @@ import {
   Briefcase, Plus, Search, Star, User, FileText, Pencil, 
   Trash2, ChevronDown, Phone, Mail, Calendar, X
 } from 'lucide-react';
+import { notifyAdmins } from '@/components/notifications/notificationHelpers.js';
 
 const STATUS_CONFIG = {
   cv_received:  { label: 'CV przesłano',   color: 'bg-slate-500/20 text-slate-300' },
@@ -64,9 +65,18 @@ export default function AdminRecruitment() {
   });
 
   const appMutation = useMutation({
-    mutationFn: (data) => data.id
-      ? base44.entities.JobApplication.update(data.id, data)
-      : base44.entities.JobApplication.create({ ...data, job_offer_id: activeOffer?.id, job_title: activeOffer?.title }),
+    mutationFn: async (data) => {
+      if (data.id) return base44.entities.JobApplication.update(data.id, data);
+      const app = await base44.entities.JobApplication.create({ ...data, job_offer_id: activeOffer?.id, job_title: activeOffer?.title });
+      await notifyAdmins({
+        type: 'system',
+        title: `Nowe CV: ${data.candidate_name}`,
+        message: `Kandydat na stanowisko: ${activeOffer?.title}. Email: ${data.candidate_email}`,
+        referenceId: app.id,
+        referenceType: 'other'
+      });
+      return app;
+    },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['jobApplications'] }); setAppForm(null); setEditingApp(null); toast.success('Zapisano kandydata'); }
   });
 
