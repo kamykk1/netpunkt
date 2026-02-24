@@ -165,24 +165,116 @@ PROBLEMY I ULEPSZENIA:
             'border-red-500/50 bg-red-500/10'
           }`}>
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex items-start justify-between flex-wrap gap-4">
                 <div>
                   <p className="text-slate-400 text-sm">Ogólna ocena kreacji</p>
                   <div className="flex items-center gap-3">
                     <p className="text-5xl font-bold text-white">{analysis.overall_rating}</p>
-                    <span className="text-2xl text-slate-400">/10</span>
+                    <div>
+                      <span className="text-2xl text-slate-400">/10</span>
+                      {analysis.performance_forecast && (
+                        <Badge className="ml-2 bg-purple-500/30 text-purple-300">{analysis.performance_forecast}</Badge>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-slate-300 mt-2">{analysis.summary}</p>
+                  <p className="text-slate-300 mt-2 text-sm">{analysis.summary}</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-slate-400 text-sm">Przewidywany CTR</p>
-                  <p className={`text-3xl font-bold ${getScoreColor(analysis.predicted_ctr * 10)}`}>
-                    {analysis.predicted_ctr.toFixed(1)}%
-                  </p>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-slate-400 text-xs">CTR</p>
+                    <p className={`text-2xl font-bold ${getScoreColor(analysis.predicted_ctr * 10)}`}>
+                      {analysis.predicted_ctr?.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-400 text-xs">Konwersje</p>
+                    <p className="text-2xl font-bold text-cyan-400">
+                      {analysis.predicted_conversion_rate?.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-400 text-xs">ROI</p>
+                    <p className={`text-2xl font-bold ${(analysis.predicted_roi || 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {(analysis.predicted_roi || 0) >= 0 ? '+' : ''}{analysis.predicted_roi?.toFixed(0)}%
+                    </p>
+                  </div>
                 </div>
               </div>
+              {analysis.best_time_to_run && (
+                <div className="mt-4 p-2 bg-slate-800/50 rounded-lg flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-cyan-400" />
+                  <span className="text-slate-300 text-sm">Najlepsze godziny emisji: <strong className="text-white">{analysis.best_time_to_run}</strong></span>
+                </div>
+              )}
             </CardContent>
           </Card>
+
+          {/* Fraud Risk */}
+          {analysis.fraud_risk_score !== undefined && (
+            <Card className={`border ${
+              analysis.fraud_risk_score >= 70 ? 'border-red-500/50 bg-red-500/10' :
+              analysis.fraud_risk_score >= 40 ? 'border-amber-500/50 bg-amber-500/10' :
+              'border-emerald-500/30 bg-emerald-500/5'
+            }`}>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-white flex items-center gap-2 text-base">
+                  <AlertTriangle className={`w-5 h-5 ${
+                    analysis.fraud_risk_score >= 70 ? 'text-red-400' :
+                    analysis.fraud_risk_score >= 40 ? 'text-amber-400' : 'text-emerald-400'
+                  }`} />
+                  Analiza ryzyka fraudu
+                  <Badge className={
+                    analysis.fraud_risk_score >= 70 ? 'bg-red-500' :
+                    analysis.fraud_risk_score >= 40 ? 'bg-amber-500' : 'bg-emerald-500'
+                  }>
+                    Ryzyko: {analysis.fraud_risk_score}/100
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Progress value={analysis.fraud_risk_score} className="h-2 mb-4" />
+                {analysis.fraud_indicators?.length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-slate-400 text-xs mb-2">Sygnały ryzyka:</p>
+                    <div className="space-y-1">
+                      {analysis.fraud_indicators.map((ind, i) => (
+                        <div key={i} className="flex items-start gap-2 text-sm">
+                          <XCircle className="w-3 h-3 text-red-400 mt-0.5 shrink-0" />
+                          <span className="text-slate-300">{ind}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {analysis.anti_fraud_tips?.length > 0 && (
+                  <div>
+                    <p className="text-slate-400 text-xs mb-2">Jak minimalizować ryzyko:</p>
+                    <div className="space-y-1">
+                      {analysis.anti_fraud_tips.map((tip, i) => (
+                        <div key={i} className="flex items-start gap-2 text-sm">
+                          <CheckCircle className="w-3 h-3 text-emerald-400 mt-0.5 shrink-0" />
+                          <span className="text-slate-300">{tip}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* A/B Test Suggestion */}
+          {analysis.ab_test_suggestion && (
+            <Card className="bg-purple-500/10 border-purple-500/30">
+              <CardContent className="p-4 flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-purple-300 font-medium text-sm">💡 Sugestia A/B testu</p>
+                  <p className="text-slate-300 text-sm mt-1">{analysis.ab_test_suggestion}</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Radar Chart */}
           <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
