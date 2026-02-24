@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Plus, Eye, Users, Coins, TrendingUp, Loader2, 
   Pencil, Trash2, AlertTriangle, ArrowLeft, Gift, Settings, 
   Mail, ShoppingBag, Target, Zap, Shield, CreditCard, BarChart3,
-  Crown, FileText, Flag, Gamepad2
+  Crown, FileText, Flag, Gamepad2, Briefcase
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ import AdminSubscriptions from '@/components/admin/AdminSubscriptions.jsx';
 import AdminInvoices from '@/components/admin/AdminInvoices.jsx';
 import AdminTransactionHistory from '@/components/admin/AdminTransactionHistory.jsx';
 import AdminGameReports from '@/components/admin/AdminGameReports.jsx';
+import AdminRecruitment from '@/components/admin/AdminRecruitment.jsx';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
@@ -302,6 +303,9 @@ export default function AdminPanel() {
             </TabsTrigger>
             <TabsTrigger value="game_reports" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <Flag className="w-4 h-4 mr-2" /> Zgłoszenia Gier
+            </TabsTrigger>
+            <TabsTrigger value="recruitment" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Briefcase className="w-4 h-4 mr-2" /> Rekrutacja
             </TabsTrigger>
           </TabsList>
 
@@ -629,6 +633,20 @@ export default function AdminPanel() {
           {/* Transactions Tab */}
           <TabsContent value="transactions">
             <AdminTransactionHistory />
+          </TabsContent>
+
+          {/* Recruitment Tab */}
+          <TabsContent value="recruitment">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-purple-400" /> Zarządzanie rekrutacją
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdminRecruitment />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Game Reports Tab */}
