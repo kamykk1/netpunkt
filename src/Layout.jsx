@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Shield, Menu, X, Coins, ShoppingBag, 
   Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
-  Gift, Star, Crown, Gamepad2, Bolt
+  Gift, Star, Crown, Gamepad2
 } from 'lucide-react';
 import UserAvatar from '@/components/profile/UserAvatar.jsx';
 import AvatarPicker from '@/components/profile/AvatarPicker.jsx';
@@ -95,7 +95,7 @@ export default function Layout({ children, currentPageName }) {
             {/* Logo */}
             <Link to={createPageUrl('Dashboard')} className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center neon-glow">
-                <Zap className="w-6 h-6 text-white" />
+                <span className="text-white font-black text-lg leading-none">N</span>
               </div>
               <span className="font-bold text-xl text-white neon-text hidden sm:block">netpunkt.pl</span>
             </Link>
