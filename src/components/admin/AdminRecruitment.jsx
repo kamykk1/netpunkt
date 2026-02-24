@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Briefcase, Plus, Search, Star, User, FileText, Pencil, 
-  Trash2, ChevronDown, Phone, Mail, Calendar, X
+  Briefcase, Plus, Search, FileText, Pencil, 
+  Trash2, Phone, Mail, Calendar, Sparkles, BarChart3, Send
 } from 'lucide-react';
 import { notifyAdmins } from '@/components/notifications/notificationHelpers.jsx';
+import CVScreening from '@/components/recruitment/CVScreening.jsx';
+import RecruitmentAnalytics from '@/components/recruitment/RecruitmentAnalytics.jsx';
+import CandidateEmail from '@/components/recruitment/CandidateEmail.jsx';
 
 const STATUS_CONFIG = {
   cv_received:  { label: 'CV przesłano',   color: 'bg-slate-500/20 text-slate-300' },
@@ -36,7 +37,7 @@ const EMPTY_APP = { candidate_name: '', candidate_email: '', candidate_phone: ''
 export default function AdminRecruitment() {
   const queryClient = useQueryClient();
   const [activeOffer, setActiveOffer] = useState(null);
-  const [offerForm, setOfferForm] = useState(null); // null = closed, obj = editing
+  const [offerForm, setOfferForm] = useState(null);
   const [appForm, setAppForm] = useState(null);
   const [editingApp, setEditingApp] = useState(null);
   const [search, setSearch] = useState('');
@@ -46,6 +47,8 @@ export default function AdminRecruitment() {
   const [salaryMin, setSalaryMin] = useState('');
   const [salaryMax, setSalaryMax] = useState('');
   const [sortBy, setSortBy] = useState('created_date_desc');
+  const [showEmail, setShowEmail] = useState(false);
+  const [activeTab, setActiveTab] = useState('candidates');
 
   const { data: offers = [] } = useQuery({
     queryKey: ['jobOffers'],
@@ -138,7 +141,7 @@ export default function AdminRecruitment() {
           className="bg-slate-800 border-purple-500/30 text-white h-8 text-xs" />
         <Select value={empTypeFilter} onValueChange={setEmpTypeFilter}>
           <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-8 text-xs"><SelectValue placeholder="Typ zatrudnienia" /></SelectTrigger>
-          <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+          <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
             <SelectItem value="all">Wszystkie typy</SelectItem>
             {Object.entries(EMP_TYPES).map(([k,v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
           </SelectContent>
@@ -199,110 +202,146 @@ export default function AdminRecruitment() {
             <div className="space-y-3">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h4 className="text-white font-medium">{activeOffer.title}</h4>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Button size="sm" variant="outline" onClick={() => setShowEmail(true)}
+                    className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 text-xs h-7">
+                    <Send className="w-3 h-3 mr-1" /> Email
+                  </Button>
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-7 text-xs w-40"><SelectValue /></SelectTrigger>
-                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                    <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-7 text-xs w-36"><SelectValue /></SelectTrigger>
+                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                       <SelectItem value="created_date_desc">Najnowsze</SelectItem>
                       <SelectItem value="created_date_asc">Najstarsze</SelectItem>
                       <SelectItem value="rating_desc">Najlepsza ocena</SelectItem>
                       <SelectItem value="status">Wg statusu</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button size="sm" onClick={() => setAppForm({ ...EMPTY_APP })} className="bg-emerald-600 hover:bg-emerald-700">
+                  <Button size="sm" onClick={() => setAppForm({ ...EMPTY_APP })} className="bg-emerald-600 hover:bg-emerald-700 text-xs h-7">
                     <Plus className="w-3 h-3 mr-1" /> Dodaj
                   </Button>
                 </div>
               </div>
 
-              {/* Progress widget */}
-              <div className="grid grid-cols-3 gap-1.5">
-                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
-                  <div key={k} className={`px-2 py-1.5 rounded-lg border text-center ${v.color} border-current/20`} style={{borderColor:'currentColor',opacity:0.9}}>
-                    <p className="font-bold text-sm">{statusCounts[k] || 0}</p>
-                    <p className="text-xs opacity-80 leading-tight">{v.label}</p>
+              {/* Tabs: Kandydaci / AI Screening / Analityka */}
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="bg-slate-800/50 border border-slate-700/50 h-8 p-0.5">
+                  <TabsTrigger value="candidates" className="text-xs h-7 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-400">
+                    Kandydaci ({offerApps.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="ai" className="text-xs h-7 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-400">
+                    <Sparkles className="w-3 h-3 mr-1" /> AI Screening
+                  </TabsTrigger>
+                  <TabsTrigger value="analytics" className="text-xs h-7 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-slate-400">
+                    <BarChart3 className="w-3 h-3 mr-1" /> Analityka
+                  </TabsTrigger>
+                </TabsList>
+
+                {/* Kandydaci */}
+                <TabsContent value="candidates" className="space-y-3 mt-3">
+                  {/* Progress widget */}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {Object.entries(STATUS_CONFIG).map(([k, v]) => (
+                      <div key={k} className={`px-2 py-1.5 rounded-lg border text-center ${v.color}`} style={{borderColor:'currentColor',opacity:0.9}}>
+                        <p className="font-bold text-sm">{statusCounts[k] || 0}</p>
+                        <p className="text-xs opacity-80 leading-tight">{v.label}</p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {/* Status pipeline */}
-              <div className="flex flex-wrap gap-1.5">
-                <button onClick={() => setStatusFilter('all')}
-                  className={`px-2 py-1 rounded text-xs border transition-all ${statusFilter === 'all' ? 'bg-purple-500/20 border-purple-500/50 text-white' : 'border-slate-700 text-slate-400'}`}>
-                  Wszyscy ({offerApps.length})
-                </button>
-                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
-                  <button key={k} onClick={() => setStatusFilter(k)}
-                    className={`px-2 py-1 rounded text-xs border transition-all ${statusFilter === k ? 'bg-purple-500/20 border-purple-500/50 text-white' : 'border-slate-700 text-slate-400'}`}>
-                    {v.label} ({statusCounts[k] || 0})
-                  </button>
-                ))}
-              </div>
+                  {/* Status pipeline */}
+                  <div className="flex flex-wrap gap-1.5">
+                    <button onClick={() => setStatusFilter('all')}
+                      className={`px-2 py-1 rounded text-xs border transition-all ${statusFilter === 'all' ? 'bg-purple-500/20 border-purple-500/50 text-white' : 'border-slate-700 text-slate-400'}`}>
+                      Wszyscy ({offerApps.length})
+                    </button>
+                    {Object.entries(STATUS_CONFIG).map(([k, v]) => (
+                      <button key={k} onClick={() => setStatusFilter(k)}
+                        className={`px-2 py-1 rounded text-xs border transition-all ${statusFilter === k ? 'bg-purple-500/20 border-purple-500/50 text-white' : 'border-slate-700 text-slate-400'}`}>
+                        {v.label} ({statusCounts[k] || 0})
+                      </button>
+                    ))}
+                  </div>
 
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-                <Input value={search} onChange={e => setSearch(e.target.value)}
-                  placeholder="Szukaj w CV, imieniu, emailu, słowach kluczowych..."
-                  className="pl-8 bg-slate-800 border-purple-500/30 text-white text-sm h-8" />
-              </div>
+                  {/* Search */}
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                    <Input value={search} onChange={e => setSearch(e.target.value)}
+                      placeholder="Szukaj w CV, imieniu, emailu..."
+                      className="pl-8 bg-slate-800 border-purple-500/30 text-white text-sm h-8" />
+                  </div>
 
-              {/* Applications */}
-              <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
-                {filteredApps.length === 0 ? (
-                  <div className="text-center py-6 text-slate-500 text-sm">Brak kandydatów</div>
-                ) : filteredApps.map(app => (
-                  <div key={app.id} className="p-3 rounded-xl border border-slate-700/50 bg-slate-800/30">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-white font-medium text-sm">{app.candidate_name}</p>
-                          <Badge className={STATUS_CONFIG[app.status]?.color + ' text-xs'}>
-                            {STATUS_CONFIG[app.status]?.label}
-                          </Badge>
-                          {app.rating && (
-                            <span className="flex items-center gap-0.5 text-yellow-400 text-xs">
-                              {'★'.repeat(parseInt(app.rating))}{'☆'.repeat(5 - parseInt(app.rating))}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex flex-wrap items-center gap-3 mt-1 text-slate-400 text-xs">
-                          <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{app.candidate_email}</span>
-                          {app.candidate_phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{app.candidate_phone}</span>}
-                          {app.interview_date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{app.interview_date}</span>}
-                          {app.source && <span className="text-purple-400">{SOURCES[app.source]}</span>}
-                        </div>
-                        {app.keywords && (
-                          <div className="flex flex-wrap gap-1 mt-1.5">
-                            {app.keywords.split(',').map(k => k.trim()).filter(Boolean).map((kw, i) => (
-                              <span key={i} className="px-1.5 py-0.5 bg-slate-700/60 rounded text-slate-300 text-xs">{kw}</span>
-                            ))}
+                  {/* Applications list */}
+                  <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+                    {filteredApps.length === 0 ? (
+                      <div className="text-center py-6 text-slate-500 text-sm">Brak kandydatów</div>
+                    ) : filteredApps.map(app => (
+                      <div key={app.id} className="p-3 rounded-xl border border-slate-700/50 bg-slate-800/30">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="text-white font-medium text-sm">{app.candidate_name}</p>
+                              <Badge className={STATUS_CONFIG[app.status]?.color + ' text-xs'}>
+                                {STATUS_CONFIG[app.status]?.label}
+                              </Badge>
+                              {app.rating && (
+                                <span className="flex items-center gap-0.5 text-yellow-400 text-xs">
+                                  {'★'.repeat(parseInt(app.rating))}{'☆'.repeat(5 - parseInt(app.rating))}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3 mt-1 text-slate-400 text-xs">
+                              <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{app.candidate_email}</span>
+                              {app.candidate_phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{app.candidate_phone}</span>}
+                              {app.interview_date && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{app.interview_date}</span>}
+                              {app.source && <span className="text-purple-400">{SOURCES[app.source]}</span>}
+                            </div>
+                            {app.keywords && (
+                              <div className="flex flex-wrap gap-1 mt-1.5">
+                                {app.keywords.split(',').map(k => k.trim()).filter(Boolean).map((kw, i) => (
+                                  <span key={i} className="px-1.5 py-0.5 bg-slate-700/60 rounded text-slate-300 text-xs">{kw}</span>
+                                ))}
+                              </div>
+                            )}
+                            {app.recruiter_notes && (
+                              <p className="text-slate-400 text-xs mt-1.5 italic border-l-2 border-purple-500/30 pl-2 line-clamp-2">{app.recruiter_notes}</p>
+                            )}
                           </div>
-                        )}
-                        {app.recruiter_notes && (
-                          <p className="text-slate-400 text-xs mt-1.5 italic border-l-2 border-purple-500/30 pl-2">{app.recruiter_notes}</p>
-                        )}
+                          <div className="flex gap-1 shrink-0">
+                            {app.cv_url && (
+                              <a href={app.cv_url} target="_blank" rel="noreferrer"
+                                className="p-1.5 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 rounded">
+                                <FileText className="w-3 h-3" />
+                              </a>
+                            )}
+                            <button onClick={() => setEditingApp(app)}
+                              className="p-1.5 text-slate-400 hover:text-white border border-slate-600 rounded">
+                              <Pencil className="w-3 h-3" />
+                            </button>
+                            <button onClick={() => deleteAppMutation.mutate(app.id)}
+                              className="p-1.5 text-slate-400 hover:text-red-400 border border-slate-600 rounded">
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex gap-1 shrink-0">
-                        {app.cv_url && (
-                          <a href={app.cv_url} target="_blank" rel="noreferrer"
-                            className="p-1.5 text-cyan-400 hover:text-cyan-300 border border-cyan-500/30 rounded">
-                            <FileText className="w-3 h-3" />
-                          </a>
-                        )}
-                        <button onClick={() => setEditingApp(app)}
-                          className="p-1.5 text-slate-400 hover:text-white border border-slate-600 rounded">
-                          <Pencil className="w-3 h-3" />
-                        </button>
-                        <button onClick={() => deleteAppMutation.mutate(app.id)}
-                          className="p-1.5 text-slate-400 hover:text-red-400 border border-slate-600 rounded">
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </TabsContent>
+
+                {/* AI Screening */}
+                <TabsContent value="ai" className="mt-3">
+                  <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50">
+                    <CVScreening offer={activeOffer} applications={offerApps} />
+                  </div>
+                </TabsContent>
+
+                {/* Analytics */}
+                <TabsContent value="analytics" className="mt-3">
+                  <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50">
+                    <RecruitmentAnalytics offers={offers} applications={applications} />
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           )}
         </div>
@@ -328,7 +367,7 @@ export default function AdminRecruitment() {
                   <Label className="text-slate-300 text-xs">Typ zatrudnienia</Label>
                   <Select value={offerForm.employment_type} onValueChange={v => setOfferForm(p => ({...p, employment_type: v}))}>
                     <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-8 text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                       {Object.entries(EMP_TYPES).map(([k,v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -337,7 +376,7 @@ export default function AdminRecruitment() {
                   <Label className="text-slate-300 text-xs">Status</Label>
                   <Select value={offerForm.status} onValueChange={v => setOfferForm(p => ({...p, status: v}))}>
                     <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-8 text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                    <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                       <SelectItem value="open">Otwarta</SelectItem>
                       <SelectItem value="closed">Zamknięta</SelectItem>
                       <SelectItem value="draft">Szkic</SelectItem>
@@ -414,7 +453,7 @@ export default function AdminRecruitment() {
                     <Label className="text-slate-300 text-xs">Status</Label>
                     <Select value={data.status} onValueChange={v => setData(p => ({...p, status: v}))}>
                       <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-8 text-sm"><SelectValue /></SelectTrigger>
-                      <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                      <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                         {Object.entries(STATUS_CONFIG).map(([k,v]) => <SelectItem key={k} value={k}>{v.label}</SelectItem>)}
                       </SelectContent>
                     </Select>
@@ -423,7 +462,7 @@ export default function AdminRecruitment() {
                     <Label className="text-slate-300 text-xs">Źródło</Label>
                     <Select value={data.source || 'direct'} onValueChange={v => setData(p => ({...p, source: v}))}>
                       <SelectTrigger className="bg-slate-800 border-purple-500/30 text-white h-8 text-sm"><SelectValue /></SelectTrigger>
-                      <SelectContent className="bg-[#1a1a2e] border-purple-500/30">
+                      <SelectContent className="bg-[#1a1a2e] border-purple-500/30 text-white">
                         {Object.entries(SOURCES).map(([k,v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}
                       </SelectContent>
                     </Select>
@@ -461,6 +500,22 @@ export default function AdminRecruitment() {
               </div>
             );
           })()}
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Dialog */}
+      <Dialog open={showEmail} onOpenChange={setShowEmail}>
+        <DialogContent className="bg-[#1a1a2e] border-purple-500/30 text-white max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-cyan-400" /> Wyślij email do kandydatów
+            </DialogTitle>
+          </DialogHeader>
+          <CandidateEmail
+            applications={offerApps}
+            offerTitle={activeOffer?.title}
+            onClose={() => setShowEmail(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>
