@@ -309,6 +309,9 @@ export default function AdminPanel() {
             <TabsTrigger value="recruitment" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
               <Briefcase className="w-4 h-4 mr-2" /> Rekrutacja
             </TabsTrigger>
+            <TabsTrigger value="wheel" className="data-[state=active]:bg-amber-500 data-[state=active]:text-white text-slate-400">
+              <Gift className="w-4 h-4 mr-2" /> Koło Fortuny
+            </TabsTrigger>
           </TabsList>
 
           {/* Messages Tab (default) */}
