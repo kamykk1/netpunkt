@@ -587,6 +587,20 @@ export default function AdminPanel() {
             </Card>
           </TabsContent>
 
+          {/* Fortune Wheel Tab */}
+          <TabsContent value="wheel">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Gift className="w-5 h-5 text-amber-400" /> Koło Fortuny — konfiguracja
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdminFortuneWheel settings={settings} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
         </Tabs>
       </div>
 
