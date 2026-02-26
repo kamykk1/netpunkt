@@ -14,6 +14,7 @@ const POINTS_REWARD = 25;
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
 export default function MemoryGame({ user, onClose }) {
+  const qc = useQueryClient();
   const [cards, setCards] = useState([]);
   const [flipped, setFlipped] = useState([]);
   const [matched, setMatched] = useState([]);
@@ -65,8 +66,16 @@ export default function MemoryGame({ user, onClose }) {
   const finishGame = async () => {
     setPhase('result');
     setSaving(true);
-    await base44.auth.updateMe({ points_balance: (user.points_balance || 0) + POINTS_REWARD });
+    await Promise.all([
+      base44.auth.updateMe({
+        points_balance: (user.points_balance || 0) + POINTS_REWARD,
+        memory_best_moves: Math.min(user.memory_best_moves || 999, moves)
+      }),
+      base44.entities.GameScore.create({ user_id: user.id, user_email: user.email, user_name: user.full_name || user.email?.split('@')[0], game_type: 'memory', score: moves, extra: JSON.stringify({ time, moves }) })
+    ]);
     toast.success(`+${POINTS_REWARD} punktów za Memory!`);
+    qc.invalidateQueries({ queryKey: ['gameScores'] });
+    qc.invalidateQueries({ queryKey: ['currentUser'] });
     setSaving(false);
   };
 
