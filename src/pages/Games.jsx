@@ -105,9 +105,18 @@ export default function Games() {
   }, [activeRoom?.id]);
 
   const createMutation = useMutation({
-    mutationFn: async () => {
-      if (newGame.bet_points > 0 && (user.points_balance || 0) < newGame.bet_points) throw new Error('Niewystarczające punkty');
-      return base44.entities.GameRoom.create({ ...newGame, player1_id: user.id, player1_email: user.email, status: 'waiting', chat_enabled: true });
+    mutationFn: async (form) => {
+      if (form.bet_points > 0 && (user.points_balance || 0) < form.bet_points) throw new Error('Niewystarczające punkty');
+      const eloRating = user.elo_rating || 1000;
+      return base44.entities.GameRoom.create({
+        ...form,
+        player1_id: user.id,
+        player1_email: user.email,
+        player1_name: user.full_name || user.email,
+        player1_elo: eloRating,
+        status: 'waiting',
+        chat_enabled: true,
+      });
     },
     onSuccess: (room) => { setActiveRoom(room); setShowCreate(false); queryClient.invalidateQueries({ queryKey: ['gameRooms'] }); toast.success('Pokój utworzony!'); },
     onError: (e) => toast.error(e.message)
