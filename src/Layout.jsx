@@ -51,7 +51,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Ranking', icon: Trophy, page: 'Ranking' },
     { name: 'Cashback', icon: Gift, page: 'Cashback' },
     { name: 'Battle Pass', icon: Zap, page: 'BattlePass' },
-    { name: 'Partnerzy', icon: Users, page: 'Partners' },
     { name: 'Gry', icon: Gamepad2, page: 'Games' },
     ...(user?.is_advertiser ? [{ name: 'Reklamodawca', icon: TrendingUp, page: 'AdvertiserPanel' }] : [{ name: 'Reklama', icon: TrendingUp, page: 'AdvertiserRegister' }]),
     ...(user?.role === 'admin' || user?.is_moderator ? [

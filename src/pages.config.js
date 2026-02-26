@@ -59,7 +59,6 @@ import Dashboard from './pages/Dashboard';
 import EarnAds from './pages/EarnAds';
 import Games from './pages/Games';
 import Missions from './pages/Missions';
-import Partners from './pages/Partners';
 import Payments from './pages/Payments';
 import PointsHistory from './pages/PointsHistory';
 import Profile from './pages/Profile';
@@ -84,7 +83,6 @@ export const PAGES = {
     "EarnAds": EarnAds,
     "Games": Games,
     "Missions": Missions,
-    "Partners": Partners,
     "Payments": Payments,
     "PointsHistory": PointsHistory,
     "Profile": Profile,
