@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { 
   LayoutDashboard, Shield, Coins, ShoppingBag, LogOut,
   Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
-  Gift, Crown, Gamepad2, User
+  Gift, Crown, Gamepad2, User, Image
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -54,7 +54,11 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Partnerzy', icon: Users, page: 'Partners' },
     { name: 'Gry', icon: Gamepad2, page: 'Games' },
     ...(user?.is_advertiser ? [{ name: 'Reklamodawca', icon: TrendingUp, page: 'AdvertiserPanel' }] : [{ name: 'Reklama', icon: TrendingUp, page: 'AdvertiserRegister' }]),
-    ...(user?.role === 'admin' || user?.is_moderator ? [{ name: 'Admin', icon: Shield, page: 'AdminPanel' }] : []),
+    ...(user?.role === 'admin' || user?.is_moderator ? [
+      { name: 'Admin', icon: Shield, page: 'AdminPanel' },
+      { name: 'Bannery gier', icon: Shield, page: 'AdminBanners' },
+      { name: 'Osiągnięcia', icon: Trophy, page: 'AdminAchievements' },
+    ] : []),
     { name: 'Kontakt', icon: Mail, page: 'Contact' },
     null,
   ];
