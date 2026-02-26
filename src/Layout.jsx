@@ -7,12 +7,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Shield, Menu, X, Coins, ShoppingBag, 
   Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
-  Gift, Star, Crown, Gamepad2, User
+  Gift, Crown, Gamepad2, User
 } from 'lucide-react';
-import UserAvatar from '@/components/profile/UserAvatar.jsx';
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import NotificationCenter from '@/components/notifications/NotificationCenter.jsx';
 
 export default function Layout({ children, currentPageName }) {
