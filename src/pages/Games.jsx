@@ -316,6 +316,17 @@ export default function Games() {
           )}
         </div>
         <ReportModal open={!!reportTarget} onClose={() => setReportTarget(null)} currentUser={user} reportedUser={reportTarget} roomId={activeRoom?.id} gameType={activeRoom?.game_type} />
+        {postGame && (
+          <PostGameSummary
+            room={activeRoom}
+            currentUser={user}
+            opponent={opponent}
+            result={postGame.result}
+            eloChange={postGame.eloChange}
+            onLeave={leaveRoom}
+            onPlayAgain={() => { setPostGame(null); leaveRoom(); setTimeout(() => setShowCreate(true), 100); }}
+          />
+        )}
       </div>
     );
   }
