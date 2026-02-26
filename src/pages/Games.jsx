@@ -298,7 +298,7 @@ export default function Games() {
                 return (
                   <motion.div key={game.key} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
                     <Card className={`bg-[#1a1a2e]/50 border-purple-500/20 overflow-hidden ${enabled ? 'cursor-pointer hover:border-purple-500/50' : 'opacity-50 cursor-not-allowed'} transition-all group`}
-                      onClick={() => enabled && setSoloGame(game.key)}>
+                      onClick={() => enabled && startSoloGame(game.key)}>
                       <CardContent className="p-5">
                         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${game.color} flex items-center justify-center mb-3 ${enabled ? 'group-hover:scale-110' : ''} transition-transform text-2xl`}>
                           {game.icon}
