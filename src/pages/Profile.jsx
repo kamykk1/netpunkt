@@ -304,6 +304,11 @@ export default function Profile() {
             </Card>
           </TabsContent>
 
+          {/* --- OSIĄGNIĘCIA --- */}
+          <TabsContent value="achievements">
+            <AchievementsPanel user={user} />
+          </TabsContent>
+
           {/* --- SZYBKIE LINKI --- */}
           <TabsContent value="quick">
             <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
