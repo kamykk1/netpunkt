@@ -126,7 +126,9 @@ export default function Games() {
     mutationFn: async (room) => {
       if (room.bet_points > 0 && (user.points_balance || 0) < room.bet_points) throw new Error('Niewystarczające punkty');
       const updated = await base44.entities.GameRoom.update(room.id, {
-        player2_id: user.id, player2_email: user.email, status: 'active', current_turn: room.player1_id, game_state: JSON.stringify({})
+        player2_id: user.id, player2_email: user.email, player2_name: user.full_name || user.email,
+        player2_elo: user.elo_rating || 1000,
+        status: 'active', current_turn: room.player1_id, game_state: JSON.stringify({})
       });
       const p1users = await base44.entities.User.filter({ id: room.player1_id });
       const p1 = p1users[0] || null;
