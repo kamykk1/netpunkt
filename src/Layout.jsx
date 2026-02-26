@@ -145,22 +145,54 @@ export default function Layout({ children, currentPageName }) {
               {/* Notifications */}
               <NotificationCenter userId={user?.id} />
 
-              {/* User avatar button → Moje dane */}
-              <Link to={createPageUrl('Profile')}>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-purple-500/30 p-0 overflow-hidden">
-                  {user?.avatar_url ? (
-                    <img src={user.avatar_url} alt="avatar" className="h-10 w-10 object-cover rounded-full" />
-                  ) : user?.avatar_emoji ? (
-                    <span className="text-xl leading-none">{user.avatar_emoji}</span>
-                  ) : (
-                    <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-500 text-white">
-                        {getInitials(user?.full_name)}
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                </Button>
-              </Link>
+              {/* User avatar dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-purple-500/30 p-0 overflow-hidden">
+                    {user?.avatar_url ? (
+                      <img src={user.avatar_url} alt="avatar" className="h-10 w-10 object-cover rounded-full" />
+                    ) : user?.avatar_emoji ? (
+                      <span className="text-xl leading-none">{user.avatar_emoji}</span>
+                    ) : (
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-500 text-white">
+                          {getInitials(user?.full_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-[#1a1a2e] border-purple-500/30 text-white">
+                  <div className="px-2 py-1.5">
+                    <p className="font-medium text-sm">{user?.full_name}</p>
+                    <p className="text-xs text-slate-400">{user?.email}</p>
+                  </div>
+                  <DropdownMenuSeparator className="bg-purple-500/20" />
+                  <DropdownMenuItem className="sm:hidden text-slate-300">
+                    <Coins className="w-4 h-4 mr-2 text-yellow-400" />
+                    {(user?.points_balance || 0).toLocaleString()} pkt
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('Profile')} className="text-slate-300 hover:text-white">
+                      <User className="w-4 h-4 mr-2" /> Moje dane
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('Payments')} className="text-slate-300 hover:text-white">
+                      <CreditCard className="w-4 h-4 mr-2" /> Wypłaty
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl('Referrals')} className="text-slate-300 hover:text-white">
+                      <Users className="w-4 h-4 mr-2" /> Polecenia
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-purple-500/20" />
+                  <DropdownMenuItem onClick={() => base44.auth.logout()} className="text-red-400">
+                    Wyloguj się
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Mobile Menu Button */}
               <Button
