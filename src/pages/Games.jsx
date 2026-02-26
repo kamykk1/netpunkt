@@ -194,13 +194,13 @@ export default function Games() {
     );
   }
 
-  // Pre-game ad overlay
+  // Pre-game banner overlay
   if (pendingGame) {
     const gameMeta = SOLO_GAMES.find(g => g.key === pendingGame);
     return (
       <>
         <div className="min-h-screen bg-[#0a0a0f]" />
-        <PreGameAd
+        <PreGameBanner
           gameName={gameMeta?.name || ''}
           gameIcon={gameMeta?.icon || '🎮'}
           onStart={() => { const g = pendingGame; setPendingGame(null); setSoloGame(g); }}

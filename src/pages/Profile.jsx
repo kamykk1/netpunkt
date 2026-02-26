@@ -303,6 +303,11 @@ export default function Profile() {
             </Card>
           </TabsContent>
 
+          {/* --- OSIĄGNIĘCIA — pod historią — dostępne w profilu */}
+          <TabsContent value="history">
+            {/* already defined above, skip duplicate — this is appended below history tabs */}
+          </TabsContent>
+
           {/* --- SZYBKIE LINKI --- */}
           <TabsContent value="quick">
             <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
