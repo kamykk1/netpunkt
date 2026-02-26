@@ -19,6 +19,7 @@ function freeCell(snake) {
 }
 
 export default function SnakeGame({ user, onClose }) {
+  const qc = useQueryClient();
   const [phase, setPhase] = useState('intro');
   const [snake, setSnake] = useState([{x:10,y:7}]);
   const [food, setFood] = useState({x:15,y:7});
@@ -56,11 +57,13 @@ export default function SnakeGame({ user, onClose }) {
       if (next.x < 0 || next.x >= COLS || next.y < 0 || next.y >= ROWS || newSnake.some(s=>s.x===next.x&&s.y===next.y)) {
         phaseRef.current = 'lost';
         setPhase('lost');
-        const pts = Math.floor(scoreRef.current / 5);
-        if (pts > 0) {
-          base44.auth.updateMe({ points_balance: (user.points_balance || 0) + pts });
-          toast.success(`+${pts} punktów za Snake!`);
-        }
+        const finalScore = scoreRef.current;
+        const pts = Math.floor(finalScore / 5);
+        Promise.all([
+          pts > 0 ? base44.auth.updateMe({ points_balance: (user.points_balance || 0) + pts, snake_best_score: Math.max(user.snake_best_score || 0, finalScore) }) : base44.auth.updateMe({ snake_best_score: Math.max(user.snake_best_score || 0, finalScore) }),
+          base44.entities.GameScore.create({ user_id: user.id, user_email: user.email, user_name: user.full_name || user.email?.split('@')[0], game_type: 'snake', score: finalScore })
+        ]).then(() => { qc.invalidateQueries({ queryKey: ['gameScores'] }); qc.invalidateQueries({ queryKey: ['currentUser'] }); });
+        if (pts > 0) toast.success(`+${pts} punktów za Snake!`);
         return;
       }
       newSnake.unshift(next);
