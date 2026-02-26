@@ -54,7 +54,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Gry', icon: Gamepad2, page: 'Games' },
     { name: 'Kontakt', icon: Mail, page: 'Contact' },
     ...(user?.is_advertiser ? [{ name: 'Reklamodawca', icon: TrendingUp, page: 'AdvertiserPanel' }] : [{ name: 'Reklama', icon: TrendingUp, page: 'AdvertiserRegister' }]),
-    ...(user?.role === 'admin' || user?.is_moderator ? [{ name: 'Admin', icon: Shield, page: 'AdminPanel' }] : [])
+    ...(user?.role === 'admin' || user?.is_moderator ? [{ name: 'Admin', icon: Shield, page: 'AdminPanel' }] : []),
+    { name: 'Moje dane', icon: User, page: 'Profile' },
   ];
 
   return (
