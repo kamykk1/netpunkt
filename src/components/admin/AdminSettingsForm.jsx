@@ -41,6 +41,11 @@ const DEFAULT_SETTINGS = {
   minesweeper_enabled: 'true',
   snake_enabled: 'true',
   scratch_enabled: 'true',
+  games_pre_ad_enabled: 'true',
+  games_td_program_id: '',
+  games_pre_ad_url: '',
+  games_pre_ad_image: '',
+  games_pre_ad_title: 'Sprawdź naszych partnerów!',
 };
 
 export default function AdminSettingsForm({ settings }) {
