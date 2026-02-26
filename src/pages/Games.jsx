@@ -140,15 +140,46 @@ export default function Games() {
     onError: (e) => toast.error(e.message)
   });
 
-  const handleGameEnd = async (won) => {
+  const handleGameEnd = async (won, isDraw = false) => {
     if (!activeRoom) return;
     const bet = activeRoom.bet_points || 0;
+    const mode = activeRoom.game_mode || 'classic';
     const gameName = MULTIPLAYER_TYPES[activeRoom.game_type]?.name || activeRoom.game_type;
-    if (bet > 0 && won) await base44.auth.updateMe({ points_balance: (user.points_balance || 0) + bet });
-    if (won) { await base44.auth.updateMe({ games_won: (user.games_won||0)+1, games_played: (user.games_played||0)+1 }); if (bet>0) toast.success(`🏆 Wygrałeś ${bet} punktów!`); }
-    else await base44.auth.updateMe({ games_played: (user.games_played||0)+1 });
-    await sendNotification({ userId: user.id, userEmail: user.email, type: 'status_update', title: won ? `🏆 Wygrałeś w ${gameName}!` : `Mecz zakończony`, message: won ? 'Gratulacje!' : 'Lepsza próba następnym razem!', referenceId: activeRoom.id, referenceType: 'other' });
-    if (opponent?.id) await sendNotification({ userId: opponent.id, userEmail: opponent.email, type: 'status_update', title: won ? `Mecz zakończony` : `🏆 Wygrałeś!`, message: won ? 'Twój przeciwnik wygrał.' : 'Gratulacje!', referenceId: activeRoom.id, referenceType: 'other' });
+
+    // Points / bet logic
+    if (isDraw && bet > 0) {
+      // Tie: each player keeps their stake (no change)
+      toast.info('Remis! Stawki zostają zwrócone.');
+    } else if (!isDraw && bet > 0 && won) {
+      await base44.auth.updateMe({ points_balance: (user.points_balance || 0) + bet });
+      toast.success(`🏆 Wygrałeś ${bet} punktów!`);
+    }
+
+    // ELO update for ranked mode
+    if (mode === 'ranked') {
+      const myElo = user.elo_rating || 1000;
+      const oppElo = (won ? (activeRoom.player2_id === user.id ? activeRoom.player1_elo : activeRoom.player2_elo) : (activeRoom.player1_id === user.id ? activeRoom.player2_elo : activeRoom.player1_elo)) || 1000;
+      const expected = 1 / (1 + Math.pow(10, (oppElo - myElo) / 400));
+      const k = 32;
+      const score = isDraw ? 0.5 : (won ? 1 : 0);
+      const newElo = Math.round(myElo + k * (score - expected));
+      await base44.auth.updateMe({ elo_rating: newElo });
+      const diff = newElo - myElo;
+      toast.info(`ELO: ${myElo} → ${newElo} (${diff >= 0 ? '+' : ''}${diff})`);
+    }
+
+    // Stats
+    if (!isDraw && won) await base44.auth.updateMe({ games_won: (user.games_won || 0) + 1, games_played: (user.games_played || 0) + 1 });
+    else await base44.auth.updateMe({ games_played: (user.games_played || 0) + 1 });
+
+    const title = isDraw ? 'Remis!' : (won ? `🏆 Wygrałeś w ${gameName}!` : 'Mecz zakończony');
+    const msg = isDraw ? 'Wyrównany pojedynek!' : (won ? 'Gratulacje!' : 'Lepsza próba następnym razem!');
+    await sendNotification({ userId: user.id, userEmail: user.email, type: 'status_update', title, message: msg, referenceId: activeRoom.id, referenceType: 'other' });
+    if (opponent?.id) {
+      const oppTitle = isDraw ? 'Remis!' : (won ? 'Mecz zakończony' : `🏆 Wygrałeś w ${gameName}!`);
+      const oppMsg = isDraw ? 'Wyrównany pojedynek!' : (won ? 'Twój przeciwnik wygrał.' : 'Gratulacje!');
+      await sendNotification({ userId: opponent.id, userEmail: opponent.email, type: 'status_update', title: oppTitle, message: oppMsg, referenceId: activeRoom.id, referenceType: 'other' });
+    }
     queryClient.invalidateQueries({ queryKey: ['currentUser'] });
   };
 
