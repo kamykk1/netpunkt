@@ -12,11 +12,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { 
   User, Mail, Phone, MapPin, Building2, Globe, CreditCard, 
   Users, LogOut, Camera, Smile, Save, Crown, Coins, Trophy, 
-  Gamepad2, Hash, FileText, Bell, History, Image
+  Gamepad2, Hash, FileText, Bell, History, Image, TrendingUp
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AvatarPicker from '@/components/profile/AvatarPicker.jsx';
 import AchievementsPanel from '@/components/achievements/AchievementsPanel.jsx';
+import GameStatsSection from '@/components/games/GameStatsSection.jsx';
+import EloHistoryChart from '@/components/games/EloHistoryChart.jsx';
+import FriendsPanel from '@/components/games/FriendsPanel.jsx';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
