@@ -261,7 +261,12 @@ export default function Games() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white">{gt.name}</h1>
-                {activeRoom.bet_points > 0 && <Badge className="bg-yellow-500/20 text-yellow-400 text-xs"><Coins className="w-3 h-3 mr-1" /> Stawka: {activeRoom.bet_points} pkt</Badge>}
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {activeRoom.game_mode === 'ranked' && <Badge className="bg-cyan-500/20 text-cyan-400 text-xs">🏆 Rankingowa</Badge>}
+                  {activeRoom.game_mode === 'point_duel' && <Badge className="bg-yellow-500/20 text-yellow-400 text-xs">⚔️ Pojedynek na punkty {activeRoom.point_limit ? `• cel: ${activeRoom.point_limit}pkt` : ''}</Badge>}
+                  {activeRoom.bet_points > 0 && <Badge className="bg-yellow-500/20 text-yellow-400 text-xs"><Coins className="w-3 h-3 mr-1" /> Stawka: {activeRoom.bet_points} pkt</Badge>}
+                  {activeRoom.time_per_move > 0 && <Badge className="bg-slate-600 text-slate-300 text-xs"><Clock className="w-3 h-3 mr-1" />{activeRoom.time_per_move}s/ruch</Badge>}
+                </div>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={leaveRoom} className="border-red-500/30 text-red-400 bg-transparent"><X className="w-4 h-4 mr-1" /> Opuść</Button>
