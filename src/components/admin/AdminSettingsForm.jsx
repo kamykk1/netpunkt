@@ -416,12 +416,13 @@ export default function AdminSettingsForm({ settings }) {
         <CardContent className="space-y-3">
           {[
             { key: 'games_enabled', label: '🎮 Sekcja gier (wszystkie)' },
-            { key: 'games_chat_enabled', label: '💬 Chat w grach' },
+            { key: 'games_chat_enabled', label: '💬 Chat w grach multiplayer' },
+            { key: 'games_pre_ad_enabled', label: '📢 Reklama przed grą solo' },
             { key: 'quiz_enabled', label: '🧠 Quiz wiedzy ogólnej' },
             { key: 'memory_enabled', label: '🃏 Memory (pary kart)' },
             { key: 'minesweeper_enabled', label: '💣 Saper (Minesweeper)' },
             { key: 'snake_enabled', label: '🐍 Snake' },
-            { key: 'scratch_enabled', label: '🎰 Zdrapka (nagroda za reklamę)' },
+            { key: 'scratch_enabled', label: '🎰 Zdrapka' },
           ].map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-purple-500/20">
               <span className="text-slate-300">{label}</span>
@@ -431,6 +432,37 @@ export default function AdminSettingsForm({ settings }) {
               />
             </div>
           ))}
+
+          {/* Pre-game ad config */}
+          {formData.games_pre_ad_enabled === 'true' && (
+            <div className="mt-4 space-y-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
+              <p className="text-amber-400 text-sm font-medium flex items-center gap-2">
+                <ExternalLink className="w-4 h-4" /> Konfiguracja reklamy przed grą
+              </p>
+              <p className="text-slate-500 text-xs">Domyślnie: Tradedoubler.com. Możesz ustawić własną reklamę poniżej (wypełnienie tych pól nadpisuje Tradedoubler).</p>
+              <div className="space-y-2">
+                <Label className="text-slate-300">Tytuł reklamy</Label>
+                <Input value={formData.games_pre_ad_title || ''} onChange={e => handleChange('games_pre_ad_title', e.target.value)}
+                  className="bg-slate-800 border-purple-500/30 text-white" placeholder="Sprawdź naszych partnerów!" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-slate-300">Link docelowy reklamy (URL)</Label>
+                <Input value={formData.games_pre_ad_url || ''} onChange={e => handleChange('games_pre_ad_url', e.target.value)}
+                  className="bg-slate-800 border-purple-500/30 text-white" placeholder="https://... (puste = Tradedoubler)" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-slate-300">Grafika banneru (URL obrazka)</Label>
+                <Input value={formData.games_pre_ad_image || ''} onChange={e => handleChange('games_pre_ad_image', e.target.value)}
+                  className="bg-slate-800 border-purple-500/30 text-white" placeholder="https://... (opcjonalne)" />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-slate-300">ID programu Tradedoubler (jeśli bez własnej reklamy)</Label>
+                <Input value={formData.games_td_program_id || ''} onChange={e => handleChange('games_td_program_id', e.target.value)}
+                  className="bg-slate-800 border-purple-500/30 text-white" placeholder="np. 304455" />
+                <p className="text-xs text-slate-500">Znajdziesz go na tradedoubler.com w panelu programu</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
