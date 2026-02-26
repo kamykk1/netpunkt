@@ -227,12 +227,15 @@ export default function Profile() {
 
           {/* --- STATYSTYKI GER --- */}
           <TabsContent value="stats">
-            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
-              <CardHeader><CardTitle className="text-white text-lg flex items-center gap-2"><Gamepad2 className="w-5 h-5 text-purple-400" /> Statystyki gier</CardTitle></CardHeader>
-              <CardContent>
-                <GameStatsSection userId={user?.id} />
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+                <CardHeader><CardTitle className="text-white text-lg flex items-center gap-2"><Gamepad2 className="w-5 h-5 text-purple-400" /> Statystyki gier</CardTitle></CardHeader>
+                <CardContent>
+                  <GameStatsSection userId={user?.id} />
+                </CardContent>
+              </Card>
+              <MultiplayerLeaderboard currentUserId={user?.id} />
+            </div>
           </TabsContent>
 
           {/* --- ELO HISTORY --- */}
