@@ -159,25 +159,24 @@ export default function Games() {
     }
 
     // ELO update for ranked mode
+    let eloChange = 0;
     if (mode === 'ranked') {
       const myElo = user.elo_rating || 1000;
-      const oppId = activeRoom.player1_id === user.id ? activeRoom.player2_id : activeRoom.player1_id;
       const oppName = activeRoom.player1_id === user.id ? (activeRoom.player2_name || activeRoom.player2_email) : (activeRoom.player1_name || activeRoom.player1_email);
       const oppElo = activeRoom.player1_id === user.id ? (activeRoom.player2_elo || 1000) : (activeRoom.player1_elo || 1000);
       const expected = 1 / (1 + Math.pow(10, (oppElo - myElo) / 400));
       const k = 32;
       const score = isDraw ? 0.5 : (won ? 1 : 0);
       const newElo = Math.round(myElo + k * (score - expected));
-      const diff = newElo - myElo;
+      eloChange = newElo - myElo;
       await base44.auth.updateMe({ elo_rating: newElo });
       await base44.entities.EloHistory.create({
         user_id: user.id, user_email: user.email,
-        elo_before: myElo, elo_after: newElo, elo_change: diff,
+        elo_before: myElo, elo_after: newElo, elo_change: eloChange,
         game_type: activeRoom.game_type, room_id: activeRoom.id,
         opponent_name: oppName,
         result: isDraw ? 'draw' : (won ? 'win' : 'loss'),
       });
-      toast.info(`ELO: ${myElo} → ${newElo} (${diff >= 0 ? '+' : ''}${diff})`);
     }
 
     // Stats
