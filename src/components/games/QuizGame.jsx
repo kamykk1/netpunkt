@@ -30,6 +30,7 @@ const TIME_PER_QUESTION = 15;
 const POINTS_PER_CORRECT = 10;
 
 export default function QuizGame({ user, onClose }) {
+  const qc = useQueryClient();
   const [phase, setPhase] = useState('intro'); // intro | playing | result
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
@@ -73,10 +74,17 @@ export default function QuizGame({ user, onClose }) {
     setPhase('result');
     setSaving(true);
     const pts = finalScore * POINTS_PER_CORRECT;
-    if (pts > 0) {
-      await base44.auth.updateMe({ points_balance: (user.points_balance || 0) + pts });
-      toast.success(`+${pts} punktów za quiz!`);
-    }
+    await Promise.all([
+      pts > 0 ? base44.auth.updateMe({
+        points_balance: (user.points_balance || 0) + pts,
+        quiz_games_played: (user.quiz_games_played || 0) + 1,
+        quiz_best_score: Math.max(user.quiz_best_score || 0, pts)
+      }) : base44.auth.updateMe({ quiz_games_played: (user.quiz_games_played || 0) + 1 }),
+      base44.entities.GameScore.create({ user_id: user.id, user_email: user.email, user_name: user.full_name || user.email?.split('@')[0], game_type: 'quiz', score: pts })
+    ]);
+    if (pts > 0) toast.success(`+${pts} punktów za quiz!`);
+    qc.invalidateQueries({ queryKey: ['gameScores'] });
+    qc.invalidateQueries({ queryKey: ['currentUser'] });
     setSaving(false);
   };
 
