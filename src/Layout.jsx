@@ -103,27 +103,6 @@ export default function Layout({ children, currentPageName }) {
               <span className="logo-text text-2xl sm:hidden">np.</span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {navItems.map((item) => {
-                const isActive = currentPageName === item.page;
-                return (
-                  <Link key={item.page} to={createPageUrl(item.page)}>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`gap-2 ${isActive 
-                        ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50' 
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-                    >
-                      <item.icon className="w-4 h-4" />
-                      {item.name}
-                    </Button>
-                  </Link>
-                );
-              })}
-            </nav>
-
             {/* Right Section */}
             <div className="flex items-center gap-4">
               {/* Points Display */}
