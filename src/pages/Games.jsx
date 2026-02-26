@@ -47,7 +47,6 @@ const SOLO_GAMES = [
 export default function Games() {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
-  const [newGame, setNewGame] = useState({ game_type: 'tictactoe', bet_points: 0, is_private: false });
   const [activeRoom, setActiveRoom] = useState(null);
   const [opponent, setOpponent] = useState(null);
   const [reportTarget, setReportTarget] = useState(null);
