@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  LayoutDashboard, Shield, Menu, X, Coins, ShoppingBag, 
+  LayoutDashboard, Shield, Coins, ShoppingBag, LogOut,
   Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
   Gift, Crown, Gamepad2, User
 } from 'lucide-react';
