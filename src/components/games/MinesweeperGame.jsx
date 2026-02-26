@@ -42,6 +42,7 @@ function reveal(board, r, c) {
 const NUM_COLORS = ['','text-blue-400','text-emerald-400','text-red-400','text-purple-400','text-amber-400','text-cyan-400','text-pink-400','text-slate-300'];
 
 export default function MinesweeperGame({ user, onClose }) {
+  const qc = useQueryClient();
   const [board, setBoard] = useState(null);
   const [phase, setPhase] = useState('intro'); // intro playing won lost
   const [time, setTime] = useState(0);
@@ -74,7 +75,10 @@ export default function MinesweeperGame({ user, onClose }) {
     const unrevealed = b.flat().filter(cell => !cell.revealed && !cell.mine);
     if (unrevealed.length === 0) {
       setPhase('won');
-      base44.auth.updateMe({ points_balance: (user.points_balance || 0) + POINTS_WIN });
+      Promise.all([
+        base44.auth.updateMe({ points_balance: (user.points_balance || 0) + POINTS_WIN }),
+        base44.entities.GameScore.create({ user_id: user.id, user_email: user.email, user_name: user.full_name || user.email?.split('@')[0], game_type: 'minesweeper', score: 1, extra: JSON.stringify({ time }) })
+      ]).then(() => { qc.invalidateQueries({ queryKey: ['gameScores'] }); qc.invalidateQueries({ queryKey: ['currentUser'] }); });
       toast.success(`+${POINTS_WIN} punktów za wygranie sapera!`);
     }
   };
