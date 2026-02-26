@@ -31,7 +31,7 @@ import MinesweeperGame from '@/components/games/MinesweeperGame.jsx';
 import SnakeGame from '@/components/games/SnakeGame.jsx';
 import ScratchCard from '@/components/games/ScratchCard.jsx';
 import FortuneWheel from '@/components/games/FortuneWheel.jsx';
-import PreGameAd from '@/components/games/PreGameAd.jsx';
+import PreGameBanner from '@/components/games/PreGameBanner.jsx';
 
 const MULTIPLAYER_TYPES = {
   battleship: { name: 'Okręty', icon: Ship, color: 'from-blue-600 to-cyan-600', desc: 'Zatop flotę przeciwnika' },

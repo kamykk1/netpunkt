@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AvatarPicker from '@/components/profile/AvatarPicker.jsx';
+import AchievementsPanel from '@/components/achievements/AchievementsPanel.jsx';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
