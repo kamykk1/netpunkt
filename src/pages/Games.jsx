@@ -20,6 +20,8 @@ import BattleshipGame from '@/components/games/BattleshipGame.jsx';
 import TicTacToeGame from '@/components/games/TicTacToeGame.jsx';
 import Connect4Game from '@/components/games/Connect4Game.jsx';
 import GameRankings from '@/components/games/GameRankings.jsx';
+import PostGameSummary from '@/components/games/PostGameSummary.jsx';
+import MultiplayerLeaderboard from '@/components/games/MultiplayerLeaderboard.jsx';
 import GameAchievements from '@/components/games/GameAchievements.jsx';
 import QuizGame from '@/components/games/QuizGame.jsx';
 import MemoryGame from '@/components/games/MemoryGame.jsx';
@@ -50,9 +52,10 @@ export default function Games() {
   const [activeRoom, setActiveRoom] = useState(null);
   const [opponent, setOpponent] = useState(null);
   const [reportTarget, setReportTarget] = useState(null);
-  const [soloGame, setSoloGame] = useState(null); // key of solo game
-  const [pendingGame, setPendingGame] = useState(null); // waiting to show ad
+  const [soloGame, setSoloGame] = useState(null);
+  const [pendingGame, setPendingGame] = useState(null);
   const [settings, setSettings] = useState({});
+  const [postGame, setPostGame] = useState(null); // { result, eloChange }
 
   const { data: user } = useQuery({ queryKey: ['currentUser'], queryFn: () => base44.auth.me() });
 
