@@ -192,6 +192,7 @@ export default function Games() {
       await sendNotification({ userId: opponent.id, userEmail: opponent.email, type: 'status_update', title: oppTitle, message: oppMsg, referenceId: activeRoom.id, referenceType: 'other' });
     }
     queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+    setPostGame({ result: isDraw ? 'draw' : (won ? 'win' : 'loss'), eloChange });
   };
 
   const leaveRoom = async () => {
