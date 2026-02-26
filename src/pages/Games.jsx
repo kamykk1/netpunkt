@@ -503,7 +503,10 @@ export default function Games() {
 
           {/* RANKING */}
           <TabsContent value="ranking">
-            <GameRankings />
+            <div className="space-y-6">
+              <GameRankings />
+              <MultiplayerLeaderboard currentUserId={user?.id} />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
