@@ -62,10 +62,12 @@ import Missions from './pages/Missions';
 import Partners from './pages/Partners';
 import Payments from './pages/Payments';
 import PointsHistory from './pages/PointsHistory';
+import Profile from './pages/Profile';
 import Ranking from './pages/Ranking';
 import Referrals from './pages/Referrals';
 import Shop from './pages/Shop';
-import Profile from './pages/Profile';
+import AdminBanners from './pages/AdminBanners';
+import AdminAchievements from './pages/AdminAchievements';
 import __Layout from './Layout.jsx';
 
 
@@ -85,10 +87,12 @@ export const PAGES = {
     "Partners": Partners,
     "Payments": Payments,
     "PointsHistory": PointsHistory,
+    "Profile": Profile,
     "Ranking": Ranking,
     "Referrals": Referrals,
     "Shop": Shop,
-    "Profile": Profile,
+    "AdminBanners": AdminBanners,
+    "AdminAchievements": AdminAchievements,
 }
 
 export const pagesConfig = {
