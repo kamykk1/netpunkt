@@ -56,6 +56,7 @@ export default function Games() {
   const [opponent, setOpponent] = useState(null);
   const [reportTarget, setReportTarget] = useState(null);
   const [soloGame, setSoloGame] = useState(null); // key of solo game
+  const [pendingGame, setPendingGame] = useState(null); // waiting to show ad
   const [settings, setSettings] = useState({});
 
   const { data: user } = useQuery({ queryKey: ['currentUser'], queryFn: () => base44.auth.me() });
