@@ -88,6 +88,32 @@ function GlobalRankingList({ users }) {
   );
 }
 
+function EloRankingList({ users }) {
+  if (!users.length) return <p className="text-center text-slate-500 py-8">Brak graczy rankingowych</p>;
+  return (
+    <div className="space-y-2">
+      {users.map((u, i) => (
+        <div key={u.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
+          i === 0 ? 'bg-yellow-500/10 border-yellow-500/30' :
+          i === 1 ? 'bg-slate-400/10 border-slate-400/30' :
+          i === 2 ? 'bg-amber-700/10 border-amber-700/30' :
+          'bg-slate-800/30 border-slate-700/30'
+        }`}>
+          <div className="w-6 flex justify-center"><RankBadge rank={i + 1} /></div>
+          <div className="flex-1 min-w-0">
+            <p className="text-white font-medium text-sm truncate">{u.full_name || u.email?.split('@')[0]}</p>
+            <p className="text-slate-400 text-xs">{u.games_played || 0} partii rankingowych</p>
+          </div>
+          <div className="text-right">
+            <p className="text-cyan-400 font-bold text-sm">{u.elo_rating || 1000}</p>
+            <p className="text-slate-500 text-xs">ELO</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function GameRankings() {
   const [activeGame, setActiveGame] = useState('all');
 
@@ -96,16 +122,23 @@ export default function GameRankings() {
     queryFn: () => base44.entities.User.list('-games_won', 20)
   });
 
+  const { data: eloUsers = [], isLoading: eloLoading } = useQuery({
+    queryKey: ['gameEloRanking'],
+    queryFn: () => base44.entities.User.list('-elo_rating', 20),
+    enabled: activeGame === 'elo',
+  });
+
   const { data: scores = [], isLoading: scoresLoading } = useQuery({
     queryKey: ['gameScores', activeGame],
     queryFn: () => activeGame === 'all'
       ? base44.entities.GameScore.list('-score', 50)
       : base44.entities.GameScore.filter({ game_type: activeGame }, '-score', 20),
-    enabled: activeGame !== 'global'
+    enabled: activeGame !== 'global' && activeGame !== 'elo'
   });
 
-  const isLoading = usersLoading || scoresLoading;
+  const isLoading = usersLoading || scoresLoading || eloLoading;
   const ranked = users.filter(u => (u.games_played || 0) > 0);
+  const eloRanked = eloUsers.filter(u => u.elo_rating);
 
   return (
     <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
@@ -123,6 +156,7 @@ export default function GameRankings() {
               <TabsList className="bg-slate-800/60 mb-4 w-max min-w-full">
                 <TabsTrigger value="all" className="text-xs">🏆 Ogólny</TabsTrigger>
                 <TabsTrigger value="global" className="text-xs">👥 Gracze</TabsTrigger>
+                <TabsTrigger value="elo" className="text-xs">⚡ ELO</TabsTrigger>
                 {Object.entries(GAME_LABELS).map(([k, l]) => (
                   <TabsTrigger key={k} value={k} className="text-xs">{l}</TabsTrigger>
                 ))}
@@ -135,6 +169,10 @@ export default function GameRankings() {
             <TabsContent value="global">
               <p className="text-slate-500 text-xs text-center mb-3">Ranking po liczbie wygranych partii</p>
               <GlobalRankingList users={ranked.slice(0, 15)} />
+            </TabsContent>
+            <TabsContent value="elo">
+              <p className="text-slate-500 text-xs text-center mb-3">Ranking graczy rankingowych (ELO)</p>
+              <EloRankingList users={eloRanked.slice(0, 15)} />
             </TabsContent>
             {Object.keys(GAME_LABELS).map(gameKey => (
               <TabsContent key={gameKey} value={gameKey}>
