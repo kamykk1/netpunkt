@@ -171,40 +171,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden border-t border-purple-500/20 bg-[#0f0f18]"
-            >
-              <nav className="px-4 py-3 space-y-1">
-                {navItems.map((item) => {
-                  const isActive = currentPageName === item.page;
-                  return (
-                    <Link
-                      key={item.page}
-                      to={createPageUrl(item.page)}
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start gap-3 ${isActive 
-                          ? 'bg-purple-500/20 text-purple-400' 
-                          : 'text-slate-400 hover:text-white'}`}
-                      >
-                        <item.icon className="w-5 h-5" />
-                        {item.name}
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
       </header>
 
       {/* Main Content */}
