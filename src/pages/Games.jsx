@@ -392,17 +392,24 @@ export default function Games() {
           {/* MULTIPLAYER */}
           <TabsContent value="multi">
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {Object.entries(MULTIPLAYER_TYPES).map(([key, gt]) => (
-                  <motion.div key={key} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                    <Card className="bg-[#1a1a2e]/50 border-purple-500/20 overflow-hidden cursor-pointer hover:border-purple-500/50 transition-all group"
-                      onClick={() => { setNewGame({ game_type: key, bet_points: 0 }); setShowCreate(true); }}>
-                      <CardContent className="p-5">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gt.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                          <gt.icon className="w-6 h-6 text-white" />
+              {/* Tryby gry */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { mode: 'classic', label: 'Klasyczny', icon: '🎮', desc: 'Standardowa rozgrywka', color: 'from-purple-600 to-purple-800' },
+                  { mode: 'point_duel', label: 'Pojedynek na punkty', icon: '⚔️', desc: 'Gra do limitu punktów', color: 'from-yellow-600 to-amber-700' },
+                  { mode: 'ranked', label: 'Bitwa rankingowa', icon: '🏆', desc: 'Wpływa na ranking ELO', color: 'from-cyan-600 to-blue-700' },
+                ].map(m => (
+                  <motion.div key={m.mode} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                    <Card
+                      className="bg-[#1a1a2e]/50 border-purple-500/20 cursor-pointer hover:border-purple-500/50 transition-all group"
+                      onClick={() => setShowCreate(true)}
+                    >
+                      <CardContent className="p-4 flex items-start gap-3">
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center text-xl flex-shrink-0`}>{m.icon}</div>
+                        <div>
+                          <p className="text-white font-semibold text-sm">{m.label}</p>
+                          <p className="text-slate-400 text-xs">{m.desc}</p>
                         </div>
-                        <h3 className="text-white font-bold">{gt.name}</h3>
-                        <p className="text-slate-400 text-sm">{gt.desc}</p>
                       </CardContent>
                     </Card>
                   </motion.div>
