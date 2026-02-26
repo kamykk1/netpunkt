@@ -136,6 +136,7 @@ export default function Profile() {
             <TabsTrigger value="company" className="data-[state=active]:bg-cyan-600 data-[state=active]:text-white text-xs px-3"><Building2 className="w-3.5 h-3.5 mr-1" /> Firma</TabsTrigger>
             <TabsTrigger value="history" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-xs px-3"><History className="w-3.5 h-3.5 mr-1" /> Historia</TabsTrigger>
             <TabsTrigger value="notif" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs px-3"><Bell className="w-3.5 h-3.5 mr-1" /> Powiadomienia</TabsTrigger>
+            <TabsTrigger value="achievements" className="data-[state=active]:bg-yellow-600 data-[state=active]:text-white text-xs px-3"><Trophy className="w-3.5 h-3.5 mr-1" /> Osiągnięcia</TabsTrigger>
             <TabsTrigger value="quick" className="data-[state=active]:bg-slate-600 data-[state=active]:text-white text-xs px-3"><CreditCard className="w-3.5 h-3.5 mr-1" /> Linki</TabsTrigger>
           </TabsList>
 
@@ -301,11 +302,6 @@ export default function Profile() {
                 </Button>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* --- OSIĄGNIĘCIA — pod historią — dostępne w profilu */}
-          <TabsContent value="history">
-            {/* already defined above, skip duplicate — this is appended below history tabs */}
           </TabsContent>
 
           {/* --- SZYBKIE LINKI --- */}
