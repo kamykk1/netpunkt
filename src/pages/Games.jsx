@@ -282,11 +282,11 @@ export default function Games() {
           </div>
         </motion.div>
 
-        <Tabs defaultValue="solo">
+        <Tabs defaultValue="multi">
           <TabsList className="bg-slate-800/50 border border-purple-500/20 mb-6 w-full">
+            <TabsTrigger value="multi" className="flex-1 data-[state=active]:bg-cyan-600 data-[state=active]:text-white">👥 Multiplayer</TabsTrigger>
             <TabsTrigger value="solo" className="flex-1 data-[state=active]:bg-purple-600 data-[state=active]:text-white">🕹️ Gry Solo</TabsTrigger>
             <TabsTrigger value="wheel" className="flex-1 data-[state=active]:bg-amber-600 data-[state=active]:text-white">🎡 Koło fortuny</TabsTrigger>
-            <TabsTrigger value="multi" className="flex-1 data-[state=active]:bg-cyan-600 data-[state=active]:text-white">👥 Multiplayer</TabsTrigger>
             <TabsTrigger value="ranking" className="flex-1 data-[state=active]:bg-emerald-600 data-[state=active]:text-white">🏆 Ranking</TabsTrigger>
           </TabsList>
 
