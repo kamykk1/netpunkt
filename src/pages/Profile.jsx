@@ -224,6 +224,31 @@ export default function Profile() {
             </Card>
           </TabsContent>
 
+          {/* --- STATYSTYKI GER --- */}
+          <TabsContent value="stats">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader><CardTitle className="text-white text-lg flex items-center gap-2"><Gamepad2 className="w-5 h-5 text-purple-400" /> Statystyki gier</CardTitle></CardHeader>
+              <CardContent>
+                <GameStatsSection userId={user?.id} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* --- ELO HISTORY --- */}
+          <TabsContent value="elo">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader><CardTitle className="text-white text-lg flex items-center gap-2"><TrendingUp className="w-5 h-5 text-cyan-400" /> Historia rankingu ELO</CardTitle></CardHeader>
+              <CardContent>
+                <EloHistoryChart userId={user?.id} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* --- ZNAJOMI --- */}
+          <TabsContent value="friends">
+            <FriendsPanel user={user} />
+          </TabsContent>
+
           {/* --- HISTORIA TRANSAKCJI --- */}
           <TabsContent value="history">
             <div className="space-y-4">
