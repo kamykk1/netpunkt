@@ -197,7 +197,7 @@ export default function Games() {
 
   const leaveRoom = async () => {
     if (activeRoom?.status === 'waiting') await base44.entities.GameRoom.update(activeRoom.id, { status: 'abandoned' });
-    setActiveRoom(null); setOpponent(null);
+    setActiveRoom(null); setOpponent(null); setPostGame(null);
     queryClient.invalidateQueries({ queryKey: ['gameRooms'] });
   };
 
