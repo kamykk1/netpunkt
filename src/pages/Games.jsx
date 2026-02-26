@@ -436,20 +436,23 @@ export default function Games() {
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {rooms.map(room => {
+                      {rooms.filter(r => !r.is_private).map(room => {
                         const gt = MULTIPLAYER_TYPES[room.game_type];
                         const isOwn = room.player1_id === user?.id;
+                        const modeBadge = { classic: null, point_duel: { label: '⚔️ Punkty', cls: 'bg-yellow-500/20 text-yellow-400' }, ranked: { label: '🏆 ELO', cls: 'bg-cyan-500/20 text-cyan-400' } }[room.game_mode || 'classic'];
                         return (
                           <div key={room.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-800/50 border border-purple-500/10">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 flex-wrap">
                               <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${gt?.color} flex items-center justify-center`}>
                                 {gt && <gt.icon className="w-4 h-4 text-white" />}
                               </div>
                               <div>
                                 <p className="text-white font-medium">{gt?.name}</p>
-                                <p className="text-slate-400 text-xs">{room.player1_email?.split('@')[0]}</p>
+                                <p className="text-slate-400 text-xs">{room.player1_name || room.player1_email?.split('@')[0]}</p>
                               </div>
+                              {modeBadge && <Badge className={`text-xs ${modeBadge.cls}`}>{modeBadge.label}</Badge>}
                               {room.bet_points > 0 && <Badge className="bg-yellow-500/20 text-yellow-400 text-xs"><Coins className="w-3 h-3 mr-1" />{room.bet_points} pkt</Badge>}
+                              {room.time_per_move > 0 && <Badge className="bg-slate-600 text-slate-300 text-xs"><Clock className="w-3 h-3 mr-1" />{room.time_per_move}s</Badge>}
                             </div>
                             {!isOwn && (
                               <Button size="sm" onClick={() => joinMutation.mutate(room)} disabled={joinMutation.isPending} className="bg-emerald-600 hover:bg-emerald-700">
