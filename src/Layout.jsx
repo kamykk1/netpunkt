@@ -18,10 +18,6 @@ import {
 import NotificationCenter from '@/components/notifications/NotificationCenter.jsx';
 
 export default function Layout({ children, currentPageName }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // queryClient kept for potential future use
-  
-
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
@@ -45,7 +41,9 @@ export default function Layout({ children, currentPageName }) {
 
   const badge = getMembershipBadge(user?.membership_level);
 
-  const navItems = [
+  const menuItems = [
+    { name: 'Moje dane', icon: User, page: 'Profile' },
+    null,
     { name: 'Panel', icon: LayoutDashboard, page: 'Dashboard' },
     { name: 'Zarabiaj', icon: Coins, page: 'EarnAds' },
     { name: 'Misje', icon: Target, page: 'Missions' },
@@ -55,10 +53,10 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Battle Pass', icon: Zap, page: 'BattlePass' },
     { name: 'Partnerzy', icon: Users, page: 'Partners' },
     { name: 'Gry', icon: Gamepad2, page: 'Games' },
-    { name: 'Kontakt', icon: Mail, page: 'Contact' },
     ...(user?.is_advertiser ? [{ name: 'Reklamodawca', icon: TrendingUp, page: 'AdvertiserPanel' }] : [{ name: 'Reklama', icon: TrendingUp, page: 'AdvertiserRegister' }]),
     ...(user?.role === 'admin' || user?.is_moderator ? [{ name: 'Admin', icon: Shield, page: 'AdminPanel' }] : []),
-    { name: 'Moje dane', icon: User, page: 'Profile' },
+    { name: 'Kontakt', icon: Mail, page: 'Contact' },
+    null,
   ];
 
   return (
