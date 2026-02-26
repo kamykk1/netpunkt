@@ -5,17 +5,13 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
   Ship, Grid3X3, Circle, Plus, Users, Trophy, Coins, 
-  Loader2, Play, Clock, X, Flag, Lock, Copy, Brain, LayoutGrid,
-  Bomb, Worm, Ticket, Gift
+  Loader2, Play, Clock, X, Copy, Swords
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CreateRoomDialog from '@/components/games/CreateRoomDialog.jsx';
 import UserAvatar from '@/components/profile/UserAvatar.jsx';
 import { sendNotification } from '@/components/notifications/notificationHelpers.jsx';
 import GameChat from '@/components/games/GameChat.jsx';
