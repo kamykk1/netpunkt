@@ -163,8 +163,13 @@ export default function Games() {
     );
   }
 
+  const startSoloGame = (key) => {
+    setPendingGame(key);
+  };
+
   // Solo game view
   if (soloGame) {
+    const gameMeta = SOLO_GAMES.find(g => g.key === soloGame);
     const gameEl = {
       quiz: <QuizGame user={user} onClose={() => setSoloGame(null)} />,
       memory: <MemoryGame user={user} onClose={() => setSoloGame(null)} />,
@@ -174,7 +179,6 @@ export default function Games() {
       wheel: null,
     }[soloGame];
 
-    const gameMeta = SOLO_GAMES.find(g => g.key === soloGame);
     return (
       <div className="min-h-screen bg-[#0a0a0f] py-6">
         <div className="max-w-lg mx-auto px-4">
@@ -187,6 +191,22 @@ export default function Games() {
           </Card>
         </div>
       </div>
+    );
+  }
+
+  // Pre-game ad overlay
+  if (pendingGame) {
+    const gameMeta = SOLO_GAMES.find(g => g.key === pendingGame);
+    return (
+      <>
+        <div className="min-h-screen bg-[#0a0a0f]" />
+        <PreGameAd
+          gameName={gameMeta?.name || ''}
+          gameIcon={gameMeta?.icon || '🎮'}
+          onStart={() => { const g = pendingGame; setPendingGame(null); setSoloGame(g); }}
+          onSkip={() => { const g = pendingGame; setPendingGame(null); setSoloGame(g); }}
+        />
+      </>
     );
   }
 
