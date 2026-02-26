@@ -20,6 +20,7 @@ import AchievementsPanel from '@/components/achievements/AchievementsPanel.jsx';
 import GameStatsSection from '@/components/games/GameStatsSection.jsx';
 import EloHistoryChart from '@/components/games/EloHistoryChart.jsx';
 import FriendsPanel from '@/components/games/FriendsPanel.jsx';
+import MultiplayerLeaderboard from '@/components/games/MultiplayerLeaderboard.jsx';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
