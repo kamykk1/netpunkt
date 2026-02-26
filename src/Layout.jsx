@@ -17,7 +17,8 @@ import NotificationCenter from '@/components/notifications/NotificationCenter.js
 
 export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const queryClient = useQueryClient();
+  // queryClient kept for potential future use
+  
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
