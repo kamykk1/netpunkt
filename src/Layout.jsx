@@ -121,7 +121,7 @@ export default function Layout({ children, currentPageName }) {
               {/* Notifications */}
               <NotificationCenter userId={user?.id} />
 
-              {/* User avatar dropdown */}
+              {/* User avatar dropdown — całe menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-purple-500/30 p-0 overflow-hidden">
@@ -138,47 +138,35 @@ export default function Layout({ children, currentPageName }) {
                     )}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-[#1a1a2e] border-purple-500/30 text-white">
+                <DropdownMenuContent align="end" className="w-56 bg-[#1a1a2e] border-purple-500/30 text-white max-h-[80vh] overflow-y-auto">
                   <div className="px-2 py-1.5">
                     <p className="font-medium text-sm">{user?.full_name}</p>
                     <p className="text-xs text-slate-400">{user?.email}</p>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <Coins className="w-3.5 h-3.5 text-yellow-400" />
+                      <span className="text-yellow-400 text-xs font-bold">{(user?.points_balance || 0).toLocaleString()} pkt</span>
+                      <Badge className={`${badge.color} text-white text-xs py-0 px-1.5 ml-1`}>
+                        <Crown className="w-2.5 h-2.5 mr-0.5" />{badge.name}
+                      </Badge>
+                    </div>
                   </div>
                   <DropdownMenuSeparator className="bg-purple-500/20" />
-                  <DropdownMenuItem className="sm:hidden text-slate-300">
-                    <Coins className="w-4 h-4 mr-2 text-yellow-400" />
-                    {(user?.points_balance || 0).toLocaleString()} pkt
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl('Profile')} className="text-slate-300 hover:text-white">
-                      <User className="w-4 h-4 mr-2" /> Moje dane
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl('Payments')} className="text-slate-300 hover:text-white">
-                      <CreditCard className="w-4 h-4 mr-2" /> Wypłaty
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to={createPageUrl('Referrals')} className="text-slate-300 hover:text-white">
-                      <Users className="w-4 h-4 mr-2" /> Polecenia
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-purple-500/20" />
-                  <DropdownMenuItem onClick={() => base44.auth.logout()} className="text-red-400">
-                    Wyloguj się
+                  {menuItems.map((item, i) =>
+                    item === null ? (
+                      <DropdownMenuSeparator key={`sep-${i}`} className="bg-purple-500/20" />
+                    ) : (
+                      <DropdownMenuItem key={item.page} asChild>
+                        <Link to={createPageUrl(item.page)} className={`flex items-center gap-2 ${currentPageName === item.page ? 'text-purple-400' : 'text-slate-300 hover:text-white'}`}>
+                          <item.icon className="w-4 h-4" /> {item.name}
+                        </Link>
+                      </DropdownMenuItem>
+                    )
+                  )}
+                  <DropdownMenuItem onClick={() => base44.auth.logout()} className="text-red-400 gap-2">
+                    <LogOut className="w-4 h-4" /> Wyloguj się
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              {/* Mobile Menu Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden text-white"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
             </div>
           </div>
         </div>
