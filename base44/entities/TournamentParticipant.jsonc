@@ -1,0 +1,45 @@
+{
+  "name": "TournamentParticipant",
+  "type": "object",
+  "properties": {
+    "tournament_id": {
+      "type": "string"
+    },
+    "tournament_name": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "user_elo": {
+      "type": "number"
+    },
+    "registered_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "eliminated": {
+      "type": "boolean",
+      "default": false
+    },
+    "final_position": {
+      "type": "number",
+      "description": "1 = zwyci\u0119zca, 2 = finalista, itd."
+    },
+    "prize_awarded": {
+      "type": "number",
+      "default": 0,
+      "description": "Przyznana nagroda w punktach"
+    }
+  },
+  "required": [
+    "tournament_id",
+    "user_id"
+  ]
+}

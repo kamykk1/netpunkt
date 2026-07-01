@@ -1,0 +1,92 @@
+{
+  "name": "Tournament",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nazwa turnieju"
+    },
+    "description": {
+      "type": "string"
+    },
+    "game_type": {
+      "type": "string",
+      "enum": [
+        "battleship",
+        "tictactoe",
+        "connect4"
+      ],
+      "description": "Typ gry"
+    },
+    "entry_fee": {
+      "type": "number",
+      "default": 0,
+      "description": "Wpisowe w punktach"
+    },
+    "prize_pool": {
+      "type": "number",
+      "default": 0,
+      "description": "Aktualna pula nagr\u00f3d"
+    },
+    "max_participants": {
+      "type": "number",
+      "default": 16,
+      "description": "Maks. liczba graczy"
+    },
+    "current_participants": {
+      "type": "number",
+      "default": 0,
+      "description": "Aktualna liczba graczy"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "upcoming",
+        "registration",
+        "active",
+        "finished",
+        "cancelled"
+      ],
+      "default": "upcoming"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "registration_deadline": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "winner_id": {
+      "type": "string"
+    },
+    "winner_name": {
+      "type": "string"
+    },
+    "runner_up_id": {
+      "type": "string"
+    },
+    "runner_up_name": {
+      "type": "string"
+    },
+    "created_by_id": {
+      "type": "string"
+    },
+    "created_by_email": {
+      "type": "string"
+    },
+    "slack_channel": {
+      "type": "string",
+      "description": "Kana\u0142 Slack do powiadomie\u0144"
+    }
+  },
+  "required": [
+    "name",
+    "game_type",
+    "entry_fee"
+  ]
+}

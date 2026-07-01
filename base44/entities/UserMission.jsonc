@@ -20,9 +20,18 @@
       "type": "boolean",
       "default": false
     },
+    "badge_awarded": {
+      "type": "boolean",
+      "default": false
+    },
     "completed_date": {
       "type": "string",
       "format": "date-time"
+    },
+    "reset_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data resetu post\u0119pu (dla misji dziennych/tygodniowych)"
     }
   },
   "required": [

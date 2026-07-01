@@ -26,7 +26,11 @@
         "refer_users",
         "make_purchase",
         "cashback",
-        "consecutive_login"
+        "consecutive_login",
+        "play_games",
+        "win_games",
+        "play_multiplayer",
+        "win_tournament"
       ],
       "default": "view_ads"
     },
@@ -36,6 +40,10 @@
     },
     "points_reward": {
       "type": "number"
+    },
+    "badge_reward": {
+      "type": "string",
+      "description": "Nazwa odznaki za uko\u0144czenie"
     },
     "bonus_reward": {
       "type": "string",
