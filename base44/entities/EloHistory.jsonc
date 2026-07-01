@@ -1,0 +1,43 @@
+{
+  "name": "EloHistory",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "elo_before": {
+      "type": "number"
+    },
+    "elo_after": {
+      "type": "number"
+    },
+    "elo_change": {
+      "type": "number"
+    },
+    "game_type": {
+      "type": "string"
+    },
+    "room_id": {
+      "type": "string"
+    },
+    "opponent_name": {
+      "type": "string"
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "win",
+        "loss",
+        "draw"
+      ]
+    }
+  },
+  "required": [
+    "user_id",
+    "elo_before",
+    "elo_after"
+  ]
+}

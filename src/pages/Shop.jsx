@@ -28,6 +28,9 @@ const PRODUCT_TYPE_CONFIG = {
   voucher: { name: 'Voucher', icon: Gift, color: 'from-emerald-500 to-teal-500' },
   physical: { name: 'Fizyczny', icon: ShoppingBag, color: 'from-blue-500 to-indigo-500' },
   aliexpress: { name: 'AliExpress', icon: Tag, color: 'from-orange-500 to-red-500' },
+  avatar: { name: 'Awatar', icon: Star, color: 'from-pink-500 to-rose-600' },
+  chat_emoji: { name: 'Emotki', icon: Star, color: 'from-violet-500 to-purple-600' },
+  profile_frame: { name: 'Ramka', icon: Crown, color: 'from-cyan-500 to-blue-600' },
 };
 
 export default function Shop() {
@@ -100,6 +103,26 @@ export default function Shop() {
           boost_until: boostUntil.toISOString()
         });
       }
+
+      // Awatary, emotki, ramki — dodaj do kolekcji użytkownika
+      if (['avatar', 'chat_emoji', 'profile_frame'].includes(product.product_type)) {
+        const fieldMap = {
+          avatar: 'owned_avatars',
+          chat_emoji: 'owned_emojis',
+          profile_frame: 'owned_frames',
+        };
+        const fieldName = fieldMap[product.product_type];
+        const currentList = JSON.parse(user[fieldName] || '[]');
+        if (!currentList.includes(product.item_key || product.name)) {
+          currentList.push(product.item_key || product.name);
+          const update = { [fieldName]: JSON.stringify(currentList) };
+          // Automatycznie aktywuj ramkę przy zakupie
+          if (product.product_type === 'profile_frame') update.active_frame = product.item_key || product.name;
+          // Automatycznie aktywuj awatar-emoji przy zakupie
+          if (product.product_type === 'avatar' && product.item_value) update.avatar_emoji = product.item_value;
+          await base44.auth.updateMe(update);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
@@ -155,6 +178,15 @@ export default function Shop() {
             <TabsTrigger value="aliexpress" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
               <Tag className="w-4 h-4 mr-1" /> AliExpress
             </TabsTrigger>
+            <TabsTrigger value="avatar" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Star className="w-4 h-4 mr-1" /> Awatary
+            </TabsTrigger>
+            <TabsTrigger value="chat_emoji" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Star className="w-4 h-4 mr-1" /> Emotki
+            </TabsTrigger>
+            <TabsTrigger value="profile_frame" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <Crown className="w-4 h-4 mr-1" /> Ramki
+            </TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -206,6 +238,15 @@ export default function Shop() {
                       )}
                       {product.product_type === 'boost' && product.boost_multiplier && (
                         <p className="text-pink-400 text-sm mb-2">⚡ x{product.boost_multiplier} przez {product.boost_hours}h</p>
+                      )}
+                      {product.product_type === 'avatar' && (
+                        <p className="text-pink-400 text-sm mb-2">{product.item_value ? `Awatar: ${product.item_value}` : 'Specjalny awatar'}</p>
+                      )}
+                      {product.product_type === 'chat_emoji' && (
+                        <p className="text-violet-400 text-sm mb-2">Unikalne emotki do czatu w grze</p>
+                      )}
+                      {product.product_type === 'profile_frame' && (
+                        <p className="text-cyan-400 text-sm mb-2">Unikalna ramka dla Twojego profilu</p>
                       )}
                       
                       <div className="flex items-center justify-between mb-4">

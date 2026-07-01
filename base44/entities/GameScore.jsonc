@@ -1,0 +1,43 @@
+{
+  "name": "GameScore",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "game_type": {
+      "type": "string",
+      "enum": [
+        "quiz",
+        "memory",
+        "minesweeper",
+        "snake",
+        "scratch",
+        "wheel",
+        "battleship",
+        "tictactoe",
+        "connect4"
+      ],
+      "description": "Typ gry"
+    },
+    "score": {
+      "type": "number",
+      "description": "Wynik"
+    },
+    "extra": {
+      "type": "string",
+      "description": "Dodatkowe dane JSON (czas, ruchy itp.)"
+    }
+  },
+  "required": [
+    "user_id",
+    "game_type",
+    "score"
+  ]
+}

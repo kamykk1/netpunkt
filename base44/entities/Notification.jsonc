@@ -1,0 +1,72 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "campaign_budget_low",
+        "campaign_goal_reached",
+        "commission_paid",
+        "message_received",
+        "status_update",
+        "system",
+        "promo"
+      ],
+      "description": "Typ powiadomienia"
+    },
+    "title": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "reference_id": {
+      "type": "string",
+      "description": "ID powi\u0105zanego obiektu (kampania, transakcja, itp.)"
+    },
+    "reference_type": {
+      "type": "string",
+      "enum": [
+        "campaign",
+        "transaction",
+        "message",
+        "payment",
+        "other"
+      ]
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "channels": {
+      "type": "string",
+      "description": "JSON z kana\u0142ami: email, in_app, push"
+    },
+    "email_sent": {
+      "type": "boolean",
+      "default": false
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    }
+  },
+  "required": [
+    "user_id",
+    "type",
+    "title",
+    "message"
+  ]
+}

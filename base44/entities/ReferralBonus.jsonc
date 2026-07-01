@@ -1,0 +1,35 @@
+{
+  "name": "ReferralBonus",
+  "type": "object",
+  "properties": {
+    "referrer_id": {
+      "type": "string",
+      "description": "User ID of the referrer who earned the bonus"
+    },
+    "referrer_email": {
+      "type": "string",
+      "description": "Email of the referrer"
+    },
+    "referred_user_id": {
+      "type": "string",
+      "description": "User ID of the referred user"
+    },
+    "referred_user_email": {
+      "type": "string",
+      "description": "Email of the referred user"
+    },
+    "ad_view_id": {
+      "type": "string",
+      "description": "ID of the ad view that triggered the bonus"
+    },
+    "bonus_amount": {
+      "type": "number",
+      "description": "Bonus amount in cents"
+    }
+  },
+  "required": [
+    "referrer_id",
+    "referred_user_id",
+    "bonus_amount"
+  ]
+}

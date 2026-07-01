@@ -40,6 +40,7 @@ import AdminGameReports from '@/components/admin/AdminGameReports.jsx';
 import AdminRecruitment from '@/components/admin/AdminRecruitment.jsx';
 import AdminUsersList from '@/components/admin/AdminUsersList.jsx';
 import AdminFortuneWheel from '@/components/admin/AdminFortuneWheel.jsx';
+import AdminGameAnalytics from '@/components/admin/AdminGameAnalytics.jsx';
 
 export default function AdminPanel() {
   const [showAdForm, setShowAdForm] = useState(false);
@@ -311,6 +312,9 @@ export default function AdminPanel() {
             </TabsTrigger>
             <TabsTrigger value="wheel" className="data-[state=active]:bg-amber-500 data-[state=active]:text-white text-slate-400">
               <Gift className="w-4 h-4 mr-2" /> Koło Fortuny
+            </TabsTrigger>
+            <TabsTrigger value="game-analytics" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white text-slate-400">
+              <BarChart3 className="w-4 h-4 mr-2" /> Analityka Gier
             </TabsTrigger>
           </TabsList>
 
@@ -597,6 +601,20 @@ export default function AdminPanel() {
               </CardHeader>
               <CardContent>
                 <AdminFortuneWheel settings={settings} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Game Analytics Tab */}
+          <TabsContent value="game-analytics">
+            <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-purple-400" /> Analityka Gier Multiplayer
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdminGameAnalytics />
               </CardContent>
             </Card>
           </TabsContent>

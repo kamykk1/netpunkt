@@ -1,0 +1,47 @@
+{
+  "name": "SiteSettings",
+  "type": "object",
+  "properties": {
+    "setting_key": {
+      "type": "string",
+      "description": "Klucz ustawienia"
+    },
+    "setting_value": {
+      "type": "string",
+      "description": "Warto\u015b\u0107 ustawienia"
+    },
+    "setting_type": {
+      "type": "string",
+      "enum": [
+        "string",
+        "number",
+        "boolean",
+        "json"
+      ],
+      "default": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "general",
+        "points",
+        "payments",
+        "referrals",
+        "security",
+        "events",
+        "membership",
+        "shop",
+        "cashback",
+        "billing"
+      ],
+      "default": "general"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "setting_key",
+    "setting_value"
+  ]
+}

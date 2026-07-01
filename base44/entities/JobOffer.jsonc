@@ -1,0 +1,55 @@
+{
+  "name": "JobOffer",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Stanowisko"
+    },
+    "department": {
+      "type": "string",
+      "description": "Dzia\u0142"
+    },
+    "location": {
+      "type": "string",
+      "description": "Lokalizacja"
+    },
+    "employment_type": {
+      "type": "string",
+      "enum": [
+        "full_time",
+        "part_time",
+        "contract",
+        "internship"
+      ],
+      "default": "full_time"
+    },
+    "description": {
+      "type": "string",
+      "description": "Opis stanowiska"
+    },
+    "requirements": {
+      "type": "string",
+      "description": "Wymagania"
+    },
+    "salary_from": {
+      "type": "number"
+    },
+    "salary_to": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "closed",
+        "draft"
+      ],
+      "default": "open"
+    }
+  },
+  "required": [
+    "title",
+    "department"
+  ]
+}

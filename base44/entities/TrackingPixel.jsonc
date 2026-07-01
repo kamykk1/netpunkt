@@ -1,0 +1,58 @@
+{
+  "name": "TrackingPixel",
+  "type": "object",
+  "properties": {
+    "advertiser_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "pixel_type": {
+      "type": "string",
+      "enum": [
+        "facebook",
+        "google_analytics",
+        "google_ads",
+        "custom"
+      ],
+      "default": "custom"
+    },
+    "pixel_id": {
+      "type": "string",
+      "description": "ID pixela (np. Facebook Pixel ID)"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "page_view",
+        "click",
+        "conversion",
+        "lead",
+        "purchase"
+      ],
+      "default": "page_view"
+    },
+    "campaign_id": {
+      "type": "string",
+      "description": "Opcjonalnie powi\u0105zana kampania"
+    },
+    "custom_code": {
+      "type": "string",
+      "description": "W\u0142asny kod JS do \u015bledzenia"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "fires_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "advertiser_id",
+    "name",
+    "pixel_type"
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "points_balance": {
+      "type": "number",
+      "default": 0
+    },
+    "total_points_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "total_withdrawn": {
+      "type": "number",
+      "default": 0
+    },
+    "ads_viewed": {
+      "type": "number",
+      "default": 0
+    },
+    "referral_code": {
+      "type": "string"
+    },
+    "referred_by": {
+      "type": "string"
+    },
+    "referred_by_level2": {
+      "type": "string"
+    },
+    "referred_by_level3": {
+      "type": "string"
+    },
+    "referral_earnings": {
+      "type": "number",
+      "default": 0
+    },
+    "referral_earnings_level2": {
+      "type": "number",
+      "default": 0
+    },
+    "referral_earnings_level3": {
+      "type": "number",
+      "default": 0
+    },
+    "referral_count": {
+      "type": "number",
+      "default": 0
+    },
+    "membership_level": {
+      "type": "number",
+      "default": 1
+    },
+    "vip_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "active_boost_multiplier": {
+      "type": "number",
+      "default": 1
+    },
+    "boost_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "consecutive_logins": {
+      "type": "number",
+      "default": 0
+    },
+    "last_login_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "fraud_score": {
+      "type": "number",
+      "default": 0
+    },
+    "is_blocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "chat_blocked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Czy u\u017cytkownik jest zablokowany na czacie"
+    },
+    "is_advertiser": {
+      "type": "boolean",
+      "default": false
+    },
+    "advertiser_balance": {
+      "type": "number",
+      "default": 0
+    },
+    "advertiser_company_name": {
+      "type": "string"
+    },
+    "advertiser_nip": {
+      "type": "string"
+    },
+    "advertiser_address": {
+      "type": "string"
+    },
+    "advertiser_phone": {
+      "type": "string"
+    },
+    "is_moderator": {
+      "type": "boolean",
+      "default": false
+    },
+    "invoices_enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "company_name": {
+      "type": "string"
+    },
+    "company_nip": {
+      "type": "string"
+    },
+    "company_address": {
+      "type": "string"
+    },
+    "bank_account_number": {
+      "type": "string"
+    },
+    "paypal_email": {
+      "type": "string"
+    },
+    "crypto_address": {
+      "type": "string"
+    },
+    "preferred_payout_method": {
+      "type": "string",
+      "enum": [
+        "bank_transfer",
+        "paypal",
+        "crypto",
+        "tpay",
+        "faucetpay"
+      ],
+      "default": "bank_transfer"
+    },
+    "battlepass_level": {
+      "type": "number",
+      "default": 1
+    },
+    "battlepass_xp": {
+      "type": "number",
+      "default": 0
+    },
+    "cashback_pending": {
+      "type": "number",
+      "default": 0
+    },
+    "cashback_confirmed": {
+      "type": "number",
+      "default": 0
+    },
+    "registration_bonus_claimed": {
+      "type": "boolean",
+      "default": false
+    },
+    "phone_number": {
+      "type": "string"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date"
+    },
+    "country": {
+      "type": "string",
+      "default": "PL"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "pl",
+        "en"
+      ],
+      "default": "pl"
+    },
+    "email_notifications": {
+      "type": "boolean",
+      "default": true
+    },
+    "push_notifications": {
+      "type": "boolean",
+      "default": true
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "URL zdj\u0119cia profilowego"
+    },
+    "avatar_emoji": {
+      "type": "string",
+      "description": "Wybrany emoji jako awatar",
+      "default": "\ud83d\ude00"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Wy\u015bwietlana nazwa / login"
+    },
+    "games_won": {
+      "type": "number",
+      "default": 0
+    },
+    "games_played": {
+      "type": "number",
+      "default": 0
+    },
+    "elo_rating": {
+      "type": "number",
+      "default": 1000,
+      "description": "Ranking ELO gracza"
+    },
+    "owned_avatars": {
+      "type": "string",
+      "description": "JSON lista zakupionych awatar\u00f3w (emoji lub URL)"
+    },
+    "owned_emojis": {
+      "type": "string",
+      "description": "JSON lista zakupionych paczek emotek do czatu"
+    },
+    "owned_frames": {
+      "type": "string",
+      "description": "JSON lista zakupionych ramek profilu"
+    },
+    "active_frame": {
+      "type": "string",
+      "description": "Klucz aktywnej ramki profilu"
+    },
+    "active_chat_emojis": {
+      "type": "string",
+      "description": "JSON lista aktywnych paczek emotek"
+    }
+  },
+  "required": [
+    "referral_code",
+    "referred_by",
+    "referred_by_level2",
+    "referred_by_level3",
+    "vip_until",
+    "boost_until",
+    "last_login_date",
+    "advertiser_company_name",
+    "advertiser_nip",
+    "advertiser_address",
+    "advertiser_phone",
+    "company_name",
+    "company_nip",
+    "company_address",
+    "bank_account_number",
+    "paypal_email",
+    "crypto_address",
+    "phone_number",
+    "date_of_birth"
+  ]
+}

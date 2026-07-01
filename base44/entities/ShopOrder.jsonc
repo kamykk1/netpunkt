@@ -1,0 +1,62 @@
+{
+  "name": "ShopOrder",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "product_id": {
+      "type": "string"
+    },
+    "product_name": {
+      "type": "string"
+    },
+    "points_paid": {
+      "type": "number"
+    },
+    "cash_paid": {
+      "type": "number",
+      "description": "Grosze"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "points",
+        "stripe",
+        "paypal",
+        "tpay",
+        "mixed"
+      ],
+      "default": "points"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "paid",
+        "processing",
+        "shipped",
+        "completed",
+        "cancelled",
+        "refunded"
+      ],
+      "default": "pending"
+    },
+    "shipping_address": {
+      "type": "string"
+    },
+    "tracking_number": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "product_id"
+  ]
+}

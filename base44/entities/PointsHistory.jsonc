@@ -1,0 +1,52 @@
+{
+  "name": "PointsHistory",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Ilo\u015b\u0107 punkt\u00f3w (+ lub -)"
+    },
+    "balance_after": {
+      "type": "number",
+      "description": "Saldo po operacji"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "ad_view",
+        "referral_bonus",
+        "withdrawal",
+        "purchase",
+        "cashback",
+        "mission",
+        "daily_bonus",
+        "event_bonus",
+        "admin_adjustment",
+        "shop_purchase",
+        "email_read"
+      ],
+      "default": "ad_view"
+    },
+    "description": {
+      "type": "string"
+    },
+    "reference_id": {
+      "type": "string",
+      "description": "ID powi\u0105zanego obiektu"
+    },
+    "ip_address": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "amount",
+    "type"
+  ]
+}

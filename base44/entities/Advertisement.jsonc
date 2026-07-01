@@ -1,0 +1,126 @@
+{
+  "name": "Advertisement",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Tytu\u0142 reklamy"
+    },
+    "description": {
+      "type": "string",
+      "description": "Opis reklamy"
+    },
+    "url": {
+      "type": "string",
+      "description": "Link docelowy"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Banner reklamy"
+    },
+    "ad_type": {
+      "type": "string",
+      "enum": [
+        "ptc",
+        "ptr",
+        "ptv",
+        "email"
+      ],
+      "default": "ptc",
+      "description": "Typ: PTC (click), PTR (read), PTV (video), Email"
+    },
+    "points_reward": {
+      "type": "number",
+      "description": "Nagroda w punktach"
+    },
+    "view_duration": {
+      "type": "number",
+      "description": "Czas ogl\u0105dania w sekundach",
+      "default": 30
+    },
+    "max_views": {
+      "type": "number",
+      "description": "Maksymalna liczba wy\u015bwietle\u0144"
+    },
+    "current_views": {
+      "type": "number",
+      "description": "Aktualna liczba wy\u015bwietle\u0144",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "paused",
+        "completed",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "general",
+        "tech",
+        "shopping",
+        "finance",
+        "entertainment",
+        "health",
+        "gaming"
+      ],
+      "default": "general"
+    },
+    "advertiser_id": {
+      "type": "string",
+      "description": "ID reklamodawcy"
+    },
+    "cost_per_view": {
+      "type": "number",
+      "description": "Koszt za wy\u015bwietlenie (grosze)"
+    },
+    "total_budget": {
+      "type": "number",
+      "description": "Bud\u017cet ca\u0142kowity (grosze)"
+    },
+    "spent_budget": {
+      "type": "number",
+      "description": "Wydany bud\u017cet",
+      "default": 0
+    },
+    "affiliate_network": {
+      "type": "string",
+      "enum": [
+        "none",
+        "tradedoubler",
+        "awin",
+        "cj",
+        "admitad",
+        "aliexpress"
+      ],
+      "default": "none"
+    },
+    "affiliate_id": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "number",
+      "default": 1,
+      "description": "Priorytet wy\u015bwietlania (1-10)"
+    },
+    "target_countries": {
+      "type": "string",
+      "description": "Kraje docelowe (kody oddzielone przecinkami)"
+    },
+    "event_multiplier": {
+      "type": "number",
+      "default": 1,
+      "description": "Mno\u017cnik punkt\u00f3w (eventy)"
+    }
+  },
+  "required": [
+    "title",
+    "points_reward",
+    "ad_type"
+  ]
+}

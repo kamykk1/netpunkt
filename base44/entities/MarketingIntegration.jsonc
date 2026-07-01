@@ -1,0 +1,59 @@
+{
+  "name": "MarketingIntegration",
+  "type": "object",
+  "properties": {
+    "advertiser_id": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "google_analytics",
+        "google_ads",
+        "facebook_ads",
+        "tiktok_ads",
+        "linkedin_ads"
+      ],
+      "description": "Platforma marketingowa"
+    },
+    "account_id": {
+      "type": "string"
+    },
+    "api_key": {
+      "type": "string"
+    },
+    "api_secret": {
+      "type": "string"
+    },
+    "access_token": {
+      "type": "string"
+    },
+    "refresh_token": {
+      "type": "string"
+    },
+    "is_connected": {
+      "type": "boolean",
+      "default": false
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sync_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "import_campaigns": {
+      "type": "boolean",
+      "default": true
+    },
+    "export_data": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "advertiser_id",
+    "platform"
+  ]
+}

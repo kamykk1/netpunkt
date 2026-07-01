@@ -1,0 +1,65 @@
+{
+  "name": "NotificationSettings",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "email_campaign_budget": {
+      "type": "boolean",
+      "default": true
+    },
+    "email_campaign_goals": {
+      "type": "boolean",
+      "default": true
+    },
+    "email_commission_paid": {
+      "type": "boolean",
+      "default": true
+    },
+    "email_messages": {
+      "type": "boolean",
+      "default": true
+    },
+    "email_status_updates": {
+      "type": "boolean",
+      "default": true
+    },
+    "email_promo": {
+      "type": "boolean",
+      "default": false
+    },
+    "inapp_campaign_budget": {
+      "type": "boolean",
+      "default": true
+    },
+    "inapp_campaign_goals": {
+      "type": "boolean",
+      "default": true
+    },
+    "inapp_commission_paid": {
+      "type": "boolean",
+      "default": true
+    },
+    "inapp_messages": {
+      "type": "boolean",
+      "default": true
+    },
+    "inapp_status_updates": {
+      "type": "boolean",
+      "default": true
+    },
+    "inapp_promo": {
+      "type": "boolean",
+      "default": true
+    },
+    "budget_threshold_percent": {
+      "type": "number",
+      "default": 20,
+      "description": "% bud\u017cetu poni\u017cej kt\u00f3rego wysy\u0142ane jest powiadomienie"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}

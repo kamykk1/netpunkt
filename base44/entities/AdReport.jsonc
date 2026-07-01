@@ -1,0 +1,49 @@
+{
+  "name": "AdReport",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "advertisement_id": {
+      "type": "string"
+    },
+    "advertisement_title": {
+      "type": "string"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "inappropriate",
+        "misleading",
+        "scam",
+        "broken_link",
+        "other"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "action_taken",
+        "dismissed"
+      ],
+      "default": "pending"
+    },
+    "admin_notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "advertisement_id",
+    "reason"
+  ]
+}

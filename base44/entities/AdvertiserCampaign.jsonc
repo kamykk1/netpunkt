@@ -1,0 +1,132 @@
+{
+  "name": "AdvertiserCampaign",
+  "type": "object",
+  "properties": {
+    "advertiser_id": {
+      "type": "string"
+    },
+    "advertiser_email": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "campaign_type": {
+      "type": "string",
+      "enum": [
+        "ptc",
+        "ptr",
+        "ptv",
+        "banner",
+        "email"
+      ],
+      "default": "ptc"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "budget_total": {
+      "type": "number",
+      "description": "Ca\u0142kowity bud\u017cet w groszach"
+    },
+    "budget_spent": {
+      "type": "number",
+      "default": 0
+    },
+    "cost_per_action": {
+      "type": "number",
+      "description": "Koszt za akcj\u0119 (klikni\u0119cie/wy\u015bwietlenie)"
+    },
+    "points_reward": {
+      "type": "number",
+      "description": "Nagroda dla u\u017cytkownika"
+    },
+    "view_duration": {
+      "type": "number",
+      "default": 30
+    },
+    "target_views": {
+      "type": "number"
+    },
+    "current_views": {
+      "type": "number",
+      "default": 0
+    },
+    "target_countries": {
+      "type": "string"
+    },
+    "target_membership_level": {
+      "type": "number",
+      "default": 1
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "general",
+        "tech",
+        "shopping",
+        "finance",
+        "entertainment",
+        "health",
+        "gaming"
+      ],
+      "default": "general"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "pending_review",
+        "active",
+        "paused",
+        "completed",
+        "rejected"
+      ],
+      "default": "draft"
+    },
+    "rejection_reason": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "points",
+        "stripe",
+        "paypal",
+        "tpay"
+      ],
+      "default": "points"
+    },
+    "payment_id": {
+      "type": "string"
+    },
+    "fraud_score": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "advertiser_id",
+    "name",
+    "title",
+    "budget_total",
+    "cost_per_action"
+  ]
+}

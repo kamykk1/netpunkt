@@ -1,0 +1,42 @@
+{
+  "name": "EmailTemplate",
+  "type": "object",
+  "properties": {
+    "template_key": {
+      "type": "string",
+      "description": "Klucz szablonu (welcome, password_reset, withdrawal_pending, etc.)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Nazwa szablonu"
+    },
+    "subject_pl": {
+      "type": "string"
+    },
+    "subject_en": {
+      "type": "string"
+    },
+    "body_pl": {
+      "type": "string",
+      "description": "Tre\u015b\u0107 HTML w j\u0119zyku polskim"
+    },
+    "body_en": {
+      "type": "string",
+      "description": "Tre\u015b\u0107 HTML w j\u0119zyku angielskim"
+    },
+    "variables": {
+      "type": "string",
+      "description": "JSON z dost\u0119pnymi zmiennymi"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "template_key",
+    "name",
+    "subject_pl",
+    "body_pl"
+  ]
+}

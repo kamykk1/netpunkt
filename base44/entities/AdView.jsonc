@@ -1,0 +1,35 @@
+{
+  "name": "AdView",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who viewed the ad"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User's email"
+    },
+    "advertisement_id": {
+      "type": "string",
+      "description": "The ad that was viewed"
+    },
+    "advertisement_title": {
+      "type": "string",
+      "description": "Ad title for display"
+    },
+    "reward_earned": {
+      "type": "number",
+      "description": "Amount earned from this view"
+    },
+    "completed": {
+      "type": "boolean",
+      "description": "Whether the view was completed",
+      "default": false
+    }
+  },
+  "required": [
+    "user_id",
+    "advertisement_id"
+  ]
+}

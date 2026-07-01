@@ -1,0 +1,73 @@
+{
+  "name": "Mission",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "mission_type": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "special",
+        "achievement"
+      ],
+      "default": "daily"
+    },
+    "requirement_type": {
+      "type": "string",
+      "enum": [
+        "view_ads",
+        "earn_points",
+        "refer_users",
+        "make_purchase",
+        "cashback",
+        "consecutive_login"
+      ],
+      "default": "view_ads"
+    },
+    "requirement_value": {
+      "type": "number",
+      "description": "Wymagana ilo\u015b\u0107"
+    },
+    "points_reward": {
+      "type": "number"
+    },
+    "bonus_reward": {
+      "type": "string",
+      "description": "Dodatkowa nagroda (JSON)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ],
+      "default": "active"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "title",
+    "requirement_type",
+    "requirement_value",
+    "points_reward"
+  ]
+}

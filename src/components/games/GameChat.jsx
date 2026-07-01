@@ -3,37 +3,57 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, MessageCircle, Flag } from 'lucide-react';
-import UserAvatar from '@/components/profile/UserAvatar.jsx';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
+import { Send, MessageCircle, Flag, Lock } from 'lucide-react';
+import { sendNotification } from '@/components/notifications/notificationHelpers.jsx';
 
-export default function GameChat({ roomId, currentUser, opponent, chatEnabled, onReport }) {
+export default function GameChat({ roomId, currentUser, opponent, chatEnabled, onReport, gameStatus }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef();
+  const lastNotifiedId = useRef(null);
+
+  const isFinished = gameStatus === 'finished' || gameStatus === 'abandoned';
+  const canChat = chatEnabled && !isFinished && !currentUser?.chat_blocked;
 
   useEffect(() => {
     if (!roomId) return;
-    base44.entities.GameChat.filter({ room_id: roomId }, 'created_date', 50).then(setMessages);
+    base44.entities.GameChat.filter({ room_id: roomId }, '-created_date', 50).then(msgs => {
+      setMessages(msgs.reverse());
+      if (msgs.length > 0) lastNotifiedId.current = msgs[msgs.length - 1].id;
+    });
     const unsub = base44.entities.GameChat.subscribe((ev) => {
-      if (ev.data?.room_id === roomId) {
+      if (ev.data?.room_id !== roomId) return;
+      if (ev.type === 'create') {
         setMessages(prev => {
-          if (ev.type === 'create') return [...prev, ev.data];
-          return prev;
+          if (prev.some(m => m.id === ev.data.id)) return prev;
+          return [...prev, ev.data];
         });
+        // Powiadom o nowej wiadomości od przeciwnika (realtime)
+        if (ev.data.sender_id !== currentUser?.id && ev.data.sender_id && lastNotifiedId.current !== ev.data.id) {
+          lastNotifiedId.current = ev.data.id;
+          if (opponent?.id && document.hidden) {
+            sendNotification({
+              userId: currentUser.id,
+              userEmail: currentUser.email,
+              type: 'message_received',
+              title: `Nowa wiadomość od ${ev.data.sender_name || 'przeciwnika'}`,
+              message: ev.data.message?.slice(0, 80) || '',
+              referenceId: roomId,
+              referenceType: 'other',
+            });
+          }
+        }
       }
     });
     return unsub;
-  }, [roomId]);
+  }, [roomId, currentUser?.id, opponent?.id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const moderateAndSend = async (raw) => {
-    // AI moderation
     let moderated = raw;
     try {
       const result = await base44.integrations.Core.InvokeLLM({
@@ -62,18 +82,18 @@ Wiadomość: "${raw}"`,
   };
 
   const sendMessage = async () => {
-    if (!text.trim() || !chatEnabled || currentUser?.chat_blocked) return;
+    if (!text.trim() || !canChat) return;
     setSending(true);
     await moderateAndSend(text.trim());
     setText('');
     setSending(false);
   };
 
-  if (!chatEnabled) {
+  if (!chatEnabled || isFinished) {
     return (
       <div className="bg-slate-800/50 rounded-xl p-3 text-center text-slate-500 text-sm">
-        <MessageCircle className="w-5 h-5 mx-auto mb-1 opacity-40" />
-        Czat wyłączony
+        {isFinished ? <Lock className="w-5 h-5 mx-auto mb-1 opacity-40" /> : <MessageCircle className="w-5 h-5 mx-auto mb-1 opacity-40" />}
+        {isFinished ? 'Czat zablokowany — gra zakończona' : 'Czat wyłączony'}
       </div>
     );
   }

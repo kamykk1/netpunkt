@@ -1,0 +1,90 @@
+{
+  "name": "ShopProduct",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "product_type": {
+      "type": "string",
+      "enum": [
+        "vip",
+        "boost",
+        "physical",
+        "voucher",
+        "aliexpress",
+        "avatar",
+        "chat_emoji",
+        "profile_frame"
+      ],
+      "default": "voucher"
+    },
+    "points_price": {
+      "type": "number",
+      "description": "Cena w punktach"
+    },
+    "cash_price": {
+      "type": "number",
+      "description": "Cena w groszach (opcjonalna)"
+    },
+    "discount_with_points": {
+      "type": "number",
+      "description": "Zni\u017cka % przy p\u0142atno\u015bci punktami"
+    },
+    "stock": {
+      "type": "number",
+      "default": -1,
+      "description": "-1 = nieograniczony"
+    },
+    "aliexpress_url": {
+      "type": "string"
+    },
+    "affiliate_commission": {
+      "type": "number",
+      "description": "Prowizja afiliacyjna %"
+    },
+    "vip_days": {
+      "type": "number",
+      "description": "Dni VIP (dla typu vip)"
+    },
+    "boost_multiplier": {
+      "type": "number",
+      "description": "Mno\u017cnik boost"
+    },
+    "boost_hours": {
+      "type": "number",
+      "description": "Czas trwania boost w godzinach"
+    },
+    "item_key": {
+      "type": "string",
+      "description": "Klucz przedmiotu (emoji awatara, paczka emotek, ramki)"
+    },
+    "item_value": {
+      "type": "string",
+      "description": "Warto\u015b\u0107 przedmiotu (URL obrazka, lista emoji, kod ramki)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "out_of_stock"
+      ],
+      "default": "active"
+    },
+    "category": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "points_price",
+    "product_type"
+  ]
+}

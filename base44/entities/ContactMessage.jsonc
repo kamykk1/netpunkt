@@ -1,0 +1,67 @@
+{
+  "name": "ContactMessage",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "user_name": {
+      "type": "string"
+    },
+    "department": {
+      "type": "string",
+      "enum": [
+        "advertising",
+        "contact",
+        "complaints",
+        "purchases"
+      ],
+      "description": "Dzia\u0142: reklama, kontakt, reklamacje, zakupy"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "in_progress",
+        "resolved",
+        "closed"
+      ],
+      "default": "new"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "ID admina/moderatora"
+    },
+    "admin_notes": {
+      "type": "string"
+    },
+    "ai_response": {
+      "type": "string",
+      "description": "Automatyczna odpowied\u017a AI"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    }
+  },
+  "required": [
+    "user_email",
+    "department",
+    "subject",
+    "message"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "name": "MembershipLevel",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "level": {
+      "type": "number",
+      "description": "Poziom (1-10)"
+    },
+    "min_points_earned": {
+      "type": "number",
+      "description": "Minimalna suma zarobionych punkt\u00f3w"
+    },
+    "points_multiplier": {
+      "type": "number",
+      "default": 1,
+      "description": "Mno\u017cnik punkt\u00f3w"
+    },
+    "referral_bonus_percent": {
+      "type": "number",
+      "default": 10
+    },
+    "daily_ads_limit": {
+      "type": "number",
+      "default": 50
+    },
+    "cashback_bonus_percent": {
+      "type": "number",
+      "default": 0
+    },
+    "badge_color": {
+      "type": "string",
+      "default": "#6366f1"
+    },
+    "badge_icon": {
+      "type": "string"
+    },
+    "benefits": {
+      "type": "string",
+      "description": "Lista korzy\u015bci (JSON)"
+    }
+  },
+  "required": [
+    "name",
+    "level",
+    "min_points_earned"
+  ]
+}

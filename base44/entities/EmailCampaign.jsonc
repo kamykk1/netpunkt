@@ -1,0 +1,70 @@
+{
+  "name": "EmailCampaign",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string",
+      "description": "Tre\u015b\u0107 HTML"
+    },
+    "points_reward": {
+      "type": "number"
+    },
+    "advertiser_id": {
+      "type": "string"
+    },
+    "total_recipients": {
+      "type": "number",
+      "default": 0
+    },
+    "sent_count": {
+      "type": "number",
+      "default": 0
+    },
+    "opened_count": {
+      "type": "number",
+      "default": 0
+    },
+    "clicked_count": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "scheduled",
+        "sending",
+        "sent",
+        "paused"
+      ],
+      "default": "draft"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "target_membership_level": {
+      "type": "number",
+      "description": "Minimalny poziom cz\u0142onkostwa"
+    },
+    "cost_per_open": {
+      "type": "number",
+      "description": "Koszt za otwarcie (grosze)"
+    },
+    "total_budget": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "title",
+    "subject",
+    "content",
+    "points_reward"
+  ]
+}

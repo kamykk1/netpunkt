@@ -1,0 +1,54 @@
+{
+  "name": "CashbackTransaction",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "shop_name": {
+      "type": "string"
+    },
+    "order_id": {
+      "type": "string",
+      "description": "ID zam\u00f3wienia w sklepie"
+    },
+    "order_amount": {
+      "type": "number",
+      "description": "Warto\u015b\u0107 zam\u00f3wienia (grosze)"
+    },
+    "cashback_percent": {
+      "type": "number"
+    },
+    "points_earned": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "paid",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "affiliate_network": {
+      "type": "string"
+    },
+    "affiliate_transaction_id": {
+      "type": "string"
+    },
+    "confirmed_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "shop_name",
+    "order_amount"
+  ]
+}

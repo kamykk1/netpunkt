@@ -1,0 +1,92 @@
+{
+  "name": "Achievement",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Unikalny klucz osi\u0105gni\u0119cia"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Emoji lub URL ikony"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "games",
+        "referrals",
+        "points",
+        "social",
+        "special"
+      ],
+      "default": "games"
+    },
+    "requirement_type": {
+      "type": "string",
+      "enum": [
+        "games_played",
+        "games_won",
+        "points_earned",
+        "referrals_count",
+        "win_streak",
+        "custom"
+      ],
+      "default": "games_played"
+    },
+    "requirement_value": {
+      "type": "number",
+      "description": "Wymagana warto\u015b\u0107"
+    },
+    "reward_type": {
+      "type": "string",
+      "enum": [
+        "points",
+        "multiplier",
+        "badge",
+        "feature"
+      ],
+      "default": "points"
+    },
+    "reward_value": {
+      "type": "number",
+      "description": "Warto\u015b\u0107 nagrody"
+    },
+    "reward_description": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_visible": {
+      "type": "boolean",
+      "default": true
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "rare",
+        "epic",
+        "legendary"
+      ],
+      "default": "common"
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "key",
+    "name",
+    "requirement_type",
+    "requirement_value"
+  ]
+}

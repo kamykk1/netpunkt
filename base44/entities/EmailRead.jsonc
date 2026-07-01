@@ -1,0 +1,32 @@
+{
+  "name": "EmailRead",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "campaign_id": {
+      "type": "string"
+    },
+    "opened": {
+      "type": "boolean",
+      "default": false
+    },
+    "clicked": {
+      "type": "boolean",
+      "default": false
+    },
+    "points_claimed": {
+      "type": "boolean",
+      "default": false
+    },
+    "opened_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "campaign_id"
+  ]
+}

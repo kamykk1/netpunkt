@@ -1,0 +1,61 @@
+{
+  "name": "PartnerTransaction",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "partner_program_id": {
+      "type": "string"
+    },
+    "partner_slug": {
+      "type": "string"
+    },
+    "external_transaction_id": {
+      "type": "string"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "registration",
+        "deposit",
+        "loan",
+        "purchase",
+        "task_completion"
+      ],
+      "description": "Typ akcji: rejestracja, lokata, po\u017cyczka, zakup, zadanie"
+    },
+    "action_description": {
+      "type": "string"
+    },
+    "commission_value": {
+      "type": "number",
+      "description": "Warto\u015b\u0107 prowizji w groszach"
+    },
+    "points_earned": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "paid",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "confirmed_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "partner_program_id",
+    "action_type"
+  ]
+}

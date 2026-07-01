@@ -1,0 +1,61 @@
+{
+  "name": "PaymentRequest",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User requesting payment"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User's email"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "User's full name"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Requested amount in cents"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "paypal",
+        "bank_transfer",
+        "crypto"
+      ],
+      "default": "paypal"
+    },
+    "payment_details": {
+      "type": "string",
+      "description": "PayPal email, bank details, or crypto address"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "paid"
+      ],
+      "default": "pending"
+    },
+    "admin_notes": {
+      "type": "string",
+      "description": "Notes from admin"
+    },
+    "processed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request was processed"
+    }
+  },
+  "required": [
+    "user_id",
+    "user_email",
+    "amount",
+    "payment_method",
+    "payment_details"
+  ]
+}

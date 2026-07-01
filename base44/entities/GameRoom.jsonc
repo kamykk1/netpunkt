@@ -1,0 +1,99 @@
+{
+  "name": "GameRoom",
+  "type": "object",
+  "properties": {
+    "game_type": {
+      "type": "string",
+      "enum": [
+        "battleship",
+        "tictactoe",
+        "connect4"
+      ],
+      "description": "Typ gry"
+    },
+    "game_mode": {
+      "type": "string",
+      "enum": [
+        "classic",
+        "point_duel",
+        "ranked"
+      ],
+      "default": "classic",
+      "description": "Tryb gry: classic, point_duel (pojedynek na punkty), ranked (bitwa rankingowa)"
+    },
+    "player1_id": {
+      "type": "string"
+    },
+    "player1_email": {
+      "type": "string"
+    },
+    "player1_name": {
+      "type": "string"
+    },
+    "player2_id": {
+      "type": "string"
+    },
+    "player2_email": {
+      "type": "string"
+    },
+    "player2_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "waiting",
+        "active",
+        "finished",
+        "abandoned"
+      ],
+      "default": "waiting"
+    },
+    "winner_id": {
+      "type": "string"
+    },
+    "bet_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Stawka w punktach"
+    },
+    "game_state": {
+      "type": "string",
+      "description": "JSON stanu gry"
+    },
+    "current_turn": {
+      "type": "string",
+      "description": "ID gracza kt\u00f3ry ma ruch"
+    },
+    "chat_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": false
+    },
+    "time_per_move": {
+      "type": "number",
+      "default": 60,
+      "description": "Czas na ruch w sekundach (0 = bez limitu)"
+    },
+    "point_limit": {
+      "type": "number",
+      "default": 0,
+      "description": "Limit punkt\u00f3w do zdobycia (dla trybu point_duel)"
+    },
+    "player1_elo": {
+      "type": "number",
+      "description": "ELO gracza 1 przed gr\u0105"
+    },
+    "player2_elo": {
+      "type": "number",
+      "description": "ELO gracza 2 przed gr\u0105"
+    }
+  },
+  "required": [
+    "game_type",
+    "player1_id"
+  ]
+}

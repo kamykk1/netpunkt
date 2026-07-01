@@ -1,0 +1,58 @@
+{
+  "name": "BattlePass",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "season": {
+      "type": "number"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "max_level": {
+      "type": "number",
+      "default": 50
+    },
+    "points_per_level": {
+      "type": "number",
+      "description": "Punkty potrzebne na poziom"
+    },
+    "premium_price_points": {
+      "type": "number"
+    },
+    "premium_price_cash": {
+      "type": "number",
+      "description": "Grosze"
+    },
+    "rewards_free": {
+      "type": "string",
+      "description": "JSON z nagrodami darmowymi"
+    },
+    "rewards_premium": {
+      "type": "string",
+      "description": "JSON z nagrodami premium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "upcoming",
+        "active",
+        "ended"
+      ],
+      "default": "upcoming"
+    }
+  },
+  "required": [
+    "name",
+    "season",
+    "start_date",
+    "end_date"
+  ]
+}

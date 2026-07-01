@@ -1,0 +1,79 @@
+{
+  "name": "JobApplication",
+  "type": "object",
+  "properties": {
+    "job_offer_id": {
+      "type": "string"
+    },
+    "job_title": {
+      "type": "string"
+    },
+    "candidate_name": {
+      "type": "string"
+    },
+    "candidate_email": {
+      "type": "string"
+    },
+    "candidate_phone": {
+      "type": "string"
+    },
+    "cv_url": {
+      "type": "string",
+      "description": "Link do CV"
+    },
+    "cv_text": {
+      "type": "string",
+      "description": "Tre\u015b\u0107 CV do wyszukiwania"
+    },
+    "cover_letter": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "cv_received",
+        "screening",
+        "interview",
+        "offer_sent",
+        "hired",
+        "rejected"
+      ],
+      "default": "cv_received"
+    },
+    "recruiter_notes": {
+      "type": "string"
+    },
+    "keywords": {
+      "type": "string",
+      "description": "S\u0142owa kluczowe z CV (CSV)"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Ocena 1-5"
+    },
+    "interview_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "salary_expectation": {
+      "type": "number"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "linkedin",
+        "pracuj",
+        "indeed",
+        "referral",
+        "direct",
+        "other"
+      ],
+      "default": "direct"
+    }
+  },
+  "required": [
+    "job_offer_id",
+    "candidate_name",
+    "candidate_email"
+  ]
+}

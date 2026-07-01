@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreateRoomDialog from '@/components/games/CreateRoomDialog.jsx';
 import UserAvatar from '@/components/profile/UserAvatar.jsx';
 import { sendNotification } from '@/components/notifications/notificationHelpers.jsx';
+import { trackGameEvent, recordGameSession } from '@/components/games/gameAnalytics.jsx';
 import GameChat from '@/components/games/GameChat.jsx';
 import ReportModal from '@/components/games/ReportModal.jsx';
 import BattleshipGame from '@/components/games/BattleshipGame.jsx';
@@ -98,7 +99,7 @@ export default function Games() {
       if (ev.id !== activeRoom.id) return;
       if (ev.type === 'update') {
         setActiveRoom(ev.data);
-        if (ev.data.player2_id && !opponent) {
+        if (ev.data.player2_id) {
           const users = await base44.entities.User.filter({ id: ev.data.player2_id });
           setOpponent(users[0] || null);
         }
@@ -111,7 +112,7 @@ export default function Games() {
     mutationFn: async (form) => {
       if (form.bet_points > 0 && (user.points_balance || 0) < form.bet_points) throw new Error('Niewystarczające punkty');
       const eloRating = user.elo_rating || 1000;
-      return base44.entities.GameRoom.create({
+      const room = await base44.entities.GameRoom.create({
         ...form,
         player1_id: user.id,
         player1_email: user.email,
@@ -120,8 +121,25 @@ export default function Games() {
         status: 'waiting',
         chat_enabled: true,
       });
+      // Powiadom znajomych o zaproszeniu do prywatnego pokoju
+      if (form.is_private && form.invited_friend_id) {
+        await sendNotification({
+          userId: form.invited_friend_id,
+          type: 'status_update',
+          title: 'Zaproszenie do gry!',
+          message: `${user.full_name || user.email} zaprasza Cię do gry w ${MULTIPLAYER_TYPES[form.game_type]?.name || form.game_type}.`,
+          referenceId: room.id,
+          referenceType: 'other',
+        });
+      }
+      return room;
     },
-    onSuccess: (room) => { setActiveRoom(room); setShowCreate(false); queryClient.invalidateQueries({ queryKey: ['gameRooms'] }); toast.success('Pokój utworzony!'); },
+    onSuccess: (room) => {
+      setActiveRoom(room); setShowCreate(false);
+      queryClient.invalidateQueries({ queryKey: ['gameRooms'] });
+      toast.success('Pokój utworzony!');
+      trackGameEvent('game_room_created', { game_type: room.game_type, game_mode: room.game_mode, is_private: room.is_private, bet_points: room.bet_points });
+    },
     onError: (e) => toast.error(e.message)
   });
 
@@ -139,7 +157,11 @@ export default function Games() {
       if (p1) await sendNotification({ userId: p1.id, userEmail: p1.email, type: 'status_update', title: 'Gracz dołączył!', message: `${user.full_name || user.email} dołączył do Twojej gry.`, referenceId: room.id, referenceType: 'other' });
       return updated;
     },
-    onSuccess: (room) => { setActiveRoom(room); queryClient.invalidateQueries({ queryKey: ['gameRooms'] }); },
+    onSuccess: (room) => {
+      setActiveRoom(room);
+      queryClient.invalidateQueries({ queryKey: ['gameRooms'] });
+      trackGameEvent('game_room_joined', { game_type: room.game_type, game_mode: room.game_mode });
+    },
     onError: (e) => toast.error(e.message)
   });
 
@@ -193,6 +215,11 @@ export default function Games() {
     }
     queryClient.invalidateQueries({ queryKey: ['currentUser'] });
     setPostGame({ result: isDraw ? 'draw' : (won ? 'win' : 'loss'), eloChange });
+
+    // Analytics: zapisz sesję gry (czas trwania, typ, tryb)
+    const durationSeconds = Math.round((Date.now() - new Date(activeRoom.created_date).getTime()) / 1000);
+    trackGameEvent('game_ended', { game_type: activeRoom.game_type, game_mode: mode, result: isDraw ? 'draw' : (won ? 'win' : 'loss'), duration_seconds: durationSeconds, is_private: activeRoom.is_private });
+    recordGameSession({ gameType: activeRoom.game_type, gameMode: mode, roomId: activeRoom.id, durationSeconds, isPrivate: activeRoom.is_private, result: isDraw ? 'draw' : (won ? 'win' : 'loss'), userId: user.id, userEmail: user.email, userName: user.full_name });
   };
 
   const leaveRoom = async () => {
@@ -310,7 +337,7 @@ export default function Games() {
                 </Card>
               </div>
               <div>
-                <GameChat roomId={activeRoom.id} currentUser={user} opponent={opponent} chatEnabled={getSetting('games_chat_enabled') && !user?.chat_blocked} onReport={(u) => setReportTarget(u)} />
+                <GameChat roomId={activeRoom.id} currentUser={user} opponent={opponent} chatEnabled={getSetting('games_chat_enabled') && !user?.chat_blocked} gameStatus={activeRoom.status} onReport={(u) => setReportTarget(u)} />
               </div>
             </div>
           )}

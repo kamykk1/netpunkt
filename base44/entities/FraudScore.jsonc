@@ -1,0 +1,53 @@
+{
+  "name": "FraudScore",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number",
+      "description": "0-100, wy\u017cszy = bardziej podejrzany"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "low"
+    },
+    "flags": {
+      "type": "string",
+      "description": "JSON z flagami"
+    },
+    "ip_addresses": {
+      "type": "string",
+      "description": "JSON z u\u017cywanymi IP"
+    },
+    "device_fingerprints": {
+      "type": "string"
+    },
+    "suspicious_activities": {
+      "type": "string",
+      "description": "JSON z podejrzanymi aktywno\u015bciami"
+    },
+    "last_check": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "is_blocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "block_reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "score"
+  ]
+}

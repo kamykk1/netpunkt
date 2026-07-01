@@ -1,0 +1,32 @@
+{
+  "name": "UserBattlePass",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "battlepass_id": {
+      "type": "string"
+    },
+    "current_level": {
+      "type": "number",
+      "default": 1
+    },
+    "current_xp": {
+      "type": "number",
+      "default": 0
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false
+    },
+    "claimed_rewards": {
+      "type": "string",
+      "description": "JSON z odebranymi nagrodami"
+    }
+  },
+  "required": [
+    "user_id",
+    "battlepass_id"
+  ]
+}

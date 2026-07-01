@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { 
   TrendingUp, Plus, Eye, Coins, CreditCard, BarChart3, Target,
   Loader2, Pencil, Pause, Play, Trash2, FileText, AlertTriangle,

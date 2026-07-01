@@ -1,0 +1,30 @@
+{
+  "name": "UserAchievement",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "achievement_key": {
+      "type": "string"
+    },
+    "achievement_name": {
+      "type": "string"
+    },
+    "unlocked_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reward_claimed": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "user_id",
+    "achievement_key"
+  ]
+}
