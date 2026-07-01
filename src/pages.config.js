@@ -65,6 +65,7 @@ import Profile from './pages/Profile';
 import Ranking from './pages/Ranking';
 import Referrals from './pages/Referrals';
 import Shop from './pages/Shop';
+import Tournaments from './pages/Tournaments';
 import AdminBanners from './pages/AdminBanners';
 import AdminAchievements from './pages/AdminAchievements';
 import __Layout from './Layout.jsx';
@@ -89,6 +90,7 @@ export const PAGES = {
     "Ranking": Ranking,
     "Referrals": Referrals,
     "Shop": Shop,
+    "Tournaments": Tournaments,
     "AdminBanners": AdminBanners,
     "AdminAchievements": AdminAchievements,
 }

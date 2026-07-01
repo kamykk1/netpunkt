@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
   Target, Coins, Eye, Users, Gift, Star, Clock, 
-  CheckCircle, Loader2, Trophy, Zap
+  CheckCircle, Loader2, Trophy, Zap, Gamepad2, Award
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +19,10 @@ const MISSION_ICONS = {
   make_purchase: Gift,
   cashback: Star,
   consecutive_login: Clock,
+  play_games: Gamepad2,
+  win_games: Trophy,
+  play_multiplayer: Gamepad2,
+  win_tournament: Trophy,
 };
 
 const MISSION_TYPE_COLORS = {
@@ -52,7 +56,7 @@ export default function Missions() {
       const userMission = userMissions.find(um => um.mission_id === mission.id);
       
       if (userMission) {
-        await base44.entities.UserMission.update(userMission.id, { claimed: true });
+        await base44.entities.UserMission.update(userMission.id, { claimed: true, badge_awarded: !!mission.badge_reward });
       } else {
         await base44.entities.UserMission.create({
           user_id: user.id,
@@ -60,15 +64,24 @@ export default function Missions() {
           progress: mission.requirement_value,
           completed: true,
           claimed: true,
+          badge_awarded: !!mission.badge_reward,
           completed_date: new Date().toISOString()
         });
       }
 
       const newBalance = (user.points_balance || 0) + mission.points_reward;
-      await base44.auth.updateMe({
+      const updateData = {
         points_balance: newBalance,
         total_points_earned: (user.total_points_earned || 0) + mission.points_reward
-      });
+      };
+      // Award badge if mission has badge_reward
+      if (mission.badge_reward) {
+        const currentBadges = user.badges || [];
+        if (!currentBadges.includes(mission.badge_reward)) {
+          updateData.badges = [...currentBadges, mission.badge_reward];
+        }
+      }
+      await base44.auth.updateMe(updateData);
 
       await base44.entities.PointsHistory.create({
         user_id: user.id,
@@ -105,6 +118,18 @@ export default function Missions() {
         break;
       case 'consecutive_login':
         progress = user?.consecutive_logins || 0;
+        break;
+      case 'play_games':
+        progress = user?.games_played || 0;
+        break;
+      case 'win_games':
+        progress = user?.games_won || 0;
+        break;
+      case 'play_multiplayer':
+        progress = user?.games_played || 0;
+        break;
+      case 'win_tournament':
+        progress = user?.tournaments_won || 0;
         break;
       default:
         progress = 0;
@@ -179,10 +204,17 @@ export default function Missions() {
                   </Button>
                 )}
 
+                {mission.badge_reward && (
+                  <div className="flex items-center gap-2 mt-3 text-amber-400 text-sm">
+                    <Award className="w-4 h-4" />
+                    <span>Nagroda: odznaka "{mission.badge_reward}"</span>
+                  </div>
+                )}
+
                 {claimed && (
                   <div className="flex items-center justify-center gap-2 mt-4 text-emerald-400">
                     <CheckCircle className="w-5 h-5" />
-                    <span>Odebrano</span>
+                    <span>Odebrano{mission.badge_reward ? ' + odznaka' : ''}</span>
                   </div>
                 )}
               </div>

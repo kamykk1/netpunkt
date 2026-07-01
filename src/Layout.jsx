@@ -8,6 +8,7 @@ import {
   Target, Trophy, Zap, Mail, CreditCard, Users, TrendingUp,
   Gift, Crown, Gamepad2, User, Image
 } from 'lucide-react';
+// Trophy already imported above — reused for Tournaments menu
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Cashback', icon: Gift, page: 'Cashback' },
     { name: 'Battle Pass', icon: Zap, page: 'BattlePass' },
     { name: 'Gry', icon: Gamepad2, page: 'Games' },
+    { name: 'Turnieje', icon: Trophy, page: 'Tournaments' },
     ...(user?.is_advertiser ? [{ name: 'Reklamodawca', icon: TrendingUp, page: 'AdvertiserPanel' }] : [{ name: 'Reklama', icon: TrendingUp, page: 'AdvertiserRegister' }]),
     ...(user?.role === 'admin' || user?.is_moderator ? [
       { name: 'Admin', icon: Shield, page: 'AdminPanel' },
