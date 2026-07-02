@@ -76,9 +76,10 @@ export default function Missions() {
       };
       // Award badge if mission has badge_reward
       if (mission.badge_reward) {
-        const currentBadges = user.badges || [];
+        let currentBadges = [];
+        try { currentBadges = JSON.parse(user.badges || '[]'); } catch { currentBadges = []; }
         if (!currentBadges.includes(mission.badge_reward)) {
-          updateData.badges = [...currentBadges, mission.badge_reward];
+          updateData.badges = JSON.stringify([...currentBadges, mission.badge_reward]);
         }
       }
       await base44.auth.updateMe(updateData);

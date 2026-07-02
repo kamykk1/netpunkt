@@ -29,7 +29,10 @@
         "event_bonus",
         "admin_adjustment",
         "shop_purchase",
-        "email_read"
+        "email_read",
+        "tournament_entry",
+        "tournament_refund",
+        "tournament_prize"
       ],
       "default": "ad_view"
     },

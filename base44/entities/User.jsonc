@@ -213,6 +213,16 @@
       "default": 1000,
       "description": "Ranking ELO gracza"
     },
+    "tournaments_won": {
+      "type": "number",
+      "default": 0,
+      "description": "Liczba wygranych turniej\u00f3w"
+    },
+    "badges": {
+      "type": "string",
+      "description": "JSON lista odznak u\u017cytkownika",
+      "default": "[]"
+    },
     "owned_avatars": {
       "type": "string",
       "description": "JSON lista zakupionych awatar\u00f3w (emoji lub URL)"
