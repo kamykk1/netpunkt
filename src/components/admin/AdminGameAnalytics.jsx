@@ -41,7 +41,7 @@ export default function AdminGameAnalytics() {
     let totalSessions = 0;
 
     scores.forEach(s => {
-      const extra = s.extra ? JSON.parse(s.extra) : {};
+      let extra = {}; try { extra = s.extra ? JSON.parse(s.extra) : {}; } catch {}
       const game = s.game_type;
       if (!game) return;
       totalSessions++;

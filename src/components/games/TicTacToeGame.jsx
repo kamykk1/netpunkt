@@ -24,11 +24,11 @@ export default function TicTacToeGame({ room, currentUser, opponent, onGameEnd }
 
   useEffect(() => {
     if (!room?.id) return;
-    const initState = room.game_state ? JSON.parse(room.game_state) : null;
+    let initState = null; try { initState = room.game_state ? JSON.parse(room.game_state) : null; } catch {}
     if (initState?.board) { setBoard(initState.board); setMyTurn(room.current_turn === currentUser?.id); }
     const unsub = base44.entities.GameRoom.subscribe((ev) => {
       if (ev.id !== room.id || ev.type !== 'update') return;
-      const state = ev.data?.game_state ? JSON.parse(ev.data.game_state) : null;
+      let state = null; try { state = ev.data?.game_state ? JSON.parse(ev.data.game_state) : null; } catch {}
       if (state?.board) setBoard(state.board);
       setMyTurn(ev.data.current_turn === currentUser?.id);
       const w = checkWinner(state?.board || []);

@@ -91,7 +91,7 @@ export default function Referrals() {
   };
 
   const savePromoMutation = useMutation({
-    mutationFn: () => base44.auth.updateMe({ promo_codes: JSON.stringify([...(user?.promo_codes ? JSON.parse(user.promo_codes) : []), promoCode]) }),
+    mutationFn: () => { let codes = []; try { codes = user?.promo_codes ? JSON.parse(user.promo_codes) : []; } catch {} return base44.auth.updateMe({ promo_codes: JSON.stringify([...codes, promoCode]) }); },
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['currentUser'] }); setPromoCode(''); toast.success('Kod promocyjny zapisany!'); }
   });
 

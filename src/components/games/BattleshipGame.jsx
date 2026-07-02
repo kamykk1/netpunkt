@@ -58,7 +58,7 @@ export default function BattleshipGame({ room, currentUser, opponent, onGameEnd 
     if (!room?.id) return;
     const unsub = base44.entities.GameRoom.subscribe((ev) => {
       if (ev.id === room.id && ev.type === 'update') {
-        const state = ev.data?.game_state ? JSON.parse(ev.data.game_state) : null;
+        let state = null; try { state = ev.data?.game_state ? JSON.parse(ev.data.game_state) : null; } catch {}
         if (!state) return;
         const myKey = isPlayer1 ? 'grid1' : 'grid2';
         const oppKey = isPlayer1 ? 'grid2' : 'grid1';
@@ -98,7 +98,7 @@ export default function BattleshipGame({ room, currentUser, opponent, onGameEnd 
     if (!myTurn || phase !== 'playing') return;
     if (oppGrid[r][c] === 'hit' || oppGrid[r][c] === 'miss') return;
 
-    const state = room.game_state ? JSON.parse(room.game_state) : {};
+    let state = {}; try { state = room.game_state ? JSON.parse(room.game_state) : {}; } catch {}
     const oppKey = isPlayer1 ? 'grid2' : 'grid1';
     const oppRealGrid = state[oppKey] || createEmptyGrid();
 

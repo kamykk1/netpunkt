@@ -112,7 +112,7 @@ export default function Shop() {
           profile_frame: 'owned_frames',
         };
         const fieldName = fieldMap[product.product_type];
-        const currentList = JSON.parse(user[fieldName] || '[]');
+        let currentList; try { currentList = JSON.parse(user[fieldName] || '[]'); } catch { currentList = []; }
         if (!currentList.includes(product.item_key || product.name)) {
           currentList.push(product.item_key || product.name);
           const update = { [fieldName]: JSON.stringify(currentList) };

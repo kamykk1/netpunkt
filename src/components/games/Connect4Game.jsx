@@ -42,11 +42,11 @@ export default function Connect4Game({ room, currentUser, opponent, onGameEnd })
 
   useEffect(() => {
     if (!room?.id) return;
-    const s = room.game_state ? JSON.parse(room.game_state) : null;
+    let s = null; try { s = room.game_state ? JSON.parse(room.game_state) : null; } catch {}
     if (s?.board) { setBoard(s.board); setMyTurn(room.current_turn === currentUser?.id); }
     const unsub = base44.entities.GameRoom.subscribe((ev) => {
       if (ev.id !== room.id || ev.type !== 'update') return;
-      const state = ev.data?.game_state ? JSON.parse(ev.data.game_state) : null;
+      let state = null; try { state = ev.data?.game_state ? JSON.parse(ev.data.game_state) : null; } catch {}
       if (state?.board) setBoard(state.board);
       setMyTurn(ev.data.current_turn === currentUser?.id);
       if (ev.data.status === 'finished') { setWinner(ev.data.winner_id === currentUser?.id ? myColor : 'other'); onGameEnd?.(ev.data.winner_id === currentUser?.id); }
