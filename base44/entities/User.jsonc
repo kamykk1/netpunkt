@@ -242,6 +242,35 @@
     "active_chat_emojis": {
       "type": "string",
       "description": "JSON lista aktywnych paczek emotek"
+    },
+    "current_league": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "diamond"
+      ],
+      "default": "bronze",
+      "description": "Aktualna liga sezonowa na podstawie ELO"
+    },
+    "season_peak_elo": {
+      "type": "number",
+      "default": 1000,
+      "description": "Najwy\u017csze ELO w sezonie"
+    },
+    "last_league": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "diamond"
+      ],
+      "default": "bronze",
+      "description": "Poprzednia liga (do detekcji awansu)"
     }
   },
   "required": [

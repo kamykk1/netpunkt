@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AvatarPicker from '@/components/profile/AvatarPicker.jsx';
+import InventoryPanel from '@/components/profile/InventoryPanel.jsx';
 import AchievementsPanel from '@/components/achievements/AchievementsPanel.jsx';
 import GameStatsSection from '@/components/games/GameStatsSection.jsx';
 import EloHistoryChart from '@/components/games/EloHistoryChart.jsx';
@@ -137,6 +138,7 @@ export default function Profile() {
           <TabsList className="bg-slate-800/50 border border-purple-500/20 mb-6 flex flex-wrap h-auto gap-1 p-1">
             <TabsTrigger value="data" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-xs px-3"><User className="w-3.5 h-3.5 mr-1" /> Dane</TabsTrigger>
             <TabsTrigger value="avatar" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-xs px-3"><Camera className="w-3.5 h-3.5 mr-1" /> Zdjęcie</TabsTrigger>
+            <TabsTrigger value="inventory" className="data-[state=active]:bg-cyan-600 data-[state=active]:text-white text-xs px-3"><Crown className="w-3.5 h-3.5 mr-1" /> Ekwipunek</TabsTrigger>
             <TabsTrigger value="company" className="data-[state=active]:bg-cyan-600 data-[state=active]:text-white text-xs px-3"><Building2 className="w-3.5 h-3.5 mr-1" /> Firma</TabsTrigger>
             <TabsTrigger value="history" className="data-[state=active]:bg-amber-600 data-[state=active]:text-white text-xs px-3"><History className="w-3.5 h-3.5 mr-1" /> Historia</TabsTrigger>
             <TabsTrigger value="stats" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-xs px-3"><Gamepad2 className="w-3.5 h-3.5 mr-1" /> Statystyki</TabsTrigger>
@@ -191,6 +193,11 @@ export default function Profile() {
                 <p className="text-slate-500 text-sm text-center">Widoczne w górnym pasku i w grach multiplayer.</p>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* --- EKWIPUNEK --- */}
+          <TabsContent value="inventory">
+            <InventoryPanel user={user} />
           </TabsContent>
 
           {/* --- FIRMA / REKLAMODAWCA --- */}

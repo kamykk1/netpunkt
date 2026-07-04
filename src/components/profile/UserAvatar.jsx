@@ -4,6 +4,9 @@ const FRAME_STYLES = {
   'neon-purple': 'p-[3px] bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 shadow-[0_0_12px_rgba(139,92,246,0.6)]',
   'gold': 'p-[3px] bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-400 shadow-[0_0_12px_rgba(250,204,21,0.5)]',
   'cyberpunk': 'p-[3px] bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 shadow-[0_0_12px_rgba(6,182,212,0.6)]',
+  'rainbow': 'p-[3px] bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.5)]',
+  'ice': 'p-[3px] bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-300 shadow-[0_0_12px_rgba(59,130,246,0.5)]',
+  'fire': 'p-[3px] bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 shadow-[0_0_12px_rgba(239,68,68,0.6)]',
 };
 
 export default function UserAvatar({ user, size = 'md', className = '' }) {
