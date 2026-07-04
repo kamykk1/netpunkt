@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Bell, X, Check, CheckCheck, AlertTriangle, DollarSign,
-  Target, MessageSquare, Settings, Loader2, Trash2
+  Target, MessageSquare, Settings, Loader2, Trash2, Trophy, Gamepad2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,9 @@ const typeConfig = {
   status_update: { icon: Bell, color: 'text-purple-400', bg: 'bg-purple-500/20' },
   system: { icon: Settings, color: 'text-slate-400', bg: 'bg-slate-500/20' },
   promo: { icon: Bell, color: 'text-pink-400', bg: 'bg-pink-500/20' },
+  tournament_reminder: { icon: Trophy, color: 'text-yellow-400', bg: 'bg-yellow-500/20' },
+  tournament_result: { icon: Trophy, color: 'text-amber-400', bg: 'bg-amber-500/20' },
+  game_invite: { icon: Gamepad2, color: 'text-cyan-400', bg: 'bg-cyan-500/20' },
 };
 
 export default function NotificationCenter({ userId }) {
@@ -35,6 +38,17 @@ export default function NotificationCenter({ userId }) {
     enabled: !!userId,
     refetchInterval: 30000
   });
+
+  // Real-time subscription — instantly refresh when new notifications arrive
+  useEffect(() => {
+    if (!userId) return;
+    const unsub = base44.entities.Notification.subscribe((event) => {
+      if (event.type === 'create' && event.data?.user_id === userId) {
+        queryClient.invalidateQueries({ queryKey: ['notifications', userId] });
+      }
+    });
+    return unsub;
+  }, [userId, queryClient]);
 
   const markReadMutation = useMutation({
     mutationFn: (id) => base44.entities.Notification.update(id, { is_read: true }),

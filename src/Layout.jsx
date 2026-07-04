@@ -17,12 +17,15 @@ import {
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import NotificationCenter from '@/components/notifications/NotificationCenter.jsx';
+import { useBrowserNotifications } from '@/hooks/useBrowserNotifications';
 
 export default function Layout({ children, currentPageName }) {
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me()
   });
+
+  useBrowserNotifications();
 
   const getInitials = (name) => {
     if (!name) return 'U';

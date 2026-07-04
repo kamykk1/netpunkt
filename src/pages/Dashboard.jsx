@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProgressCharts from '@/components/dashboard/ProgressCharts.jsx';
 import GeographicReachMap from '@/components/dashboard/GeographicReachMap.jsx';
 import PartnerTransactionsPanel from '@/components/partners/PartnerTransactionsPanel.jsx';
+import TournamentLeaderboard from '@/components/tournaments/TournamentLeaderboard.jsx';
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -189,6 +190,10 @@ export default function Dashboard() {
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-2"
           >
+            {/* Tournament Leaderboard */}
+            <div className="mb-6">
+              <TournamentLeaderboard limit={5} />
+            </div>
             <Card className="bg-[#1a1a2e]/50 border-purple-500/20">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">

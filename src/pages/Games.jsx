@@ -125,11 +125,11 @@ export default function Games() {
       if (form.is_private && form.invited_friend_id) {
         await sendNotification({
           userId: form.invited_friend_id,
-          type: 'status_update',
-          title: 'Zaproszenie do gry!',
-          message: `${user.full_name || user.email} zaprasza Cię do gry w ${MULTIPLAYER_TYPES[form.game_type]?.name || form.game_type}.`,
+          type: 'game_invite',
+          title: '🎮 Zaproszenie do gry!',
+          message: `${user.full_name || user.email} zaprasza Cię do gry w ${MULTIPLAYER_TYPES[form.game_type]?.name || form.game_type}. Dołącz do pokoju!`,
           referenceId: room.id,
-          referenceType: 'other',
+          referenceType: 'game_room',
         });
       }
       return room;

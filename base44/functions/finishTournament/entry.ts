@@ -56,11 +56,11 @@ Deno.serve(async (req) => {
         await base44.asServiceRole.entities.Notification.create({
           user_id: winner_id,
           user_email: winnerUser.email,
-          type: 'status_update',
+          type: 'tournament_result',
           title: '🏆 Wygrałeś turniej!',
           message: `Gratulacje! Wygrałeś turniej "${tournament.name}" i otrzymujesz ${winnerPrize} punktów nagrody!`,
           reference_id: tournament_id,
-          reference_type: 'other',
+          reference_type: 'tournament',
           is_read: false,
           priority: 'high'
         });
@@ -96,11 +96,11 @@ Deno.serve(async (req) => {
         await base44.asServiceRole.entities.Notification.create({
           user_id: runner_up_id,
           user_email: ruUser.email,
-          type: 'status_update',
+          type: 'tournament_result',
           title: '🥈 II miejsce w turnieju!',
           message: `Gratulacje! Zająłeś II miejsce w turnieju "${tournament.name}" i otrzymujesz ${runnerUpPrize} punktów!`,
           reference_id: tournament_id,
-          reference_type: 'other',
+          reference_type: 'tournament',
           is_read: false,
           priority: 'medium'
         });

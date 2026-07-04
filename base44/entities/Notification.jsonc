@@ -17,7 +17,10 @@
         "message_received",
         "status_update",
         "system",
-        "promo"
+        "promo",
+        "tournament_reminder",
+        "tournament_result",
+        "game_invite"
       ],
       "description": "Typ powiadomienia"
     },
@@ -29,7 +32,7 @@
     },
     "reference_id": {
       "type": "string",
-      "description": "ID powi\u0105zanego obiektu (kampania, transakcja, itp.)"
+      "description": "ID powi\u0105zanego obiektu (kampania, transakcja, turniej, pok\u00f3j gry, itp.)"
     },
     "reference_type": {
       "type": "string",
@@ -38,6 +41,8 @@
         "transaction",
         "message",
         "payment",
+        "tournament",
+        "game_room",
         "other"
       ]
     },
